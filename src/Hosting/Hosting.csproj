@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>NetLah.Extensions.SpaServices.$(MSBuildProjectName)</PackageId>
+    <PackageTags>spa;single-page-application;host;hosting;configurable;aspnetcore;dotnet;netcore</PackageTags>
+    <TargetFramework>net6.0</TargetFramework>
+    <Description>The ASP.NET Core hosting the single-page application</Description>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>../../NetLah.snk</AssemblyOriginatorKeyFile>
+    <AssemblyName>NetLah.Extensions.SpaServices.$(MSBuildProjectName)</AssemblyName>
+    <RootNamespace>NetLah.Extensions.SpaServices.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\LICENSE" Pack="true" PackagePath="\" />
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" />
+    <PackageReference Include="NetLah.Abstractions" />
+    <PackageReference Include="NetLah.Extensions.HttpOverrides" />
+  </ItemGroup>
+
+</Project>

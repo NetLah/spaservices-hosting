@@ -1,0 +1,18 @@
+version: "3.8"
+
+services:
+  spahost:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      #args:
+      #  VERSION: 1.0.1-dev2
+    image: netlah/spa-host:dev2
+    ports:
+      - "5000:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_FORWARDEDHEADERS_ENABLED=true
+      - Serilog__MinimumLevel__Default=Debug
+      - Serilog__MinimumLevel__Override1__Serilog.AspNetCore.RequestLoggingMiddleware=Information
+      - Serilog__MinimumLevel__Override__Microsoft.AspNetCore.HttpOverrides.ForwardedHeadersMiddleware=Debug

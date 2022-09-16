@@ -8,8 +8,26 @@
 
 ## Build Status
 
-[![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2FNetLah%2Fspaservices-hosting%2Fbadge%3Fref%3Dmain&style=flat)](https://actions-badge.atrox.dev/NetLah/spaservices-hosting/goto?ref=main)
+[![ASP.NETCore 6](https://github.com/NetLah/spaservices-hosting/actions/workflows/aspnet-core.yml/badge.svg)](https://github.com/NetLah/spaservices-hosting/actions/workflows/aspnet-core.yml)
 
 ## Getting started
 
-TBC
+### 1. Add/Update PackageReference to web .csproj
+
+```
+<ItemGroup>
+  <PackageReference Include="NetLah.Extensions.SpaServices.Hosting" />
+</ItemGroup>
+```
+
+### 2. Use SPA Hosting
+
+```csharp
+builder.AddSpaApp();
+...
+var app = builder.Build();
+
+app.UseSpaApp(action: app => app.UseSerilogRequestLoggingLevel());
+
+app.Run();
+```
