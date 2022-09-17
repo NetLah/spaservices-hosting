@@ -14,7 +14,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_FORWARDEDHEADERS_ENABLED=true
       - Serilog__MinimumLevel__Default=Debug
-      - Serilog__MinimumLevel__Override1__Serilog.AspNetCore.RequestLoggingMiddleware=Information
+      - Serilog__MinimumLevel__Override__Serilog.AspNetCore.RequestLoggingMiddleware=Debug
       - Serilog__MinimumLevel__Override__Microsoft.AspNetCore.HttpOverrides.ForwardedHeadersMiddleware=Debug
 
   windows:
@@ -30,5 +30,5 @@ services:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_FORWARDEDHEADERS_ENABLED=true
       - Serilog__MinimumLevel__Default=Debug
-      - Serilog__MinimumLevel__Override1__Serilog.AspNetCore.RequestLoggingMiddleware=Information
+      - Serilog__MinimumLevel__Override__Serilog.AspNetCore.RequestLoggingMiddleware=Debug
       - Serilog__MinimumLevel__Override__Microsoft.AspNetCore.HttpOverrides.ForwardedHeadersMiddleware=Debug

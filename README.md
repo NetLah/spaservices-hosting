@@ -8,7 +8,7 @@
 
 ## Build Status
 
-[![ASP.NETCore 6](https://github.com/NetLah/spaservices-hosting/actions/workflows/aspnet-core.yml/badge.svg)](https://github.com/NetLah/spaservices-hosting/actions/workflows/aspnet-core.yml)
+[![ASP.NET Core](https://github.com/NetLah/spaservices-hosting/actions/workflows/aspnet-core.yml/badge.svg)](https://github.com/NetLah/spaservices-hosting/actions/workflows/aspnet-core.yml)
 
 ## Getting started
 
