@@ -37,11 +37,6 @@ public sealed class Public2CustomWebApplicationFactory : DefaultWebApplicationFa
     public override string EnvironmentName { get; set; } = "Public2";
 }
 
-public sealed class Public3CustomWebApplicationFactory : DefaultWebApplicationFactory<Program>
-{
-    public override string EnvironmentName { get; set; } = "Public3";
-}
-
 public sealed class NoFolderCustomWebApplicationFactory : DefaultWebApplicationFactory<Program>
 {
     public override string EnvironmentName { get; set; } = "NoFolder";

@@ -1,8 +1,8 @@
 namespace WebApp.Test;
 
-public class PagesPublic3Test : BasePagesTest<Program>, IClassFixture<Public3CustomWebApplicationFactory>
+public class PagesPublic2Test : BasePagesTest<Program>, IClassFixture<Public2CustomWebApplicationFactory>
 {
-    public PagesPublic3Test(Public3CustomWebApplicationFactory factory) : base(factory) { }
+    public PagesPublic2Test(Public2CustomWebApplicationFactory factory) : base(factory) { }
 
     [Theory]
     [InlineData("/")]
@@ -18,5 +18,5 @@ public class PagesPublic3Test : BasePagesTest<Program>, IClassFixture<Public3Cus
     [Theory]
     [InlineData("/assets/site.min.css")]
     [InlineData("/assets/site.min.css?a=b")]
-    public Task SiteCss(string url) => AssertGetStringAsync("/* site.min.css in public3 */", url);
+    public Task SiteCss(string url) => AssertGetStringAsync("/* site.min.css in public2 */", url);
 }
