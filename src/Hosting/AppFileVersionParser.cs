@@ -12,9 +12,9 @@ internal class AppFileVersionParser
     {
         var result = new AppFileVersionInfo();
         string? line;
-        string? version1 = null;
+        string? version = null;
         var firstLine = true;
-        var hasProperty = false;
+        var hasAnyProperty = false;
         while ((line = reader.ReadLine()) != null)
         {
             if (!string.IsNullOrWhiteSpace(line))
@@ -28,49 +28,66 @@ internal class AppFileVersionParser
                     var value = m.Groups["value"].Value.Trim();
                     if (!string.IsNullOrEmpty(value))
                     {
-                        hasProperty = true;
                         switch (key.ToLower())
                         {
-                            case "app": SetIf(value, a => a.Title, (a, v) => a.Title = v); break;
-                            case "version": SetIf(value, a => a.Version, (a, v) => a.Version = v); break;
+                            case "app": hasAnyProperty = true; SetIf<int>(value, a => a.Title, (a, v) => a.Title = v); break;
+                            case "version": hasAnyProperty = true; SetIf<int>(value, a => a.Version, (a, v) => a.Version = v); break;
                             case "buildtime":
-                                var hasSetBuildTimeString = SetIf(value, a => a.BuildTimeString, (a, v) => a.BuildTimeString = v);
-                                if (hasSetBuildTimeString)
+                                var buildTime = SetIf(value, a => a.BuildTimeString, (a, v) => a.BuildTimeString = v, v => BuildTimeHelper.ParseBuildTime(value));
+                                if (buildTime.HasValue)
                                 {
-                                    result.BuildTime = BuildTimeHelper.ParseBuildTime(value);
+                                    result.BuildTime = buildTime;
+                                    hasAnyProperty = true;
                                 }
                                 break;
-                            case "description": SetIf(value, a => a.Description, (a, v) => a.Description = v); break;
+                            case "description": hasAnyProperty = true; SetIf<int>(value, a => a.Description, (a, v) => a.Description = v); break;
                         }
                     }
                 }
 
                 if (index < 0 && firstLine)
                 {
-                    version1 = line.Trim();
+                    version = line.Trim();
                 }
             }
 
             firstLine = false;
         }
 
-        if (!hasProperty && !string.IsNullOrEmpty(version1))
+        if (!hasAnyProperty && !string.IsNullOrEmpty(version))
         {
-            result.Version = version1;
+            result.Version = version;
         }
 
         return result.IsValid() ? result : default;
 
-        bool SetIf(string value, Func<AppFileVersionInfo, string?> funcGet, Action<AppFileVersionInfo, string> setValue)
+        TValue? SetIf<TValue>(string value,
+            Func<AppFileVersionInfo, string?> funcGet,
+            Action<AppFileVersionInfo, string> setValue,
+            Func<string, TValue?>? convert = null) where TValue : struct
         {
+            TValue? conversionValue = default;
+
             var currentValue = funcGet(result);
             if (currentValue != null)
             {
-                return false;
+                return conversionValue;
             }
 
-            setValue(result, value);
-            return true;
+            if (convert != null)
+            {
+                conversionValue = convert(value);
+                if (conversionValue.HasValue)
+                {
+                    setValue(result, value);
+                }
+            }
+            else
+            {
+                setValue(result, value);
+            }
+
+            return conversionValue;
         }
     }
 }
