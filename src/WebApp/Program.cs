@@ -1,19 +1,11 @@
 using NetLah.Diagnostics;
 using NetLah.Extensions.Logging;
-using NetLah.Extensions.SpaServices.Hosting;
 
 AppLog.InitLogger();
 AppLog.Logger.LogInformation("Application starting...");
 try
 {
-    IAppInfo appInfo;
-#pragma warning disable S2551 // Shared resources should not be used for locking
-    lock (typeof(ApplicationInfo))
-    {
-        // Fix concurrent testing: System.InvalidOperationException : The entry point exited without ever building an IHost
-        appInfo = ApplicationInfo.TryInitialize(null).CreateAppInfo();
-    }
-#pragma warning restore S2551 // Shared resources should not be used for locking
+    _ = ApplicationInfo.TryInitialize(null).CreateAppInfo();
 
     var builder = WebApplication.CreateBuilder(args);
 

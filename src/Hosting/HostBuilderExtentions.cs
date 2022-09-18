@@ -15,6 +15,7 @@ public static class HostBuilderExtentions
         var appOptions = builder.Configuration.Get<AppOptions>();
         builder.Services.AddSingleton<AppOptions>(appOptions);
 
+        // todo: #4
         //var hstsConfiguration = builder.Configuration.GetSection("Hsts");
         //builder.Services.AddHsts(options =>
         //{

@@ -20,6 +20,7 @@ public static class HostingApplicationBuilderExtentions
         }
         else
         {
+            // todo: #4
             // app.UseHsts();
         }
 
