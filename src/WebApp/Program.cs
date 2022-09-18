@@ -5,7 +5,7 @@ AppLog.InitLogger();
 AppLog.Logger.LogInformation("Application starting...");
 try
 {
-    _ = ApplicationInfo.TryInitialize(null).CreateAppInfo();
+    ApplicationInfo.TryInitialize(null).CreateAppInfo();
 
     var builder = WebApplication.CreateBuilder(args);
 
