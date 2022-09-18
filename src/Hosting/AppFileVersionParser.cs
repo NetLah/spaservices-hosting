@@ -1,4 +1,6 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Linq.Expressions;
+using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace NetLah.Extensions.SpaServices.Hosting;
 
@@ -30,17 +32,17 @@ internal class AppFileVersionParser
                     {
                         switch (key.ToLower())
                         {
-                            case "app": hasAnyProperty = true; SetIf<int>(value, a => a.Title, (a, v) => a.Title = v); break;
-                            case "version": hasAnyProperty = true; SetIf<int>(value, a => a.Version, (a, v) => a.Version = v); break;
+                            case "app": hasAnyProperty = true; SetIf<int>(value, a => a.Title); break;
+                            case "version": hasAnyProperty = true; SetIf<int>(value, a => a.Version); break;
                             case "buildtime":
-                                var buildTime = SetIf(value, a => a.BuildTimeString, (a, v) => a.BuildTimeString = v, v => BuildTimeHelper.ParseBuildTime(value));
+                                var buildTime = SetIf(value, a => a.BuildTimeString, v => BuildTimeHelper.ParseBuildTime(value));
                                 if (buildTime.HasValue)
                                 {
                                     result.BuildTime = buildTime;
                                     hasAnyProperty = true;
                                 }
                                 break;
-                            case "description": hasAnyProperty = true; SetIf<int>(value, a => a.Description, (a, v) => a.Description = v); break;
+                            case "description": hasAnyProperty = true; SetIf<int>(value, a => a.Description); break;
                         }
                     }
                 }
@@ -62,13 +64,12 @@ internal class AppFileVersionParser
         return result.IsValid() ? result : default;
 
         TValue? SetIf<TValue>(string value,
-            Func<AppFileVersionInfo, string?> funcGet,
-            Action<AppFileVersionInfo, string> setValue,
+            Expression<Func<AppFileVersionInfo, string?>> selector,
             Func<string, TValue?>? convert = null) where TValue : struct
         {
             TValue? conversionValue = default;
 
-            var currentValue = funcGet(result);
+            var currentValue = selector.Compile().Invoke(result);
             if (currentValue != null)
             {
                 return conversionValue;
@@ -79,15 +80,21 @@ internal class AppFileVersionParser
                 conversionValue = convert(value);
                 if (conversionValue.HasValue)
                 {
-                    setValue(result, value);
+                    SetValue();
                 }
             }
             else
             {
-                setValue(result, value);
+                SetValue();
             }
 
             return conversionValue;
+
+            void SetValue()
+            {
+                var propertyInfo = (PropertyInfo)((MemberExpression)selector.Body).Member;
+                propertyInfo.SetValue(result, value);
+            }
         }
     }
 }
