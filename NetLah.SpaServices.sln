@@ -33,6 +33,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "public", "public", "{61EAC3FA-53CA-4C01-ACBB-C5096E46A71F}"
 	ProjectSection(SolutionItems) = preProject
 		src\public\.version = src\public\.version
+		src\public\.version.yaml = src\public\.version.yaml
 		src\public\.version.yml = src\public\.version.yml
 		src\public\index.html = src\public\index.html
 	EndProjectSection
