@@ -73,4 +73,39 @@ description: This is free text");
         Assert.Equal("This is free text", appFileVersionInfo.Description);
         Assert.Equal(new DateTimeOffset(2022, 9, 18, 9, 58, 19, TimeSpan.Zero).Add(TimeSpan.FromMilliseconds(754.5286D)), appFileVersionInfo.BuildTime);
     }
+
+    [Theory]
+    [InlineData("public2Precedence", "The SPA .version.yml")]
+    [InlineData("public3Precedence", "The SPA .version.yml")]
+    [InlineData("public4Precedence", "The SPA .version.yml")]
+    [InlineData("public5Precedence", "The SPA .version.yaml")]
+    [InlineData("public6PrecedenceInvalidYml", "The SPA .version.yaml")]
+    [InlineData("public7PrecedenceInvalidYmlYaml", "The SPA .version")]
+    public void ParseFolderPrecedenceSuccess(string name, string expectation)
+    {
+        var folderName = Path.Combine(TestHelper.ContentRoot, name);
+        var appFileVersionInfo = new AppFileVersionParser().ParseFolder(folderName);
+        AssertPrecedence(appFileVersionInfo, expectation);
+    }
+
+    private static void AssertPrecedence(AppFileVersionInfo? appFileVersionInfo, string expectation)
+    {
+        Assert.NotNull(appFileVersionInfo);
+        Assert.Equal(expectation, appFileVersionInfo.Title);
+        Assert.Equal("1.2.3-dev7-1999", appFileVersionInfo.Version);
+        Assert.Null(appFileVersionInfo.BuildTimeString);
+        Assert.Null(appFileVersionInfo.Description);
+        Assert.Null(appFileVersionInfo.BuildTime);
+    }
+
+    [Theory]
+    [InlineData("public8Empty", true)]
+    [InlineData("public9NotExist", false)]
+    public void ParseFolderEmptyNotExistsSuccess(string name, bool folderExists)
+    {
+        var folderName = Path.Combine(TestHelper.ContentRoot, name);
+        Assert.Equal(folderExists, Directory.Exists(folderName));
+        var appFileVersionInfo = new AppFileVersionParser().ParseFolder(folderName);
+        Assert.Null(appFileVersionInfo);
+    }
 }

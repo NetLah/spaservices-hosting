@@ -1,4 +1,2 @@
-app: The SPA .version
+app: The SPA .version.yaml
 version: 1.2.3-dev7-1999
-buildTime: 2022-09-18T09:58:19.7545286Z
-description: This is free text
