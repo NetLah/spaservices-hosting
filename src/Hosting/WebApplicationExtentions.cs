@@ -1,8 +1,10 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using NetLah.Extensions.HttpOverrides;
 using NetLah.Extensions.SpaServices.Hosting;
+using System.Text;
 
 namespace Microsoft.AspNetCore.Builder;
 
@@ -52,6 +54,29 @@ public static class WebApplicationExtentions
         {
             // do nothing
         });
+
+        if (appOptions.DebugRoutes is string debugRoutes && !string.IsNullOrWhiteSpace(debugRoutes))
+        {
+            logger.LogDebug("Debug routes: {debugRoutes}", debugRoutes);
+
+            app.MapGet(debugRoutes, (IEnumerable<EndpointDataSource> endpointSources) =>
+            {
+                var sb = new StringBuilder();
+                var endpoints = endpointSources.SelectMany(es => es.Endpoints);
+                foreach (var endpoint in endpoints)
+                {
+                    var routeNameMetadata = endpoint.Metadata.OfType<RouteNameMetadata>().FirstOrDefault();
+                    var httpMethodsMetadata = endpoint.Metadata.OfType<HttpMethodMetadata>().FirstOrDefault();
+
+                    sb.Append($"[{routeNameMetadata?.RouteName}] {(httpMethodsMetadata == null ? null : string.Join(",", httpMethodsMetadata.HttpMethods))}");
+                    if (endpoint is RouteEndpoint routeEndpoint)
+                    {
+                        sb.AppendLine($" {routeEndpoint.RoutePattern.RawText}");
+                    }
+                }
+                return sb.ToString();
+            });
+        }
 
         app.Lifetime.ApplicationStarted.Register(() => logger.LogApplicationLifetimeEvent("Application started", appInfo));
         app.Lifetime.ApplicationStopping.Register(() => logger.LogApplicationLifetimeEvent("Application stopping", appInfo));

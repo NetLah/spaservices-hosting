@@ -7,4 +7,9 @@ public class AppOptions
     public bool HttpsRedirectionEnabled { get; set; } = true;
 
     public string? WwwRoot { get; set; }
+
+    /// <summary>
+    /// /debug/routes
+    /// </summary>
+    public string? DebugRoutes { get; set; }
 }
