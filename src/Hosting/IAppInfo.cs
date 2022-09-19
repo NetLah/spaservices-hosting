@@ -2,10 +2,16 @@
 
 public interface IAppInfo
 {
-    string InformationalVersion { get; }
-    string Title { get; }
-    string FrameworkName { get; }
-    string BuildTimestampLocal { get; }
     DateTimeOffset StartTime { get; }
     TimeSpan Uptime { get; }
+
+    string Title { get; }
+    string Version { get; }
+    string? BuildTimestampLocal { get; }
+    string? Description { get; }
+
+    string HostTitle { get; }
+    string HostInformationalVersion { get; }
+    string HostBuildTimestampLocal { get; }
+    string HostFrameworkName { get; }
 }

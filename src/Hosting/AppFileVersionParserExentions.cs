@@ -59,6 +59,7 @@ internal static class AppFileVersionParserExentions
         {
             return default;
         }
+
         using var reader = new StringReader(fileContent);
         return parser.Parse(reader);
     }

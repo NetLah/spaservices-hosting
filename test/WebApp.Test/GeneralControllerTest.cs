@@ -38,8 +38,8 @@ public class GeneralControllerTest
     {
         var appInfoMock = new Mock<IAppInfo>();
         appInfoMock.SetupGet(m => m.Title).Returns("title1").Verifiable();
-        appInfoMock.SetupGet(m => m.InformationalVersion).Returns("informationalVersion1").Verifiable();
-        appInfoMock.SetupGet(m => m.FrameworkName).Returns("frameworkName1").Verifiable();
+        appInfoMock.SetupGet(m => m.Version).Returns("v1-alpha1").Verifiable();
+        appInfoMock.SetupGet(m => m.BuildTimestampLocal).Returns("buildTimestamp1").Verifiable();
 
         await using var factory = new WebApplicationFactory<Program>();
 
@@ -57,9 +57,10 @@ public class GeneralControllerTest
 
         var content = await client.GetStringAsync("/api/v1/general/getInfo");
 
-        Assert.StartsWith("App:title1; Version:", content);
+        Assert.StartsWith("App:title1; Version:v1-alpha1; BuildTime:buildTimestamp1", content);
 
         appInfoMock.VerifyAll();
-        appInfoMock.VerifyGet(m => m.BuildTimestampLocal, Times.Never);
+        appInfoMock.VerifyGet(m => m.Title, Times.Exactly(2));  // application lifetime but not initializing
+        appInfoMock.VerifyGet(m => m.HostBuildTimestampLocal, Times.Once);
     }
 }

@@ -2,13 +2,37 @@
 
 namespace NetLah.Diagnostics;
 
-public static class AppInfoExtensions
+internal static class AppInfoExtensions
 {
-    public static IAppInfo CreateAppInfo(this IAssemblyInfo assemblyInfo) => AppInfo.Instance ??= new()
+    public static AppInfo BindAppInfo(this AppInfo appInfo, IAssemblyInfo assemblyInfo, AppFileVersionInfo appFileVersionInfo)
     {
-        BuildTimestampLocal = assemblyInfo.BuildTimestampLocal,
-        FrameworkName = assemblyInfo.FrameworkName,
-        InformationalVersion = assemblyInfo.InformationalVersion,
-        Title = assemblyInfo.Title,
-    };
+        if (appInfo == null) { throw new ArgumentNullException(nameof(appInfo)); }
+
+        appInfo.AppFileVersionInfo = appFileVersionInfo ?? throw new ArgumentNullException(nameof(appFileVersionInfo));
+        appInfo.AssemblyInfo = assemblyInfo ?? throw new ArgumentNullException(nameof(assemblyInfo));
+
+        appInfo.Title = appFileVersionInfo.Title ?? assemblyInfo.Title;
+        appInfo.Version = appFileVersionInfo.Version ?? assemblyInfo.InformationalVersion;
+        appInfo.BuildTimestampLocal = GetTimestampString(appFileVersionInfo.BuildTime, TimeZoneInfo.Local);
+        appInfo.Description = appFileVersionInfo.Description;
+
+        appInfo.HostTitle = assemblyInfo.Title;
+        appInfo.HostInformationalVersion = assemblyInfo.InformationalVersion;
+        appInfo.HostBuildTimestampLocal = assemblyInfo.BuildTimestampLocal;
+        appInfo.HostFrameworkName = assemblyInfo.FrameworkName;
+
+        return appInfo;
+    }
+
+    private static string? GetTimestampString(DateTimeOffset? dateTimeOffset, TimeZoneInfo timeZoneInfo)
+    {
+        if (!dateTimeOffset.HasValue)
+        {
+            return default;
+        }
+
+        var local = TimeZoneInfo.ConvertTime(dateTimeOffset.Value, timeZoneInfo);
+        var localString = local.ToString("yyyy-MM-ddTHH:mm:ss.fffzzz", System.Globalization.CultureInfo.InvariantCulture);
+        return localString;
+    }
 }

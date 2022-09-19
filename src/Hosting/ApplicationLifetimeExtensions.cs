@@ -1,13 +1,18 @@
 ﻿using Microsoft.Extensions.Logging;
-using NetLah.Diagnostics;
+using NetLah.Extensions.SpaServices.Hosting;
 
 namespace Microsoft.AspNetCore.Builder;
 
 public static class ApplicationLifetimeExtensions
 {
-    public static void LogApplicationLifetimeEvent(this ILogger logger, string lifetime)
+    public static void LogApplicationLifetimeEvent(this ILogger logger, string lifetime, IAppInfo appInfo)
     {
-        var appInfo = ApplicationInfo.Instance;
-        logger.LogInformation("{lifetime}: AppTitle:{appTitle}; Version:{version}; BuildTime:{buildTime}; Framework:{framework}", lifetime, appInfo?.Title, appInfo?.InformationalVersion, appInfo?.BuildTimestampLocal, appInfo?.FrameworkName);
+        logger.LogInformation("{lifetime}\r\n" +
+            "AppTitle:{appTitle}; Version:{version}; BuildTime:{buildTime}\r\n" +
+            "Host:{hostApp}; Version:{hostVersion}; BuildTime:{hostBuildTime}; Framework:{framework}\r\n" +
+            "Description:{description}",
+            lifetime, appInfo.Title, appInfo.Version, appInfo.BuildTimestampLocal,
+            appInfo.HostTitle, appInfo.HostInformationalVersion, appInfo.HostBuildTimestampLocal, appInfo.HostFrameworkName,
+            appInfo.Description);
     }
 }
