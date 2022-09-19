@@ -12,4 +12,7 @@ internal static class StringHelper
 
         return string.Empty;
     }
+
+    public static string? NormalizeNull(string? value)
+        => string.IsNullOrWhiteSpace(value) ? default : value.Trim();
 }

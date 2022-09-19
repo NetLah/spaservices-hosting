@@ -2,7 +2,7 @@
 
 namespace NetLah.Extensions.SpaServices.Hosting.Controllers;
 
-[Route("api/v1/[controller]/[action]")]
+//[Route("api/v1/[controller]/[action]")]
 [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
 [ApiExplorerSettings(IgnoreApi = true)]
 public class GeneralController : ControllerBase
@@ -20,6 +20,14 @@ public class GeneralController : ControllerBase
     //{
     //    return Content(string.Join(Environment.NewLine, _infoCollector.Logs), "text/plain; charset=utf-8");
     //}
+
+    [HttpGet]
+#pragma warning disable CA1822 // Mark members as static
+    public string SysInfo()
+#pragma warning restore CA1822 // Mark members as static
+    {
+        return $"This is GetInfo {DateTimeOffset.Now:O}";
+    }
 
     [HttpGet]
     public string GetInfo()
