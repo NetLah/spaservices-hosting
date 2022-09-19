@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using NetLah.Diagnostics;
 using NetLah.Extensions.HttpOverrides;
 using NetLah.Extensions.SpaServices.Hosting;
 
@@ -8,12 +9,30 @@ namespace Microsoft.AspNetCore.Builder;
 
 public static class HostBuilderExtentions
 {
-    public static WebApplicationBuilder AddSpaApp(this WebApplicationBuilder builder, ILogger? logger = null)
+    public static IAppInfo InitializeSpaApp(this WebApplicationBuilder builder, ILogger? logger = null)
     {
         logger ??= LogHelper.LoggerOrDefault;
 
         var appOptions = builder.Configuration.Get<AppOptions>();
+        builder.SetAppOptions(appOptions);
+
+        var wwwroot = StringHelper.GetOrDefault(appOptions.WwwRoot, "wwwroot");
+        logger.LogDebug("Load UI version information {folder}", wwwroot);
+        var appFileVersionInfo = new AppFileVersionParser().ParseFolder(wwwroot);
+
+        var appInfo = builder.GetAppInfoOrDefault().BindAppInfo(ApplicationInfo.Instance, appFileVersionInfo ?? new AppFileVersionInfo());
+
         builder.Services.AddSingleton<AppOptions>(appOptions);
+        builder.Services.AddSingleton<IAppInfo>(appInfo);
+
+        return appInfo;
+    }
+
+    public static WebApplicationBuilder AddSpaApp(this WebApplicationBuilder builder, ILogger? logger = null)
+    {
+        logger ??= LogHelper.LoggerOrDefault;
+
+        var appOptions = builder.GetAppOptionsOrDefault();
 
         // todo: #4
         //var hstsConfiguration = builder.Configuration.GetSection("Hsts");
@@ -34,8 +53,6 @@ public static class HostBuilderExtentions
         //    }
         //});
 
-        builder.Services.AddSingleton<IAppInfo>(_ => AppInfo.GetInstanceOrDefault());
-
         builder.Services.AddHealthChecks();
 
         builder.AddHttpOverrides();
@@ -44,6 +61,7 @@ public static class HostBuilderExtentions
 
         var wwwroot = StringHelper.GetOrDefault(appOptions.WwwRoot, "wwwroot");
 
+        logger.LogInformation("Spa static files location {folder}", wwwroot);
         builder.Services.AddSpaStaticFiles(configuration =>
         {
             configuration.RootPath = wwwroot;

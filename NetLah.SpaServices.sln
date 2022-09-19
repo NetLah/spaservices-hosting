@@ -33,8 +33,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "public", "public", "{61EAC3FA-53CA-4C01-ACBB-C5096E46A71F}"
 	ProjectSection(SolutionItems) = preProject
 		src\public\.version = src\public\.version
-		src\public\.version.yaml = src\public\.version.yaml
-		src\public\.version.yml = src\public\.version.yml
 		src\public\index.html = src\public\index.html
 	EndProjectSection
 EndProject
@@ -43,7 +41,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "assets", "assets", "{A2F5CD
 		src\public\assets\site.css = src\public\assets\site.css
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hosting.Test", "test\Hosting.Test\Hosting.Test.csproj", "{45D6DC99-54ED-4940-BC68-9C857FE70A6C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hosting.Test", "test\Hosting.Test\Hosting.Test.csproj", "{45D6DC99-54ED-4940-BC68-9C857FE70A6C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
