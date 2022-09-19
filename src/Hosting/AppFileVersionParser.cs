@@ -6,7 +6,8 @@ namespace NetLah.Extensions.SpaServices.Hosting;
 
 internal class AppFileVersionParser
 {
-    private static readonly Regex KeyValueRegex = new("^\\s*(?<key>app|version|buildTime|description)\\s*:(?<value>.{1,100})$", RegexOptions.Compiled);
+    private static readonly Regex KeyValueRegex = new("^\\s*(?<key>app|version|buildTime|description)\\s*:(?<value>.{1,100})$",
+        RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
 #pragma warning disable CA1822 // Mark members as static
     public AppFileVersionInfo? Parse(TextReader reader)
@@ -14,7 +15,7 @@ internal class AppFileVersionParser
     {
         var result = new AppFileVersionInfo();
         string? line;
-        string? version = null;
+        string version = default!;
         var firstLine = true;
         var hasAnyProperty = false;
         while ((line = reader.ReadLine()) != null)

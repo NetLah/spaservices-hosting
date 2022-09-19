@@ -7,7 +7,7 @@ using NetLah.Extensions.SpaServices.Hosting;
 
 namespace Microsoft.AspNetCore.Builder;
 
-public static class HostBuilderExtentions
+public static class WebApplicationBuilderExtentions
 {
     public static IAppInfo InitializeSpaApp(this WebApplicationBuilder builder, ILogger? logger = null)
     {
@@ -67,6 +67,38 @@ public static class HostBuilderExtentions
             configuration.RootPath = wwwroot;
         });
 
+        return builder;
+    }
+
+    internal static AppInfo GetAppInfoOrDefault(this WebApplicationBuilder builder)
+    {
+        if (!builder.Host.Properties.TryGetValue(typeof(AppInfo), out var appInfoObject) || appInfoObject is not AppInfo appInfo)
+        {
+            appInfo = new AppInfo();
+            SetAppInfo(builder, appInfo);
+        }
+        return appInfo;
+    }
+
+    internal static WebApplicationBuilder SetAppInfo(this WebApplicationBuilder builder, AppInfo appInfo)
+    {
+        builder.Host.Properties[typeof(AppInfo)] = appInfo ?? throw new ArgumentNullException(nameof(appInfo));
+        return builder;
+    }
+
+    internal static AppOptions GetAppOptionsOrDefault(this WebApplicationBuilder builder)
+    {
+        if (!builder.Host.Properties.TryGetValue(typeof(AppOptions), out var appOptionsObject) || appOptionsObject is not AppOptions appOptions)
+        {
+            appOptions = new AppOptions();
+            SetAppOptions(builder, appOptions);
+        }
+        return appOptions;
+    }
+
+    internal static WebApplicationBuilder SetAppOptions(this WebApplicationBuilder builder, AppOptions appOptions)
+    {
+        builder.Host.Properties[typeof(AppOptions)] = appOptions ?? throw new ArgumentNullException(nameof(appOptions));
         return builder;
     }
 }

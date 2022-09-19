@@ -13,13 +13,13 @@ internal class AppInfo : IAppInfo
     public DateTimeOffset StartTime { get; } = DateTimeOffset.Now;
     public TimeSpan Uptime => _uptime.Elapsed;
 
-    public string Title { get; set; } = "";
-    public string Version { get; set; } = "";
+    public string Title { get; set; } = default!;
+    public string Version { get; set; } = default!;
     public string? BuildTimestampLocal { get; set; }
     public string? Description { get; set; }
 
-    public string AssemblyTitle { get; set; } = "";
-    public string AssemblyInformationalVersion { get; set; } = "";
-    public string AssemblyBuildTimestampLocal { get; set; } = "";
-    public string AssemblyFrameworkName { get; set; } = "";
+    public string HostTitle { get; set; } = default!;
+    public string HostInformationalVersion { get; set; } = default!;
+    public string HostBuildTimestampLocal { get; set; } = default!;
+    public string HostFrameworkName { get; set; } = default!;
 }

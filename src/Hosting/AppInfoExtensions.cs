@@ -16,10 +16,10 @@ internal static class AppInfoExtensions
         appInfo.BuildTimestampLocal = GetTimestampString(appFileVersionInfo.BuildTime, TimeZoneInfo.Local);
         appInfo.Description = appFileVersionInfo.Description;
 
-        appInfo.AssemblyTitle = assemblyInfo.Title;
-        appInfo.AssemblyInformationalVersion = assemblyInfo.InformationalVersion;
-        appInfo.AssemblyBuildTimestampLocal = assemblyInfo.BuildTimestampLocal;
-        appInfo.AssemblyFrameworkName = assemblyInfo.FrameworkName;
+        appInfo.HostTitle = assemblyInfo.Title;
+        appInfo.HostInformationalVersion = assemblyInfo.InformationalVersion;
+        appInfo.HostBuildTimestampLocal = assemblyInfo.BuildTimestampLocal;
+        appInfo.HostFrameworkName = assemblyInfo.FrameworkName;
 
         return appInfo;
     }

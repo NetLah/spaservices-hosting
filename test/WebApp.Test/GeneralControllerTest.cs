@@ -61,6 +61,6 @@ public class GeneralControllerTest
 
         appInfoMock.VerifyAll();
         appInfoMock.VerifyGet(m => m.Title, Times.Exactly(2));  // application lifetime but not initializing
-        appInfoMock.VerifyGet(m => m.AssemblyBuildTimestampLocal, Times.Once);
+        appInfoMock.VerifyGet(m => m.HostBuildTimestampLocal, Times.Once);
     }
 }

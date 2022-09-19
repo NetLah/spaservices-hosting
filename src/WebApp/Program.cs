@@ -12,7 +12,7 @@ try
     var logger = AppLog.Logger;
 
     var appInfo = builder.InitializeSpaApp();
-    logger.LogApplicationLifetimeEvent("Application initializing... ", appInfo);
+    logger.LogApplicationLifetimeEvent("Application initializing...", appInfo);
 
     builder.AddSpaApp();
 

@@ -6,7 +6,7 @@ using NetLah.Extensions.SpaServices.Hosting;
 
 namespace Microsoft.AspNetCore.Builder;
 
-public static class HostingApplicationBuilderExtentions
+public static class WebApplicationExtentions
 {
     public static WebApplication UseSpaApp(this WebApplication app, ILogger? logger = null, Action<WebApplication>? action = null)
     {
@@ -53,9 +53,9 @@ public static class HostingApplicationBuilderExtentions
             // do nothing
         });
 
-        app.Lifetime.ApplicationStarted.Register(() => logger.LogApplicationLifetimeEvent("ApplicationStarted", appInfo));
-        app.Lifetime.ApplicationStopping.Register(() => logger.LogApplicationLifetimeEvent("ApplicationStopping", appInfo));
-        app.Lifetime.ApplicationStopped.Register(() => logger.LogApplicationLifetimeEvent("ApplicationStopped", appInfo));
+        app.Lifetime.ApplicationStarted.Register(() => logger.LogApplicationLifetimeEvent("Application started", appInfo));
+        app.Lifetime.ApplicationStopping.Register(() => logger.LogApplicationLifetimeEvent("Application stopping", appInfo));
+        app.Lifetime.ApplicationStopped.Register(() => logger.LogApplicationLifetimeEvent("Application stopped", appInfo));
 
         return app;
     }

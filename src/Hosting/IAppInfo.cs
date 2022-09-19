@@ -10,8 +10,8 @@ public interface IAppInfo
     string? BuildTimestampLocal { get; }
     string? Description { get; }
 
-    string AssemblyTitle { get; }
-    string AssemblyInformationalVersion { get; }
-    string AssemblyBuildTimestampLocal { get; }
-    string AssemblyFrameworkName { get; }
+    string HostTitle { get; }
+    string HostInformationalVersion { get; }
+    string HostBuildTimestampLocal { get; }
+    string HostFrameworkName { get; }
 }
