@@ -45,8 +45,6 @@ public static class WebApplicationExtentions
 
         app.UseRouting();
 
-        app.AddGeneralGetInfoIf(appOptions, logger);
-
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
@@ -56,6 +54,8 @@ public static class WebApplicationExtentions
         {
             // do nothing
         });
+
+        app.AddGeneralGetInfoIf(appOptions, logger);
 
         if (appOptions.DebugRoutes is string debugRoutes && !string.IsNullOrWhiteSpace(debugRoutes))
         {
@@ -73,7 +73,7 @@ public static class WebApplicationExtentions
                     sb.Append($"[{routeNameMetadata?.RouteName}] {(httpMethodsMetadata == null ? null : string.Join(",", httpMethodsMetadata.HttpMethods))}");
                     if (endpoint is RouteEndpoint routeEndpoint)
                     {
-                        sb.AppendLine($" {routeEndpoint.RoutePattern.RawText}");
+                        sb.AppendLine($" {routeEndpoint.RoutePattern.RawText} {routeEndpoint.DisplayName}");
                     }
                 }
                 return sb.ToString();
