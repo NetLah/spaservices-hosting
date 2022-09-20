@@ -5,6 +5,7 @@ public class AppOptions
     public string HealthChecksPath { get; set; } = "/my-healthz";
 
     public bool HttpsRedirectionEnabled { get; set; } = true;
+    public bool HstsEnabled { get; set; } = true;
 
     public string? WwwRoot { get; set; }
     public string RouteGeneral { get; set; } = "api/v1/{controller}/{action}";

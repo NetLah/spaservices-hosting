@@ -23,9 +23,12 @@ public static class WebApplicationExtentions
         }
         else
         {
-            // todo: #4
-            // app.UseHsts();
+            if (appOptions.HstsEnabled)
+            {
+                app.UseHsts();
+            }
         }
+        logger.LogInformation("Use Hsts: {enalbed}", !app.Environment.IsDevelopment() && appOptions.HstsEnabled);
 
         var healthChecksPath = StringHelper.GetOrDefault(appOptions.HealthChecksPath, "/my-healthz");
         app.UseHealthChecks(healthChecksPath);

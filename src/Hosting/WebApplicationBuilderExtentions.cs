@@ -34,24 +34,26 @@ public static class WebApplicationBuilderExtentions
 
         var appOptions = builder.GetAppOptionsOrDefault();
 
-        // todo: #4
-        //var hstsConfiguration = builder.Configuration.GetSection("Hsts");
-        //builder.Services.AddHsts(options =>
-        //{
-        //    if (!string.IsNullOrEmpty(hstsConfiguration["Preload"]) ||
-        //    !string.IsNullOrEmpty(hstsConfiguration["IncludeSubDomains"]) ||
-        //    !string.IsNullOrEmpty(hstsConfiguration["MaxAge"]) ||
-        //    !string.IsNullOrEmpty(hstsConfiguration["ExcludedHosts"]))
-        //    {
-        //        hstsConfiguration.Bind(options);
-        //    }
-        //    else
-        //    {
-        //        options.Preload = true;
-        //        options.IncludeSubDomains = true;
-        //        options.MaxAge = TimeSpan.FromDays(365);
-        //    }
-        //});
+        var hstsConfiguration = builder.Configuration.GetSection("Hsts");
+        if (appOptions.HstsEnabled)
+        {
+            var loading = hstsConfiguration.Exists();
+            if (loading)
+            {
+
+                builder.Services.AddHsts(options =>
+                {
+                    if (!string.IsNullOrEmpty(hstsConfiguration["Preload"]) ||
+                    !string.IsNullOrEmpty(hstsConfiguration["IncludeSubDomains"]) ||
+                    !string.IsNullOrEmpty(hstsConfiguration["MaxAge"]) ||
+                    !string.IsNullOrEmpty(hstsConfiguration["ExcludedHosts"]))
+                    {
+                        hstsConfiguration.Bind(options);
+                    }
+                });
+            }
+            logger.LogDebug("Load Hsts configuration {loading}", loading);
+        }
 
         builder.Services.AddHealthChecks();
 

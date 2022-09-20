@@ -1,7 +1,7 @@
 using NetLah.Diagnostics;
 using NetLah.Extensions.Logging;
 
-AppLog.InitLogger();
+AppLog.InitLogger("WebApp");
 AppLog.Logger.LogInformation("Application starting...");
 try
 {
@@ -17,10 +17,11 @@ try
     builder.AddSpaApp();
 
     var app = builder.Build();
+    logger.LogInformation("Configure the application...");
 
     app.UseSpaApp(action: app => app.UseSerilogRequestLoggingLevel());
 
-    app.Logger.LogInformation("Finished configuring application");
+    logger.LogInformation("Finished configuring application");
     app.Run();
 }
 catch (Exception ex)
