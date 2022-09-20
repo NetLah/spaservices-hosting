@@ -63,4 +63,24 @@ public class GeneralControllerTest
         appInfoMock.VerifyGet(m => m.Title, Times.Exactly(2));  // application lifetime but not initializing
         appInfoMock.VerifyGet(m => m.HostBuildTimestampLocal, Times.Once);
     }
+
+    [Theory]
+    [InlineData("RouteGeneralGetInfo", "/debug/general/getInfo", "/debug/general/getInfo")]
+    [InlineData("RouteGeneral", "/debug/general1/{action}", "/debug/general1/getInfo")]
+    public async Task CustomRouteActionGetInfoUrl(string key, string value, string url)
+    {
+        await using var factory = new WebApplicationFactory<Program>();
+
+        using var client = factory
+            .WithWebHostBuilder(builder =>
+            {
+                builder.SetupTestingEnvironment();
+                builder.UseSetting(key, value);
+            })
+            .CreateClientNoAutoRedirect();
+
+        var content = await client.GetStringAsync(url);
+
+        Assert.StartsWith("App:testhost; Version:", content);
+    }
 }
