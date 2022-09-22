@@ -37,4 +37,7 @@ public class GeneralController : ControllerBase
         var appVer = $"App:{_appInfo.Title}; Version:{_appInfo.Version}; BuildTime:{_appInfo.BuildTimestampLocal} Scheme:{request.Scheme} Host:{request.Host} {remote?.RemoteIpAddress}:{remote?.RemotePort}";
         return appVer;
     }
+
+    [HttpGet]
+    public string GetVersion() => _appInfo.Version;
 }
