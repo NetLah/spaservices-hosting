@@ -35,6 +35,17 @@ jobs:
         id: minver
         run: echo "::set-output name=version::$(dotnet minver)"
 
+      - name: Set UI Version
+        shell: pwsh
+        run: |
+          $version = "$(dotnet minver)-ui"
+          $substitutionVersion = '${1} ' + $version
+          $versionFilePath = 'src/WebApp/wwwroot/.version'
+          $content = (Get-Content $versionFilePath -ErrorAction Stop) -replace '^(version:).*$', $substitutionVersion
+          $substitutionBuildTime = '${1} ' + $(Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ss.fffZ')
+          $content = $content -replace '^(buildTime:).*$', $substitutionBuildTime
+          Set-Content -Path $versionFilePath -Value $content -ErrorAction Stop
+
       - name: Set Docker tag suffix=alpine
         if: ${{ success() && github.event_name != 'pull_request' && runner.os == 'Linux' }}
         shell: pwsh
@@ -107,10 +118,6 @@ jobs:
         name: Push MyGet
         run: dotnet nuget push .\artifacts\packages\*.nupkg -s https://www.myget.org/F/netlah/api/v2/package -k ${{ secrets.MYGET }}
 
-      - if: ${{ success() && runner.os == 'Windows' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')) }}
-        name: Push Nuget to GitHub registry
-        run: dotnet nuget push .\artifacts\packages\*.nupkg -s https://nuget.pkg.github.com/NetLah/index.json -k ${{ secrets.PUSH_GITHUB_REGISTRY_TOKEN }}
-        
-      - if: ${{ success() && runner.os == 'Windows' && startsWith(github.ref, 'refs/heads/dev') }}
+      - if: ${{ success() && runner.os == 'Windows' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/') || startsWith(github.ref, 'refs/heads/dev')) }}
         name: Push Nuget to GitHub registry
         run: dotnet nuget push .\artifacts\packages\*.nupkg -s https://nuget.pkg.github.com/NetLah/index.json --skip-duplicate -k ${{ secrets.PUSH_GITHUB_REGISTRY_TOKEN }}
