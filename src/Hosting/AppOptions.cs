@@ -2,7 +2,10 @@
 
 public class AppOptions
 {
-    public string HealthChecksPath { get; set; } = "/my-healthz";
+    /// <summary>
+    /// /_healthz
+    /// </summary>
+    public string HealthChecksPath { get; set; } = DefaultConfiguration.HealthChecksPath;
 
     public bool HttpsRedirectionEnabled { get; set; } = true;
     public bool HstsEnabled { get; set; } = true;
