@@ -38,7 +38,7 @@ jobs:
       - name: Set UI Version
         shell: pwsh
         run: |
-          $version = "$(dotnet minver)-ui"
+          $version = "$(dotnet minver)+$($Env:GITHUB_SHA.SubString(0,7))"
           $substitutionVersion = '${1} ' + $version
           $versionFilePath = 'src/WebApp/wwwroot/.version'
           $content = (Get-Content $versionFilePath -ErrorAction Stop) -replace '^(version:).*$', $substitutionVersion
