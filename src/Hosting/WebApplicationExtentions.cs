@@ -4,6 +4,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using NetLah.Extensions.HttpOverrides;
 using NetLah.Extensions.SpaServices.Hosting;
+using NetLah.Extensions.SpaServices.Hosting.Controllers;
 using System.Text;
 
 namespace Microsoft.AspNetCore.Builder;
@@ -58,7 +59,7 @@ public static class WebApplicationExtentions
             // do nothing
         });
 
-        app.AddGeneralGetInfoIf(appOptions, logger);
+        app.TryAddGeneralInfo(appOptions, logger);
 
         if (appOptions.DebugRoutes is string debugRoutes && !string.IsNullOrWhiteSpace(debugRoutes))
         {
@@ -90,31 +91,41 @@ public static class WebApplicationExtentions
         return app;
     }
 
-    private static WebApplication AddGeneralGetInfoIf(this WebApplication app, AppOptions appOptions, ILogger logger)
+    private static WebApplication TryAddGeneralInfo(this WebApplication app, AppOptions appOptions, ILogger logger)
     {
-        var routeGeneralGetInfo = StringHelper.NormalizeNull(appOptions.RouteGeneralGetInfo);
-        var routeGeneralSysInfo = StringHelper.NormalizeNull(appOptions.RouteGeneralSysInfo);
+        var routeGeneralVersion = StringHelper.NormalizeNull(appOptions.RouteGeneralVersion);
+        var routeGeneralInfo = StringHelper.NormalizeNull(appOptions.RouteGeneralInfo);
+        var routeGeneralSys = StringHelper.NormalizeNull(appOptions.RouteGeneralSys);
         var routeGeneral = StringHelper.NormalizeNull(appOptions.RouteGeneral);
 
-        if (routeGeneralGetInfo != null)
+        if (routeGeneralVersion != null)
         {
-            logger.LogDebug("Map General/GetInfo {route}", routeGeneralGetInfo);
-            app.MapControllerRoute(name: "General/GetInfo",
-                pattern: routeGeneralGetInfo,
-                defaults: new { controller = "General", action = "GetInfo" })
+            logger.LogDebug("Map General/Version {route}", routeGeneralInfo);
+            app.MapControllerRoute(name: "General/Version",
+                pattern: routeGeneralVersion,
+                defaults: new { controller = "General", action = nameof(GeneralController.Version) })
                 .WithMetadata(new HttpMethodMetadata(new[] { "GET" }));
         }
 
-        if (routeGeneralSysInfo != null)
+        if (routeGeneralInfo != null)
         {
-            logger.LogDebug("Map General/SysInfo {route}", routeGeneralSysInfo);
-            app.MapControllerRoute(name: "General/SysInfo",
-                pattern: routeGeneralSysInfo,
-                defaults: new { controller = "General", action = "SysInfo" })
+            logger.LogDebug("Map General/Info {route}", routeGeneralInfo);
+            app.MapControllerRoute(name: "General/Info",
+                pattern: routeGeneralInfo,
+                defaults: new { controller = "General", action = nameof(GeneralController.Info) })
                 .WithMetadata(new HttpMethodMetadata(new[] { "GET" }));
         }
 
-        if (routeGeneralGetInfo == null && routeGeneralSysInfo == null && routeGeneral != null)
+        if (routeGeneralSys != null)
+        {
+            logger.LogDebug("Map General/Sys {route}", routeGeneralSys);
+            app.MapControllerRoute(name: "General/Sys",
+                pattern: routeGeneralSys,
+                defaults: new { controller = "General", action = nameof(GeneralController.Sys) })
+                .WithMetadata(new HttpMethodMetadata(new[] { "GET" }));
+        }
+
+        if (routeGeneralInfo == null && routeGeneralSys == null && routeGeneral != null)
         {
             logger.LogDebug("Map GeneralController {route}", routeGeneral);
             app.MapControllerRoute(name: "GeneralController",

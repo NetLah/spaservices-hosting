@@ -22,9 +22,9 @@ public abstract class BasePagesTest<TEntryPoint> where TEntryPoint : class
     }
 
     [Fact]
-    public virtual async Task GetInfoUrl()
+    public virtual async Task GeneralInfoUrl()
     {
-        var content = await _client.GetStringAsync("/api/v1/general/getInfo");
+        var content = await _client.GetStringAsync("/_general/info");
         Assert.StartsWith("App:testhost; Version:", content);
     }
 }

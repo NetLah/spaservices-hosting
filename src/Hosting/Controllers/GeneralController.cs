@@ -14,23 +14,9 @@ public class GeneralController : ControllerBase
         _appInfo = appInfo;
     }
 
-    //[HttpGet]
-    //[ExcludeFromCodeCoverage]
-    //public ContentResult SysInfo()
-    //{
-    //    return Content(string.Join(Environment.NewLine, _infoCollector.Logs), "text/plain; charset=utf-8");
-    //}
+    public string Version() => _appInfo.Version;
 
-    [HttpGet]
-#pragma warning disable CA1822 // Mark members as static
-    public string SysInfo()
-#pragma warning restore CA1822 // Mark members as static
-    {
-        return $"This is GetInfo {DateTimeOffset.Now:O}";
-    }
-
-    [HttpGet]
-    public string GetInfo()
+    public string Info()
     {
         var request = HttpContext.Request;
         var remote = HttpContext?.Connection;
@@ -38,6 +24,17 @@ public class GeneralController : ControllerBase
         return appVer;
     }
 
-    [HttpGet]
-    public string GetVersion() => _appInfo.Version;
+#pragma warning disable CA1822 // Mark members as static
+    public string Sys()
+#pragma warning restore CA1822 // Mark members as static
+    {
+        return $"This is Sys Info {DateTimeOffset.Now:O}";
+    }
+
+    //[HttpGet]
+    //[ExcludeFromCodeCoverage]
+    //public ContentResult SysInfo()
+    //{
+    //    return Content(string.Join(Environment.NewLine, _infoCollector.Logs), "text/plain; charset=utf-8");
+    //}
 }
