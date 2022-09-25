@@ -55,11 +55,6 @@ public static class WebApplicationExtentions
             endpoints.MapControllers();
         });
 
-        app.UseSpa(spa =>
-        {
-            // do nothing
-        });
-
         app.TryAddGeneralInfo(appOptions, logger);
 
         if (appOptions.DebugRoutes is string debugRoutes && !string.IsNullOrWhiteSpace(debugRoutes))
@@ -84,6 +79,11 @@ public static class WebApplicationExtentions
                 return sb.ToString();
             });
         }
+
+        app.UseSpa(spa =>
+        {
+            // do nothing
+        });
 
         app.Lifetime.ApplicationStarted.Register(() => logger.LogApplicationLifetimeEvent("Application started", appInfo));
         app.Lifetime.ApplicationStopping.Register(() => logger.LogApplicationLifetimeEvent("Application stopping", appInfo));
