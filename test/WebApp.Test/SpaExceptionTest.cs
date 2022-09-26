@@ -5,7 +5,7 @@ public class SpaExceptionTest
     [Theory]
     [InlineData("NoFolder", false)]
     [InlineData("Testing", false)]
-    [InlineData("public", true, "")]
+    [InlineData("Public", true, "")]
     public async Task FolderNoIndexHtml(string environmentName, bool hasIndex, params string[] urls)
     {
         await using var factory = new DefaultWebApplicationFactory<Program>() { EnvironmentName = environmentName };
@@ -29,11 +29,11 @@ public class SpaExceptionTest
     }
 
     [Theory]
-    [InlineData("public", "POST", "")]
-    [InlineData("public", "PUT", "")]
-    [InlineData("public", "DELETE", "")]
-    [InlineData("public", "PATCH", "")]
-    [InlineData("public", "OPTIONS", "")]
+    [InlineData("Public", "POST", "")]
+    [InlineData("Public", "PUT", "")]
+    [InlineData("Public", "DELETE", "")]
+    [InlineData("Public", "PATCH", "")]
+    [InlineData("Public", "OPTIONS", "")]
     public async Task SpaNotSupportHttpMethod(string environmentName, string method, string url)
     {
         var asserted = false;
