@@ -31,7 +31,7 @@ public class HealthChecksTest
 
         foreach (var errorUrl in errorUrls)
         {
-            await TestHelper.AssertIndexHtmlNotFound(client, errorUrl);
+            await TestHelper.AssertIndexHtmlNotFoundAsync(client, errorUrl);
         }
     }
 }

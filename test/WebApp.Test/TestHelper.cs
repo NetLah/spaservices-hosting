@@ -22,9 +22,19 @@ internal static class TestHelper
         return builder;
     }
 
-    public static async Task AssertIndexHtmlNotFound(HttpClient client, string url)
+    public static Task AssertIndexHtmlNotFoundAsync(HttpClient client, string url)
     {
-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => client.GetAsync(url));
-        Assert.Equal("The SPA default page middleware could not return the default page '/index.html' because it was not found, and no other middleware handled the request.\n", ex.Message);
+        return AssertIndexHtmlNotFoundAsync(() => client.GetAsync(url));
+    }
+
+    public static async Task AssertIndexHtmlNotFoundAsync(Func<Task> handle)
+    {
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => handle());
+        AssertIndexHtmlNotFound(exception);
+    }
+
+    private static void AssertIndexHtmlNotFound(InvalidOperationException exception)
+    {
+        Assert.Equal("The SPA default page middleware could not return the default page '/index.html' because it was not found, and no other middleware handled the request.\n", exception.Message);
     }
 }

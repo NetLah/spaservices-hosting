@@ -9,7 +9,7 @@ public abstract class BasePagesTest<TEntryPoint> where TEntryPoint : class
     protected BasePagesTest(WebApplicationFactory<TEntryPoint> factory)
         => _client = factory.CreateClientNoAutoRedirect();
 
-    protected Task AssertIndexHtmlNotFoundAsync(string url) => TestHelper.AssertIndexHtmlNotFound(_client, url);
+    protected Task AssertIndexHtmlNotFoundAsync(string url) => TestHelper.AssertIndexHtmlNotFoundAsync(_client, url);
 
     protected async Task AssertGetStringAsync(string expected, string url)
     {
