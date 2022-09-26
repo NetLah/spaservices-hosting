@@ -25,5 +25,5 @@ public class GeneralController : ControllerBase
     }
 
     public ContentResult Sys([FromServices] IInfoCollector infoCollector)
-        => Content(string.Join(Environment.NewLine, infoCollector.Logs.Append($"Uptime: {_appInfo.Uptime.Add(TimeSpan.FromDays(2))}")), "text/plain; charset=utf-8");
+        => Content(string.Join(Environment.NewLine, infoCollector.Logs.Append($"Uptime: {_appInfo.Uptime}")), "text/plain; charset=utf-8");
 }
