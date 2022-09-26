@@ -24,7 +24,7 @@ public class InfoCollector : IInfoCollector
             .Add("HostFramework", appInfo.HostFrameworkName)
             .Add("HostBuildTime", appInfo.HostBuildTimestampLocal)
             .Add("Environment", env.EnvironmentName)
-            .Add("Timezone", TimeZoneInfo.Local.DaylightName)
+            .Add("Timezone", TimeZoneInfo.Local)
             .Add("TimezoneSG", TimeZoneLocalHelper.GetSingaporeOrCustomTimeZone())
             .Add("ContentRootPath", env.ContentRootPath)
             .Add("RootPath (PWD)", Directory.GetCurrentDirectory())
