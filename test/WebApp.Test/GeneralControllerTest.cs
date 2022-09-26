@@ -29,9 +29,9 @@ public class GeneralControllerTest
 
         appInfoMock.Invocations.Clear();    // reset invocation by application lifetime
 
-        var content = await client.GetStringAsync("/_general/version");
+        var content = await client.GetStringAsync("_general/version");
 
-        Assert.NotEmpty(content);
+        Assert.Equal("v1-alpha1", content);
 
         appInfoMock.VerifyAll();
         appInfoMock.VerifyGet(m => m.Title, Times.Never);
@@ -68,7 +68,7 @@ public class GeneralControllerTest
 
         appInfoMock.Invocations.Clear();
 
-        var content = await client.GetStringAsync("/_general/info");
+        var content = await client.GetStringAsync("_general/info");
 
         Assert.StartsWith("App:title1; Version:v1-alpha1; BuildTime:buildTimestamp1", content);
 
@@ -80,12 +80,17 @@ public class GeneralControllerTest
     }
 
     [Theory]
+    [InlineData("RouteGeneralInfo", "", "_general/info")]
     [InlineData("RouteGeneralInfo", "/debug/general/info", "/debug/general/info")]
-    [InlineData("RouteGeneral", "/debug/general1/{action}", "/debug/general1/info")]
-    [InlineData("RouteGeneral", "/debug/general1/{action}", "/debug/general1/info/")]
-    [InlineData("RouteGeneral", "/debug/general1/{action}", "/debug/general1/info?someQuery")]
-    [InlineData("RouteGeneral", "/debug/general1/{action}", "/debug/general1/info/?someQuery")]
-    [InlineData("RouteGeneral", "/debug/general/2/{action}", "/debug/general/2/info")]
+    [InlineData("RouteGeneralInfo", "debug/general/info", "/debug/general/info")]
+    [InlineData("RouteGeneralInfo", "debug/general/info", "/debug/general/info?a=b")]
+    [InlineData("RouteGeneralInfo", "debug/general/info", "/debug/general/info/?a=b")]
+    [InlineData("RouteGeneral", "debug/general1/{action}", "/debug/general1/info")]
+    [InlineData("RouteGeneral", "debug/general1/{action}", "/debug/general1/info/")]
+    [InlineData("RouteGeneral", "debug/general1/{action}", "/debug/general1/info?someQuery")]
+    [InlineData("RouteGeneral", "debug/general1/{action}", "/debug/general1/info/?someQuery")]
+    [InlineData("RouteGeneral", "debug/general/2/{action}", "/debug/general/2/info")]
+    [InlineData("RouteGeneral", "debug/general/Get{action}", "/debug/general/GetInfo")]
     public async Task CustomRouteActionGeneralInfoUrl(string key, string value, string url)
     {
         await using var factory = new WebApplicationFactory<Program>();
@@ -101,5 +106,47 @@ public class GeneralControllerTest
         var content = await client.GetStringAsync(url);
 
         Assert.StartsWith("App:testhost; Version:", content);
+    }
+
+    [Theory]
+    [InlineData("RouteGeneralVersion", "", "_general/version")]
+    [InlineData("RouteGeneralVersion", "/debug/general/ver", "/debug/general/ver")]
+    [InlineData("RouteGeneralVersion", "debug/general/ver", "/debug/general/ver")]
+    [InlineData("RouteGeneralVersion", "debug/general/ver", "/debug/general/ver?a=b")]
+    [InlineData("RouteGeneralVersion", "debug/general/ver", "/debug/general/ver/?a=b")]
+    [InlineData("RouteGeneral", "debug/general1/{action}", "/debug/general1/version")]
+    [InlineData("RouteGeneral", "debug/general1/{action}", "/debug/general1/version/")]
+    [InlineData("RouteGeneral", "debug/general1/{action}", "/debug/general1/version?someQuery")]
+    [InlineData("RouteGeneral", "debug/general1/{action}", "/debug/general1/version/?someQuery")]
+    [InlineData("RouteGeneral", "debug/general/2/{action}", "/debug/general/2/version")]
+    [InlineData("RouteGeneral", "debug/general/Get{action}", "/debug/general/GetVersion")]
+    public async Task CustomRouteActionGeneralVersionUrl(string key, string value, string url)
+    {
+        var appInfoMock = new Mock<IAppInfo>();
+        appInfoMock.SetupGet(m => m.Version).Returns("v1-alpha2").Verifiable();
+
+        await using var factory = new WebApplicationFactory<Program>();
+
+        using var client = factory
+            .WithWebHostBuilder(builder =>
+            {
+                builder.SetupTestingEnvironment();
+
+                builder.ConfigureServices(services =>
+                {
+                    services.AddSingleton<IAppInfo>(_ => appInfoMock.Object);
+                });
+
+                builder.UseSetting(key, value);
+            })
+            .CreateClientNoAutoRedirect();
+
+        appInfoMock.Invocations.Clear();    // reset invocation by application lifetime
+
+        var content = await client.GetStringAsync(url);
+
+        Assert.Equal("v1-alpha2", content);
+
+        appInfoMock.VerifyAll();
     }
 }

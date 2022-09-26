@@ -24,7 +24,7 @@ public abstract class BasePagesTest<TEntryPoint> where TEntryPoint : class
     [Fact]
     public virtual async Task GeneralInfoUrl()
     {
-        var content = await _client.GetStringAsync("/_general/info");
+        var content = await _client.GetStringAsync("_general/info");
         Assert.StartsWith("App:testhost; Version:", content);
     }
 }
