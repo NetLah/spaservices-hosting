@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.AspNetCore.TestHost;
+﻿using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using NetLah.Extensions.SpaServices.Hosting;
@@ -10,35 +7,43 @@ namespace WebApp.Test;
 
 public class GeneralControllerTest
 {
-    [Theory]
-    [InlineData(false, "http://localhost1/", "http")]
-    [InlineData(true, "http://localhost2/", "https")]
-    public async Task ForwardedHeadersEnabledTest(bool forwardedHeadersEnabled, string url, string scheme)
+    [Fact]
+    public async Task GeneralVersionUrl()
     {
-        var builder = TestHelper.CreateWebApplicationBuilder();
-        builder.Configuration["FORWARDEDHEADERS_ENABLED"] = forwardedHeadersEnabled.ToString().ToLower();
-        await using var app = builder.Build();
+        var appInfoMock = new Mock<IAppInfo>();
+        appInfoMock.SetupGet(m => m.Version).Returns("v1-alpha1").Verifiable();
 
-        app.Run(context =>
-        {
-            Assert.Equal(scheme, context.Request.Scheme);
-            return Task.CompletedTask;
-        });
+        await using var factory = new WebApplicationFactory<Program>();
 
-        await app.StartAsync();
+        using var client = factory
+            .WithWebHostBuilder(builder =>
+            {
+                builder.SetupTestingEnvironment();
 
-        var client = app.GetTestClient();
-        client.DefaultRequestHeaders.Add("x-forwarded-proto", "https");
-        var result = await client.GetAsync(url);
-        result.EnsureSuccessStatusCode();
+                builder.ConfigureServices(services =>
+                {
+                    services.AddSingleton<IAppInfo>(_ => appInfoMock.Object);
+                });
+            })
+            .CreateClientNoAutoRedirect();
+
+        appInfoMock.Invocations.Clear();    // reset invocation by application lifetime
+
+        var content = await client.GetStringAsync("_general/version");
+
+        Assert.Equal("v1-alpha1", content);
+
+        appInfoMock.VerifyAll();
+        appInfoMock.VerifyGet(m => m.Title, Times.Never);
+        appInfoMock.VerifyGet(m => m.BuildTimestampLocal, Times.Never);
     }
 
     [Fact]
-    public async Task GetInfoUrl()
+    public async Task GeneralInfoUrl()
     {
         var appInfoMock = new Mock<IAppInfo>();
         appInfoMock.SetupGet(m => m.Title).Returns("title1").Verifiable();
-        appInfoMock.SetupGet(m => m.Version).Returns("v1-alpha1").Verifiable();
+        appInfoMock.SetupGet(m => m.Version).Returns("v1-alpha2").Verifiable();
         appInfoMock.SetupGet(m => m.BuildTimestampLocal).Returns("buildTimestamp1").Verifiable();
 
         await using var factory = new WebApplicationFactory<Program>();
@@ -55,19 +60,70 @@ public class GeneralControllerTest
             })
             .CreateClientNoAutoRedirect();
 
-        var content = await client.GetStringAsync("/api/v1/general/getInfo");
+        appInfoMock.VerifyAll();
+        appInfoMock.VerifyGet(m => m.Title, Times.Once);
+        appInfoMock.VerifyGet(m => m.Version, Times.Once);
+        appInfoMock.VerifyGet(m => m.BuildTimestampLocal, Times.Once);
+        appInfoMock.VerifyGet(m => m.HostBuildTimestampLocal, Times.Once);  // application lifetime but not initializing
 
-        Assert.StartsWith("App:title1; Version:v1-alpha1; BuildTime:buildTimestamp1", content);
+        appInfoMock.Invocations.Clear();
+
+        var content = await client.GetStringAsync("_general/info");
+
+        Assert.Equal("App:title1; Version:v1-alpha2; BuildTime:buildTimestamp1 Scheme:http Host:localhost :0", content);
 
         appInfoMock.VerifyAll();
-        appInfoMock.VerifyGet(m => m.Title, Times.Exactly(2));  // application lifetime but not initializing
-        appInfoMock.VerifyGet(m => m.HostBuildTimestampLocal, Times.Once);
+        appInfoMock.VerifyGet(m => m.Title, Times.Once);
+        appInfoMock.VerifyGet(m => m.Version, Times.Once);
+        appInfoMock.VerifyGet(m => m.BuildTimestampLocal, Times.Once);
+        appInfoMock.VerifyGet(m => m.HostBuildTimestampLocal, Times.Never);
+    }
+
+    [Fact]
+    public async Task GeneralSysUrl()
+    {
+        await using var factory = new WebApplicationFactory<Program>();
+
+        using var client = factory
+            .WithWebHostBuilder(builder =>
+            {
+                builder.SetupTestingEnvironment();
+            })
+            .CreateClientNoAutoRedirect();
+
+        var content = await client.GetStringAsync("_general/sys");
+
+        Assert.Contains("App: testhost", content);
+        Assert.Contains("Version: ", content);
+        Assert.Contains("BuildTime: ", content);
+        Assert.Contains("Description:", content);
+        Assert.Contains("Host: ", content);
+        Assert.Contains("HostVersion: ", content);
+        Assert.Contains("HostFramework: ", content);
+        Assert.Contains("HostBuildTime: ", content);
+        Assert.Contains("Environment: Testing", content);
+        Assert.Contains("Timezone: ", content);
+        Assert.Contains("TimezoneSG: ", content);
+        Assert.Contains("ContentRootPath: ", content);
+        Assert.Contains("RootPath (PWD): ", content);
+        Assert.Contains("BaseDirectory: ", content);
+        Assert.Contains("StartTime: ", content);
+        Assert.Contains("Uptime: ", content);
     }
 
     [Theory]
-    [InlineData("RouteGeneralGetInfo", "/debug/general/getInfo", "/debug/general/getInfo")]
-    [InlineData("RouteGeneral", "/debug/general1/{action}", "/debug/general1/getInfo")]
-    public async Task CustomRouteActionGetInfoUrl(string key, string value, string url)
+    [InlineData("RouteGeneralInfo", "", "_general/info")]
+    [InlineData("RouteGeneralInfo", "/debug/general/info", "/debug/general/info")]
+    [InlineData("RouteGeneralInfo", "debug/general/info", "/debug/general/info")]
+    [InlineData("RouteGeneralInfo", "debug/general/info", "/debug/general/info?a=b")]
+    [InlineData("RouteGeneralInfo", "debug/general/info", "/debug/general/info/?a=b")]
+    [InlineData("RouteGeneral", "debug/general1/{action}", "/debug/general1/info")]
+    [InlineData("RouteGeneral", "debug/general1/{action}", "/debug/general1/info/")]
+    [InlineData("RouteGeneral", "debug/general1/{action}", "/debug/general1/info?someQuery")]
+    [InlineData("RouteGeneral", "debug/general1/{action}", "/debug/general1/info/?someQuery")]
+    [InlineData("RouteGeneral", "debug/general/2/{action}", "/debug/general/2/info")]
+    [InlineData("RouteGeneral", "debug/general/Get{action}", "/debug/general/GetInfo")]
+    public async Task CustomRouteActionGeneralInfoUrl(string key, string value, string url)
     {
         await using var factory = new WebApplicationFactory<Program>();
 
@@ -82,5 +138,47 @@ public class GeneralControllerTest
         var content = await client.GetStringAsync(url);
 
         Assert.StartsWith("App:testhost; Version:", content);
+    }
+
+    [Theory]
+    [InlineData("RouteGeneralVersion", "", "_general/version")]
+    [InlineData("RouteGeneralVersion", "/debug/general/ver", "/debug/general/ver")]
+    [InlineData("RouteGeneralVersion", "debug/general/ver", "/debug/general/ver")]
+    [InlineData("RouteGeneralVersion", "debug/general/ver", "/debug/general/ver?a=b")]
+    [InlineData("RouteGeneralVersion", "debug/general/ver", "/debug/general/ver/?a=b")]
+    [InlineData("RouteGeneral", "debug/general1/{action}", "/debug/general1/version")]
+    [InlineData("RouteGeneral", "debug/general1/{action}", "/debug/general1/version/")]
+    [InlineData("RouteGeneral", "debug/general1/{action}", "/debug/general1/version?someQuery")]
+    [InlineData("RouteGeneral", "debug/general1/{action}", "/debug/general1/version/?someQuery")]
+    [InlineData("RouteGeneral", "debug/general/2/{action}", "/debug/general/2/version")]
+    [InlineData("RouteGeneral", "debug/general/Get{action}", "/debug/general/GetVersion")]
+    public async Task CustomRouteActionGeneralVersionUrl(string key, string value, string url)
+    {
+        var appInfoMock = new Mock<IAppInfo>();
+        appInfoMock.SetupGet(m => m.Version).Returns("v1-alpha4").Verifiable();
+
+        await using var factory = new WebApplicationFactory<Program>();
+
+        using var client = factory
+            .WithWebHostBuilder(builder =>
+            {
+                builder.SetupTestingEnvironment();
+
+                builder.ConfigureServices(services =>
+                {
+                    services.AddSingleton<IAppInfo>(_ => appInfoMock.Object);
+                });
+
+                builder.UseSetting(key, value);
+            })
+            .CreateClientNoAutoRedirect();
+
+        appInfoMock.Invocations.Clear();    // reset invocation by application lifetime
+
+        var content = await client.GetStringAsync(url);
+
+        Assert.Equal("v1-alpha4", content);
+
+        appInfoMock.VerifyAll();
     }
 }
