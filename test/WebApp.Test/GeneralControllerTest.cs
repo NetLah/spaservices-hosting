@@ -43,7 +43,7 @@ public class GeneralControllerTest
     {
         var appInfoMock = new Mock<IAppInfo>();
         appInfoMock.SetupGet(m => m.Title).Returns("title1").Verifiable();
-        appInfoMock.SetupGet(m => m.Version).Returns("v1-alpha1").Verifiable();
+        appInfoMock.SetupGet(m => m.Version).Returns("v1-alpha2").Verifiable();
         appInfoMock.SetupGet(m => m.BuildTimestampLocal).Returns("buildTimestamp1").Verifiable();
 
         await using var factory = new WebApplicationFactory<Program>();
@@ -70,7 +70,7 @@ public class GeneralControllerTest
 
         var content = await client.GetStringAsync("_general/info");
 
-        Assert.StartsWith("App:title1; Version:v1-alpha1; BuildTime:buildTimestamp1", content);
+        Assert.Equal("App:title1; Version:v1-alpha2; BuildTime:buildTimestamp1 Scheme:http Host:localhost :0", content);
 
         appInfoMock.VerifyAll();
         appInfoMock.VerifyGet(m => m.Title, Times.Once);
@@ -123,7 +123,7 @@ public class GeneralControllerTest
     public async Task CustomRouteActionGeneralVersionUrl(string key, string value, string url)
     {
         var appInfoMock = new Mock<IAppInfo>();
-        appInfoMock.SetupGet(m => m.Version).Returns("v1-alpha2").Verifiable();
+        appInfoMock.SetupGet(m => m.Version).Returns("v1-alpha3").Verifiable();
 
         await using var factory = new WebApplicationFactory<Program>();
 
@@ -145,7 +145,7 @@ public class GeneralControllerTest
 
         var content = await client.GetStringAsync(url);
 
-        Assert.Equal("v1-alpha2", content);
+        Assert.Equal("v1-alpha3", content);
 
         appInfoMock.VerifyAll();
     }
