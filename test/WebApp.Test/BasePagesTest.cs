@@ -9,11 +9,7 @@ public abstract class BasePagesTest<TEntryPoint> where TEntryPoint : class
     protected BasePagesTest(WebApplicationFactory<TEntryPoint> factory)
         => _client = factory.CreateClientNoAutoRedirect();
 
-    protected async Task AssertIndexHtmlNotFoundAsync(string url)
-    {
-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => _client.GetAsync(url));
-        Assert.Equal("The SPA default page middleware could not return the default page '/index.html' because it was not found, and no other middleware handled the request.\n", ex.Message);
-    }
+    protected Task AssertIndexHtmlNotFoundAsync(string url) => TestHelper.AssertIndexHtmlNotFound(_client, url);
 
     protected async Task AssertGetStringAsync(string expected, string url)
     {

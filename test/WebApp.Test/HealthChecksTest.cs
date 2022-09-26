@@ -29,10 +29,9 @@ public class HealthChecksTest
 
         Assert.Equal("Healthy", content);
 
-        foreach (var item in errorUrls)
+        foreach (var errorUrl in errorUrls)
         {
-            var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => client.GetAsync(item));
-            Assert.Equal("The SPA default page middleware could not return the default page '/index.html' because it was not found, and no other middleware handled the request.\n", ex.Message);
+            await TestHelper.AssertIndexHtmlNotFound(client, errorUrl);
         }
     }
 }
