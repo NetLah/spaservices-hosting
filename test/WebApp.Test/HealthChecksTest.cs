@@ -10,7 +10,7 @@ public class HealthChecksTest
     [InlineData("/_healthz", "_healthz")]
     [InlineData("/__gtg", "__gtg", "_healthz")]
     [InlineData("/__/gtg", "__/gtg", "_healthz")]
-    public async Task CustomRouteActionGeneralInfoUrl(string? value, string url, params string[] errorUrls)
+    public async Task CustomRouteTest(string? value, string url, params string[] errorUrls)
     {
         await using var factory = new WebApplicationFactory<Program>();
 
