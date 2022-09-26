@@ -24,17 +24,6 @@ public class GeneralController : ControllerBase
         return appVer;
     }
 
-#pragma warning disable CA1822 // Mark members as static
-    public string Sys()
-#pragma warning restore CA1822 // Mark members as static
-    {
-        return $"This is Sys Info {DateTimeOffset.Now:O}";
-    }
-
-    //[HttpGet]
-    //[ExcludeFromCodeCoverage]
-    //public ContentResult SysInfo()
-    //{
-    //    return Content(string.Join(Environment.NewLine, _infoCollector.Logs), "text/plain; charset=utf-8");
-    //}
+    public ContentResult Sys([FromServices] IInfoCollector infoCollector)
+        => Content(string.Join(Environment.NewLine, infoCollector.Logs.Append($"Uptime: {_appInfo.Uptime.Add(TimeSpan.FromDays(2))}")), "text/plain; charset=utf-8");
 }

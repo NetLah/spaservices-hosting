@@ -24,6 +24,7 @@ public static class WebApplicationBuilderExtentions
 
         builder.Services.AddSingleton<AppOptions>(appOptions);
         builder.Services.AddSingleton<IAppInfo>(appInfo);
+        builder.Services.AddSingleton(builder.SetProperty(InfoCollector.CreateInstance(builder.Environment, appInfo)));
 
         return appInfo;
     }

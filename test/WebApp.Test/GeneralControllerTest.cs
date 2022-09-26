@@ -79,6 +79,38 @@ public class GeneralControllerTest
         appInfoMock.VerifyGet(m => m.HostBuildTimestampLocal, Times.Never);
     }
 
+    [Fact]
+    public async Task GeneralSysUrl()
+    {
+        await using var factory = new WebApplicationFactory<Program>();
+
+        using var client = factory
+            .WithWebHostBuilder(builder =>
+            {
+                builder.SetupTestingEnvironment();
+            })
+            .CreateClientNoAutoRedirect();
+
+        var content = await client.GetStringAsync("_general/sys");
+
+        Assert.Contains("App: testhost", content);
+        Assert.Contains("Version: ", content);
+        Assert.Contains("BuildTime: ", content);
+        Assert.Contains("Description:", content);
+        Assert.Contains("Host: ", content);
+        Assert.Contains("HostVersion: ", content);
+        Assert.Contains("HostFramework: ", content);
+        Assert.Contains("HostBuildTime: ", content);
+        Assert.Contains("Environment: Testing", content);
+        Assert.Contains("Timezone: ", content);
+        Assert.Contains("TimezoneSG: ", content);
+        Assert.Contains("ContentRootPath: ", content);
+        Assert.Contains("RootPath (PWD): ", content);
+        Assert.Contains("BaseDirectory: ", content);
+        Assert.Contains("StartTime: ", content);
+        Assert.Contains("Uptime: ", content);
+    }
+
     [Theory]
     [InlineData("RouteGeneralInfo", "", "_general/info")]
     [InlineData("RouteGeneralInfo", "/debug/general/info", "/debug/general/info")]
@@ -123,7 +155,7 @@ public class GeneralControllerTest
     public async Task CustomRouteActionGeneralVersionUrl(string key, string value, string url)
     {
         var appInfoMock = new Mock<IAppInfo>();
-        appInfoMock.SetupGet(m => m.Version).Returns("v1-alpha3").Verifiable();
+        appInfoMock.SetupGet(m => m.Version).Returns("v1-alpha4").Verifiable();
 
         await using var factory = new WebApplicationFactory<Program>();
 
@@ -145,7 +177,7 @@ public class GeneralControllerTest
 
         var content = await client.GetStringAsync(url);
 
-        Assert.Equal("v1-alpha3", content);
+        Assert.Equal("v1-alpha4", content);
 
         appInfoMock.VerifyAll();
     }

@@ -43,23 +43,26 @@ internal static class WebApplicationPropertiesExtensions
        => properties.TryGetValue(key ?? throw new ArgumentNullException(nameof(key)), out var valueObject) && valueObject is TValue value ? value : new TValue?();
 
 
-    public static void SetProperty<TValue>(this WebApplicationBuilder builder, TValue value)
+    public static TValue SetProperty<TValue>(this WebApplicationBuilder builder, TValue value)
         => builder.Host.SetProperty(value);
 
-    public static void SetProperty<TValue>(this IHostBuilder builder, TValue value)
+    public static TValue SetProperty<TValue>(this IHostBuilder builder, TValue value)
         => builder.Properties.SetProperty(value);
 
-    public static void SetProperty<TValue>(this WebApplicationBuilder builder, object key, TValue value)
+    public static TValue SetProperty<TValue>(this WebApplicationBuilder builder, object key, TValue value)
         => builder.Host.SetProperty(key, value);
 
-    public static void SetProperty<TValue>(this IHostBuilder builder, object key, TValue value)
+    public static TValue SetProperty<TValue>(this IHostBuilder builder, object key, TValue value)
         => builder.Properties.SetProperty(key, value);
 
-    public static void SetProperty<TValue>(this IDictionary<object, object> properties, TValue value)
+    public static TValue SetProperty<TValue>(this IDictionary<object, object> properties, TValue value)
        => properties.SetProperty(typeof(TValue), value);
 
-    public static void SetProperty<TValue>(this IDictionary<object, object> properties, object key, TValue value)
-       => properties[key ?? throw new ArgumentNullException(nameof(key))] = value ?? throw new ArgumentNullException(nameof(value));
+    public static TValue SetProperty<TValue>(this IDictionary<object, object> properties, object key, TValue value)
+    {
+        properties[key ?? throw new ArgumentNullException(nameof(key))] = value ?? throw new ArgumentNullException(nameof(value));
+        return value;
+    }
 
     public static AppInfo GetAppInfoOrDefault(this WebApplicationBuilder builder)
     {
