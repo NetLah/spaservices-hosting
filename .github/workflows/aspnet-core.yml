@@ -56,9 +56,20 @@ jobs:
       - name: Set Docker tag suffix=nanoserver-1809
         if: ${{ success() && github.event_name != 'pull_request' && runner.os == 'Windows' }}
         shell: pwsh
-        run: |          
+        run: |
           echo "TAG_SUFFIX=-nanoserver-1809" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           echo "Set tag suffix to: -nanoserver-1809"
+
+      - name: Docker Repos Selection
+        if: ${{ success() && github.event_name != 'pull_request' && (runner.os == 'Linux' || runner.os == 'Windows') }}
+        id: repos
+        shell: pwsh
+        run: |
+          $repos='${{ secrets.DOCKER_HUB_REPOS }}'
+          if (!$Env:GITHUB_REF.StartsWith('refs/heads/dev')) {
+            $repos+='%0Anetlah/spa-host'
+          }
+          Write-Output "::set-output name=content::$repos"
 
       - name: Docker meta
         if: ${{ success() && github.event_name != 'pull_request' && (runner.os == 'Linux' || runner.os == 'Windows') }}
@@ -66,8 +77,7 @@ jobs:
         uses: docker/metadata-action@v3
         with:
           images: |
-            ${{ secrets.DOCKER_HUB_REPOS }}
-            netlah/spa-host
+            ${{ steps.repos.outputs.content }}
           tags: |
             type=raw,enable=true,priority=999,prefix=,suffix=${{ env.TAG_SUFFIX }},value=${{ steps.minver.outputs.version }}
             type=ref,event=branch,priority=600,prefix=,suffix=${{ env.TAG_SUFFIX }}
@@ -88,7 +98,7 @@ jobs:
 
       - name: Publish
         run: dotnet publish src/WebApp -c Release --no-build -o artifacts/app
-        
+
       - name: Copy Dockerfile Linux
         if: ${{ success() && github.event_name != 'pull_request' && runner.os == 'Linux' }}
         shell: pwsh
