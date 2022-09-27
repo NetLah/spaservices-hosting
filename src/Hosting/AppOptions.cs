@@ -7,8 +7,8 @@ public class AppOptions
     /// </summary>
     public string HealthChecksPath { get; set; } = DefaultConfiguration.HealthChecksPath;
 
-    public bool HttpsRedirectionEnabled { get; set; } = true;
-    public bool HstsEnabled { get; set; } = true;
+    public bool HttpsRedirectionEnabled { get; set; }
+    public bool HstsEnabled { get; set; }
 
     public string? WwwRoot { get; set; }
     public string RouteGeneral { get; set; } = DefaultConfiguration.RouteGeneral;
