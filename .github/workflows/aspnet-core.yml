@@ -66,8 +66,9 @@ jobs:
         shell: pwsh
         run: |
           $repos='${{ secrets.DOCKER_HUB_REPOS }}'
-          if (!$Env:GITHUB_REF.StartsWith('refs/heads/dev')) {
-            $repos+='%0Anetlah/spa-host'
+          if ($Env:GITHUB_REF.StartsWith('refs/tags/')) {
+            $repos+='%0A'
+            $repos+='netlah/spa-host'
           }
           Write-Output "::set-output name=content::$repos"
 
