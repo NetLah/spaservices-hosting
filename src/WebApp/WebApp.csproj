@@ -5,12 +5,13 @@
     <UserSecretsId>netlah-spaservices-webapp-hp70a</UserSecretsId>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <InternalsVisibleTo Include="WebApp.Test" />
   </ItemGroup>
-  
+
   <ItemGroup>
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" />
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
     <PackageReference Include="NetLah.Extensions.Logging.Serilog.AspNetCore" />

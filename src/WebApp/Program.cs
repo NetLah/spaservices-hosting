@@ -14,6 +14,8 @@ try
     var appInfo = builder.InitializeSpaApp();
     logger.LogApplicationLifetimeEvent("Application initializing...", appInfo);
 
+    builder.Services.AddApplicationInsightsTelemetry();
+
     builder.AddSpaApp();
 
     var app = builder.Build();
