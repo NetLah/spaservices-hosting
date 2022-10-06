@@ -73,6 +73,18 @@ jobs:
           }
           Write-Output "::set-output name=content::$repos"
 
+      - name: Docker Sample Repos Selection
+        if: ${{ success() && github.event_name != 'pull_request' && (runner.os == 'Linux' || runner.os == 'Windows') }}
+        id: sample_repos
+        shell: pwsh
+        run: |
+          $repos='${{ secrets.DOCKER_HUB_SAMPLE_REPOS }}'
+          if ($Env:GITHUB_REF.StartsWith('refs/tags/')) {
+            $repos+='%0A'
+            $repos+='netlah/spa-host-sample'
+          }
+          Write-Output "::set-output name=content::$repos"
+
       - name: Docker meta
         if: ${{ success() && github.event_name != 'pull_request' && (runner.os == 'Linux' || runner.os == 'Windows') }}
         id: meta
@@ -80,6 +92,22 @@ jobs:
         with:
           images: |
             ${{ steps.repos.outputs.content }}
+          tags: |
+            type=raw,enable=true,priority=999,prefix=,suffix=${{ env.TAG_SUFFIX }},value=${{ steps.minver.outputs.version }}
+            type=ref,event=branch,priority=600,prefix=,suffix=${{ env.TAG_SUFFIX }}
+            type=sha,enable=true,priority=500,prefix=sha-,suffix=${{ env.TAG_SUFFIX }},format=short
+            type=match,enable=true,priority=900,prefix=,suffix=${{ env.TAG_SUFFIX }},pattern=^(\d+\.\d+(\.\d+)?(-.+)?)$,group=1
+            type=match,enable=true,priority=880,prefix=,suffix=${{ env.TAG_SUFFIX }},pattern=^(\d+\.\d+(\.\d+)?)(-.+)?$,group=1
+            type=match,enable=true,priority=870,prefix=,suffix=${{ env.TAG_SUFFIX }},pattern=^(\d+\.\d+)(\.\d+)?(-.+)?$,group=1
+            type=match,enable=true,priority=860,prefix=,suffix=${{ env.TAG_SUFFIX }},pattern=^(\d+)\.\d+(\.\d+)?(-.+)?$,group=1
+
+      - name: Docker meta sample
+        if: ${{ success() && github.event_name != 'pull_request' && (runner.os == 'Linux' || runner.os == 'Windows') }}
+        id: meta_sample
+        uses: docker/metadata-action@v3
+        with:
+          images: |
+            ${{ steps.sample_repos.outputs.content }}
           tags: |
             type=raw,enable=true,priority=999,prefix=,suffix=${{ env.TAG_SUFFIX }},value=${{ steps.minver.outputs.version }}
             type=ref,event=branch,priority=600,prefix=,suffix=${{ env.TAG_SUFFIX }}
@@ -101,15 +129,35 @@ jobs:
       - name: Publish
         run: dotnet publish src/WebApp -c Release --no-build -o artifacts/app
 
+      - name: Split sample wwwroot
+        shell: pwsh
+        run: |
+          $webFolder = New-Item -Name 'artifacts/wwwroot' -ItemType 'Directory' -ErrorAction Stop
+          Move-Item -Force -Path 'artifacts/app/wwwroot/*' -Destination "$webFolder/" -Exclude favicon.ico -ErrorAction Stop
+
       - name: Copy Dockerfile Linux
         if: ${{ success() && github.event_name != 'pull_request' && runner.os == 'Linux' }}
         shell: pwsh
-        run: Copy-Item -Recurse -Force -Path '.docker-linux/*','.dockerignore' -Destination artifacts/ -ErrorAction Stop -Verbose
+        run: Copy-Item -Recurse -Force -Path '.dockerignore','.docker-linux/*' -Destination artifacts/ -ErrorAction Stop -Verbose
 
       - name: Copy Dockerfile Windows
         if: ${{ success() && github.event_name != 'pull_request' && runner.os == 'Windows' }}
         shell: pwsh
-        run: Copy-Item -Recurse -Force -Path '.docker-windows/*','.dockerignore' -Destination artifacts/ -ErrorAction Stop -Verbose
+        run: Copy-Item -Recurse -Force -Path '.dockerignore','.docker-windows/*' -Destination artifacts/ -ErrorAction Stop -Verbose
+
+      - name: Enabling Docker Daemon With experimental features
+        if: ${{ success() && github.event_name != 'pull_request' && runner.os == 'Linux' }}
+        run: |
+          echo 'Before update daemon.json'
+          sudo cat /etc/docker/daemon.json
+          sudo bash -c 'echo "{ "\""exec-opts"\"": ["\""native.cgroupdriver=cgroupfs"\""], "\""cgroup-parent"\"": "\""/actions_job"\"", "\""experimental"\"": true }" > /etc/docker/daemon.json'
+          echo 'After update daemon.json'
+          sudo cat /etc/docker/daemon.json
+          sudo systemctl restart docker.service
+
+      - name: Set up Docker Buildx
+        if: ${{ success() && github.event_name != 'pull_request' && (runner.os == 'Linux' || runner.os == 'Windows') }}
+        uses: docker/setup-buildx-action@v2
 
       - name: Login to Docker Hub
         if: ${{ success() && github.event_name != 'pull_request' && (runner.os == 'Linux' || runner.os == 'Windows') }}
@@ -121,7 +169,12 @@ jobs:
       - name: Build and Push
         if: ${{ success() && github.event_name != 'pull_request' && (runner.os == 'Linux' || runner.os == 'Windows') }}
         shell: pwsh
-        run: ./docker-build.ps1 -Context ./artifacts -Tags "${{ steps.meta.outputs.tags }}" -Labels "${{ steps.meta.outputs.labels }}"
+        run: ./docker-build.ps1 -Context ./artifacts -Squash -Tags "${{ steps.meta.outputs.tags }}" -Labels "${{ steps.meta.outputs.labels }}"
+
+      - name: Build and Push Sample
+        if: ${{ success() && github.event_name != 'pull_request' && (runner.os == 'Linux' || runner.os == 'Windows') }}
+        shell: pwsh
+        run: ./docker-build.ps1 -Context ./artifacts -NoPull -Dockerfile ./.docker-share/Dockerfile-sample -Tags "${{ steps.meta_sample.outputs.tags }}" -Labels "${{ steps.meta_sample.outputs.labels }}" -BuildArgs "SPAHOST_IMAGE=$(('${{ steps.meta.outputs.tags }}'.Trim() -split '\r|\n' | Where-Object { $_ })[0])"
 
       - name: Pack
         run: dotnet pack -c Release -o ./artifacts/packages/ --no-build --verbosity normal

@@ -1,0 +1,4 @@
+ARG SPAHOST_IMAGE_TAG=latest
+ARG SPAHOST_IMAGE=netlah/spa-host:${SPAHOST_IMAGE_TAG}
+FROM ${SPAHOST_IMAGE}
+COPY wwwroot /app/wwwroot
