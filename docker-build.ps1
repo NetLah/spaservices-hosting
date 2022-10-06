@@ -6,6 +6,7 @@ param (
     [Parameter(Mandatory = $false)] [string] $Labels,
     [Parameter(Mandatory = $false)] [string] $BuildArgs,
     [Parameter(Mandatory = $false)] [switch] $NoPull,
+    [Parameter(Mandatory = $false)] [switch] $Squash,
     [Parameter(Mandatory = $false)] [switch] $NoPush
 )
 
@@ -25,6 +26,10 @@ $params = @('build', $Context)
 
 if (!$NoPull) {
     $params += @('--pull')
+}
+
+if ($Squash) {
+    $params += @('--squash')
 }
 
 if ($Dockerfile) {
