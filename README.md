@@ -31,3 +31,7 @@ app.UseSpaApp(action: app => app.UseSerilogRequestLoggingLevel());
 
 app.Run();
 ```
+
+### Sample Docker Image
+
+https://hub.docker.com/r/netlah/spa-host-sample
