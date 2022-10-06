@@ -150,7 +150,7 @@ jobs:
         run: |
           echo 'Before update daemon.json'
           sudo cat /etc/docker/daemon.json
-          sudo bash -c 'echo "{ \x22exec-opts\x22: [\x22native.cgroupdriver=cgroupfs\x22], "\""cgroup-parent"\"": "\""/actions_job"\"", "\""experimental"\"": true }" > /etc/docker/daemon.json'
+          sudo bash -c 'echo "{ "\""exec-opts"\"": ["\""native.cgroupdriver=cgroupfs"\""], "\""cgroup-parent"\"": "\""/actions_job"\"", "\""experimental"\"": true }" > /etc/docker/daemon.json'
           echo 'After update daemon.json'
           sudo cat /etc/docker/daemon.json
           sudo systemctl restart docker.service
