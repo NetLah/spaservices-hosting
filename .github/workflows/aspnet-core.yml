@@ -138,12 +138,12 @@ jobs:
       - name: Copy Dockerfile Linux
         if: ${{ success() && github.event_name != 'pull_request' && runner.os == 'Linux' }}
         shell: pwsh
-        run: Copy-Item -Recurse -Force -Path '.dockerignore','.docker-share/*','.docker-linux/*' -Destination artifacts/ -ErrorAction Stop -Verbose
+        run: Copy-Item -Recurse -Force -Path '.dockerignore','.docker-linux/*' -Destination artifacts/ -ErrorAction Stop -Verbose
 
       - name: Copy Dockerfile Windows
         if: ${{ success() && github.event_name != 'pull_request' && runner.os == 'Windows' }}
         shell: pwsh
-        run: Copy-Item -Recurse -Force -Path '.dockerignore','.docker-share/*','.docker-windows/*' -Destination artifacts/ -ErrorAction Stop -Verbose
+        run: Copy-Item -Recurse -Force -Path '.dockerignore','.docker-windows/*' -Destination artifacts/ -ErrorAction Stop -Verbose
 
       - name: Login to Docker Hub
         if: ${{ success() && github.event_name != 'pull_request' && (runner.os == 'Linux' || runner.os == 'Windows') }}
@@ -160,7 +160,7 @@ jobs:
       - name: Build and Push Sample
         if: ${{ success() && github.event_name != 'pull_request' && (runner.os == 'Linux' || runner.os == 'Windows') }}
         shell: pwsh
-        run: ./docker-build.ps1 -Context ./artifacts -Dockerfile Dockerfile-sample -Tags "${{ steps.meta_sample.outputs.tags }}" -Labels "${{ steps.meta_sample.outputs.labels }}" -BuildArgs "SPAHOST_IMAGE=${{ secrets.DOCKER_HUB_REPOS }}"
+        run: ./docker-build.ps1 -Context ./artifacts -Dockerfile ./.docker-share/Dockerfile-sample -Tags "${{ steps.meta_sample.outputs.tags }}" -Labels "${{ steps.meta_sample.outputs.labels }}" -BuildArgs "SPAHOST_IMAGE=${{ secrets.DOCKER_HUB_REPOS }}"
 
       - name: Pack
         run: dotnet pack -c Release -o ./artifacts/packages/ --no-build --verbosity normal
