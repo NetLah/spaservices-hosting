@@ -160,7 +160,7 @@ jobs:
       - name: Build and Push Sample
         if: ${{ success() && github.event_name != 'pull_request' && (runner.os == 'Linux' || runner.os == 'Windows') }}
         shell: pwsh
-        run: ./docker-build.ps1 -Context ./artifacts -NoPull -Dockerfile ./.docker-share/Dockerfile-sample -Tags "${{ steps.meta_sample.outputs.tags }}" -Labels "${{ steps.meta_sample.outputs.labels }}" -BuildArgs "SPAHOST_IMAGE=$('${{ steps.meta.outputs.tags }}'[0])"
+        run: ./docker-build.ps1 -Context ./artifacts -NoPull -Dockerfile ./.docker-share/Dockerfile-sample -Tags "${{ steps.meta_sample.outputs.tags }}" -Labels "${{ steps.meta_sample.outputs.labels }}" -BuildArgs "SPAHOST_IMAGE=$(('${{ steps.meta.outputs.tags }}'.Trim() -split '\r|\n' | Where-Object { $_ })[0])"
 
       - name: Pack
         run: dotnet pack -c Release -o ./artifacts/packages/ --no-build --verbosity normal
