@@ -146,7 +146,7 @@ jobs:
         run: Copy-Item -Recurse -Force -Path '.dockerignore','.docker-windows/*' -Destination artifacts/ -ErrorAction Stop -Verbose
 
       - name: Enabling Docker Daemon With experimental features
-        if: ${{ success() && github.event_name != 'pull_request' && (runner.os == 'Linux' || runner.os == 'Windows') }}
+        if: ${{ success() && github.event_name != 'pull_request' && runner.os == 'Linux' }}
         run: |
           echo 'Before update daemon.json'
           sudo cat /etc/docker/daemon.json
