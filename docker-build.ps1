@@ -28,7 +28,7 @@ if (!$NoPull) {
     $params += @('--pull')
 }
 
-if ($Squash) {
+if ($Squash -And !($Env:OS)) {
     $params += @('--squash')
 }
 
