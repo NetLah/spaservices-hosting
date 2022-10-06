@@ -1,17 +1,12 @@
 [CmdletBinding()]
 param (
-    [Parameter(Mandatory = $false)]
-    [string] $Context = '.',
-    [Parameter(Mandatory = $false)]
-    [string] $Dockerfile = '',
-    [Parameter(Mandatory = $false)]
-    [string] $Tags,
-    [Parameter(Mandatory = $false)]
-    [string] $Labels,
-    [Parameter(Mandatory = $false)]
-    [string] $BuildArgs,
-    [Parameter(Mandatory = $false)]
-    [switch] $NoPush
+    [Parameter(Mandatory = $false)] [string] $Context = '.',
+    [Parameter(Mandatory = $false)] [string] $Dockerfile = '',
+    [Parameter(Mandatory = $false)] [string] $Tags,
+    [Parameter(Mandatory = $false)] [string] $Labels,
+    [Parameter(Mandatory = $false)] [string] $BuildArgs,
+    [Parameter(Mandatory = $false)] [switch] $NoPull,
+    [Parameter(Mandatory = $false)] [switch] $NoPush
 )
 
 Write-Output "Powershell Version: $($PSVersionTable.PSVersion)"
@@ -26,7 +21,11 @@ if (!$tagStrs) {
     throw 'Tags is required'
 }
 
-$params = @('build', $Context, '--pull')
+$params = @('build', $Context)
+
+if (!$NoPull) {
+    $params += @('--pull')
+}
 
 if ($Dockerfile) {
     $params += @('--file', $Dockerfile)
