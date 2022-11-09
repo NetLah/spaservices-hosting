@@ -24,6 +24,11 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: "6.0.x"
+          
+      - name: Setup .NET Core 7.x
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: "7.0.x"
 
       - name: dotnet info
         run: dotnet --info
@@ -127,7 +132,7 @@ jobs:
         run: dotnet test -c Release --no-build --verbosity normal
 
       - name: Publish
-        run: dotnet publish src/WebApp -c Release --no-build -o artifacts/app
+        run: dotnet publish src/WebApp -c Release -f net6.0 --no-build -o artifacts/app
 
       - name: Split sample wwwroot
         shell: pwsh

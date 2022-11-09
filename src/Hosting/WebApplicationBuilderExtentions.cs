@@ -13,7 +13,7 @@ public static class WebApplicationBuilderExtentions
     {
         logger ??= LogHelper.LoggerOrDefault;
 
-        var appOptions = builder.Configuration.Get<AppOptions>();
+        var appOptions = builder.Configuration.Get<AppOptions>()!;
         builder.SetAppOptions(appOptions);
 
         var wwwroot = StringHelper.GetOrDefault(appOptions.WwwRoot, "wwwroot");

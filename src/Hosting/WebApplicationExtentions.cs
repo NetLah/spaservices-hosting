@@ -50,11 +50,6 @@ public static class WebApplicationExtentions
 
         app.UseRouting();
 
-        app.UseEndpoints(endpoints =>
-        {
-            endpoints.MapControllers();
-        });
-
         app.UseGeneralInfo(appOptions, logger);
 
         if (appOptions.DebugRoutes is string debugRoutes && !string.IsNullOrWhiteSpace(debugRoutes))

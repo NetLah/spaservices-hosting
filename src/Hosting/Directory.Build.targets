@@ -1,18 +1,17 @@
 <Project>
 
   <PropertyGroup>
-    <FrameworkVersion>6.0.9</FrameworkVersion>
-    <FrameworkBaselineVersion Condition="'$(TargetFramework)' != 'net5.0' And '$(TargetFramework)' != 'net6.0'">3.1.0</FrameworkBaselineVersion>
+    <FrameworkVersion>7.0.0</FrameworkVersion>
+    <FrameworkBaselineVersion Condition="'$(TargetFramework)' != 'net5.0' And '$(TargetFramework)' != 'net6.0' And '$(TargetFramework)' != 'net7.0'">3.1.0</FrameworkBaselineVersion>
     <FrameworkBaselineVersion Condition="'$(TargetFramework)' == 'net5.0'">5.0.0</FrameworkBaselineVersion>
     <FrameworkBaselineVersion Condition="'$(TargetFramework)' == 'net6.0'">6.0.0</FrameworkBaselineVersion>
-    <SwashbuckleVersion Condition="'$(TargetFramework)' != 'net6.0'">5.*</SwashbuckleVersion>
-    <SwashbuckleVersion Condition="'$(TargetFramework)' == 'net6.0'">6.*</SwashbuckleVersion>
+    <FrameworkBaselineVersion Condition="'$(TargetFramework)' == 'net7.0'">7.0.0</FrameworkBaselineVersion>
+    <SwashbuckleVersion Condition="'$(TargetFramework)' != 'net6.0' And '$(TargetFramework)' != 'net7.0'">5.0.0</SwashbuckleVersion>
+    <SwashbuckleVersion Condition="'$(TargetFramework)' == 'net6.0' Or '$(TargetFramework)' == 'net7.0'">6.0.0</SwashbuckleVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <!--build related-->
-    <!--<PackageReference Include="MinVer" Condition="'$(TargetFramework)' != 'net6.0'" Version="2.*" PrivateAssets="All" />-->
-    <!--<PackageReference Include="MinVer" Condition="'$(TargetFramework)' == 'net6.0'" Version="4.*" PrivateAssets="All" />-->
     <PackageReference Include="MinVer" Version="4.*" PrivateAssets="All" />
     <PackageReference Update="Microsoft.SourceLink.Gitea" Version="1.*" PrivateAssets="All" />
     <PackageReference Update="Microsoft.SourceLink.GitHub" Version="1.*" PrivateAssets="All" />
