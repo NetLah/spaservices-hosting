@@ -58,7 +58,7 @@ jobs:
           Write-Host "TAG_SUFFIX=$tagSuffix" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           Write-Host "Set tag suffix to: $tagSuffix"
 
-      - name: Docker meta
+      - name: Docker meta 6.0
         if: ${{ success() && github.event_name != 'pull_request' && (runner.os == 'Linux' || runner.os == 'Windows') }}
         id: meta
         uses: docker/metadata-action@v4
@@ -66,16 +66,26 @@ jobs:
           images: |
             ${{ secrets.DOCKER_HUB_REPOS }}
             name=netlah/spa-host,enable=${{ startsWith(github.ref, 'refs/tags/') }}
+          flavor: |
+            latest=auto
+            suffix=${{ env.TAG_SUFFIX }}
           tags: |
-            type=raw,enable=true,priority=999,prefix=,suffix=${{ env.TAG_SUFFIX }},value=${{ steps.minver.outputs.version }}
-            type=ref,event=branch,priority=600,prefix=,suffix=${{ env.TAG_SUFFIX }}
-            type=sha,enable=true,priority=500,prefix=sha-,suffix=${{ env.TAG_SUFFIX }},format=short
-            type=match,enable=true,priority=900,prefix=,suffix=${{ env.TAG_SUFFIX }},pattern=^(\d+\.\d+(\.\d+)?(-.+)?)$,group=1
-            type=match,enable=true,priority=880,prefix=,suffix=${{ env.TAG_SUFFIX }},pattern=^(\d+\.\d+(\.\d+)?)(-.+)?$,group=1
-            type=match,enable=true,priority=870,prefix=,suffix=${{ env.TAG_SUFFIX }},pattern=^(\d+\.\d+)(\.\d+)?(-.+)?$,group=1
-            type=match,enable=true,priority=860,prefix=,suffix=${{ env.TAG_SUFFIX }},pattern=^(\d+)\.\d+(\.\d+)?(-.+)?$,group=1
+            type=raw,priority=999,value=${{ steps.minver.outputs.version }}
+            type=ref,event=branch,priority=800
+            type=sha,priority=700,prefix=sha-,format=short
+            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=900,pattern=^(\d+\.\d+(\.\d+)?(-.+)?)$,group=1
+            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=880,pattern=^(\d+\.\d+(\.\d+)?)(-.+)?$,group=1
+            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=870,pattern=^(\d+\.\d+)(\.\d+)?(-.+)?$,group=1
+            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=860,pattern=^(\d+)\.\d+(\.\d+)?(-.+)?$,group=1
+            type=raw,priority=699,prefix=6.0-,value=${{ steps.minver.outputs.version }}
+            type=ref,event=branch,priority=500,prefix=6.0-
+            type=sha,priority=400,prefix=6.0-sha-,format=short
+            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=600,prefix=6.0-,pattern=^(\d+\.\d+(\.\d+)?(-.+)?)$,group=1
+            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=580,prefix=6.0-,pattern=^(\d+\.\d+(\.\d+)?)(-.+)?$,group=1
+            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=570,prefix=6.0-,pattern=^(\d+\.\d+)(\.\d+)?(-.+)?$,group=1
+            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=560,prefix=6.0-,pattern=^(\d+)\.\d+(\.\d+)?(-.+)?$,group=1
 
-      - name: Docker meta sample
+      - name: Docker meta sample 6.0
         if: ${{ success() && github.event_name != 'pull_request' && (runner.os == 'Linux' || runner.os == 'Windows') }}
         id: meta_sample
         uses: docker/metadata-action@v4
@@ -83,14 +93,24 @@ jobs:
           images: |
             ${{ secrets.DOCKER_HUB_SAMPLE_REPOS }}
             name=netlah/spa-host-sample,enable=${{ startsWith(github.ref, 'refs/tags/') }}
+          flavor: |
+            latest=auto
+            suffix=${{ env.TAG_SUFFIX }}
           tags: |
-            type=raw,enable=true,priority=999,prefix=,suffix=${{ env.TAG_SUFFIX }},value=${{ steps.minver.outputs.version }}
-            type=ref,event=branch,priority=600,prefix=,suffix=${{ env.TAG_SUFFIX }}
-            type=sha,enable=true,priority=500,prefix=sha-,suffix=${{ env.TAG_SUFFIX }},format=short
-            type=match,enable=true,priority=900,prefix=,suffix=${{ env.TAG_SUFFIX }},pattern=^(\d+\.\d+(\.\d+)?(-.+)?)$,group=1
-            type=match,enable=true,priority=880,prefix=,suffix=${{ env.TAG_SUFFIX }},pattern=^(\d+\.\d+(\.\d+)?)(-.+)?$,group=1
-            type=match,enable=true,priority=870,prefix=,suffix=${{ env.TAG_SUFFIX }},pattern=^(\d+\.\d+)(\.\d+)?(-.+)?$,group=1
-            type=match,enable=true,priority=860,prefix=,suffix=${{ env.TAG_SUFFIX }},pattern=^(\d+)\.\d+(\.\d+)?(-.+)?$,group=1
+            type=raw,priority=999,value=${{ steps.minver.outputs.version }}
+            type=ref,event=branch,priority=800
+            type=sha,priority=700,prefix=sha-,format=short
+            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=900,pattern=^(\d+\.\d+(\.\d+)?(-.+)?)$,group=1
+            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=880,pattern=^(\d+\.\d+(\.\d+)?)(-.+)?$,group=1
+            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=870,pattern=^(\d+\.\d+)(\.\d+)?(-.+)?$,group=1
+            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=860,pattern=^(\d+)\.\d+(\.\d+)?(-.+)?$,group=1
+            type=raw,priority=699,prefix=6.0-,value=${{ steps.minver.outputs.version }}
+            type=ref,event=branch,priority=500,prefix=6.0-
+            type=sha,priority=400,prefix=6.0-sha-,format=short
+            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=600,prefix=6.0-,pattern=^(\d+\.\d+(\.\d+)?(-.+)?)$,group=1
+            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=580,prefix=6.0-,pattern=^(\d+\.\d+(\.\d+)?)(-.+)?$,group=1
+            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=570,prefix=6.0-,pattern=^(\d+\.\d+)(\.\d+)?(-.+)?$,group=1
+            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=560,prefix=6.0-,pattern=^(\d+)\.\d+(\.\d+)?(-.+)?$,group=1
 
       - name: Install dependencies
         run: dotnet restore
