@@ -174,7 +174,7 @@ jobs:
           $webFolder = New-Item -Name 'artifacts/net6.0/wwwroot' -ItemType 'Directory' -ErrorAction Stop
           Move-Item -Force -Path 'artifacts/net6.0/app/wwwroot/*' -Destination "$webFolder/" -Exclude favicon.ico -ErrorAction Stop
           $webFolder = New-Item -Name 'artifacts/net7.0/wwwroot' -ItemType 'Directory' -ErrorAction Stop
-          Move-Item -Force -Path 'artifacts/app/net7.0/wwwroot/*' -Destination "$webFolder/" -Exclude favicon.ico -ErrorAction Stop
+          Move-Item -Force -Path 'artifacts/net7.0/app/wwwroot/*' -Destination "$webFolder/" -Exclude favicon.ico -ErrorAction Stop
 
       - name: Copy Dockerfile Linux
         if: ${{ success() && github.event_name != 'pull_request' && runner.os == 'Linux' }}
