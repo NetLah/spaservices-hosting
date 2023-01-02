@@ -22,7 +22,7 @@ if (!$tagStrs) {
     throw 'Tags is required'
 }
 
-$tagStrs = [Array]::Reverse($tagStrs)
+[System.Array]::Reverse($tagStrs)
 
 $params = @('build', $Context)
 
