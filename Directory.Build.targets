@@ -1,13 +1,14 @@
 <Project>
 
   <PropertyGroup>
-    <CurrentFrameworkVersion>7.0.0</CurrentFrameworkVersion>
-    <FrameworkVersion Condition="'$(TargetFramework)' != 'net5.0' And '$(TargetFramework)' != 'net6.0' And '$(TargetFramework)' != 'net7.0'">3.1.*</FrameworkVersion>
+    <CurrentFrameworkVersion>6.0.12</CurrentFrameworkVersion>
+    <FrameworkVersion Condition="'$(TargetFramework)' != 'net5.0' And '$(TargetFramework)' != 'net6.0' And '$(TargetFramework)' != 'net7.0' And '$(TargetFramework)' != 'net6.0-windows'">3.1.*</FrameworkVersion>
     <FrameworkVersion Condition="'$(TargetFramework)' == 'net5.0'">5.*</FrameworkVersion>
-    <FrameworkVersion Condition="'$(TargetFramework)' == 'net6.0'">6.*</FrameworkVersion>
+    <FrameworkVersion Condition="'$(TargetFramework)' == 'net6.0' Or '$(TargetFramework)' == 'net6.0-windows'">6.*</FrameworkVersion>
     <FrameworkVersion Condition="'$(TargetFramework)' == 'net7.0'">7.*</FrameworkVersion>
-    <SwashbuckleVersion Condition="'$(TargetFramework)' != 'net6.0' And '$(TargetFramework)' != 'net7.0'">5.*</SwashbuckleVersion>
-    <SwashbuckleVersion Condition="'$(TargetFramework)' == 'net6.0' Or '$(TargetFramework)' == 'net7.0'">6.*</SwashbuckleVersion>
+    <SystemTextJsonVersion Condition="'$(TargetFramework)' != 'net6.0' And '$(TargetFramework)' != 'net7.0' And '$(TargetFramework)' != 'net6.0-windows'">5.*</SystemTextJsonVersion>
+    <SystemTextJsonVersion Condition="'$(TargetFramework)' == 'net6.0' Or '$(TargetFramework)' == 'net7.0' Or '$(TargetFramework)' == 'net6.0-windows'">$(FrameworkVersion)</SystemTextJsonVersion>
+    <SwashbuckleVersion>6.*</SwashbuckleVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -41,7 +42,7 @@
     <PackageReference Update="xunit.runner.visualstudio" Version="2.*" PrivateAssets="All" />
 
     <!--serilog and nlog-->
-    <PackageReference Update="Serilog" Version="[2.12.*-*,3)" />
+    <PackageReference Update="Serilog" Version="[2.*-*,3)" />
     <PackageReference Update="Serilog.AspNetCore" Version="[6.*-*,7)" />
     <PackageReference Update="Serilog.Enrichers.Thread" Version="[3.*-*,4)" />
     <PackageReference Update="Serilog.Extensions.Hosting" Version="[5.*-*,6)" />
@@ -89,7 +90,6 @@
     <PackageReference Update="BenchmarkDotNet" Version="0.13.*" />
     <PackageReference Update="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Update="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="$(FrameworkVersion)" />
-    <PackageReference Update="Microsoft.Extensions.CommandLineUtils" Version="1.*" />
     <PackageReference Update="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.*" />
     <PackageReference Update="Microsoft.VisualStudio.Threading" Version="17.*" />
     <PackageReference Update="System.Memory" Version="4.5.4" />
@@ -129,10 +129,10 @@
     <PackageReference Update="System.Drawing.Common" Version="$(FrameworkVersion)" />
     <PackageReference Update="System.Net.Http.Json" Version="$(FrameworkVersion)" />
     <PackageReference Update="System.Text.Encoding.CodePages" Version="$(FrameworkVersion)" />
-    <PackageReference Update="System.Text.Json" Condition="'$(TargetFramework)' != 'net6.0' And '$(TargetFramework)' != 'net7.0'" Version="5.*" />
-    <PackageReference Update="System.Text.Json" Condition="'$(TargetFramework)' == 'net6.0' Or '$(TargetFramework)' == 'net7.0'" Version="$(FrameworkBaselineVersion)" />
+    <PackageReference Update="System.Text.Json" Version="$(SystemTextJsonVersion)" />
 
     <!--microsoft asp.net core-->
+    <PackageReference Update="Microsoft.AspNetCore.Authentication.Certificate" Version="$(FrameworkVersion)" />
     <PackageReference Update="Microsoft.AspNetCore.Authentication.Facebook" Version="$(FrameworkVersion)" />
     <PackageReference Update="Microsoft.AspNetCore.Authentication.Google" Version="$(FrameworkVersion)" />
     <PackageReference Update="Microsoft.AspNetCore.Authentication.JwtBearer" Version="$(FrameworkVersion)" />
@@ -147,7 +147,7 @@
     <PackageReference Update="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="$(FrameworkVersion)" />
 
     <!--microsoft entity framework and data-->
-    <PackageReference Update="Microsoft.Data.SqlClient" Version="4.*" />
+    <PackageReference Update="Microsoft.Data.SqlClient" Version="5.*" />
     <PackageReference Update="Microsoft.EntityFrameworkCore.Cosmos" Version="$(FrameworkVersion)" />
     <PackageReference Update="Microsoft.EntityFrameworkCore" Version="$(FrameworkVersion)" />
     <PackageReference Update="Microsoft.EntityFrameworkCore.Design" Version="$(FrameworkVersion)" PrivateAssets="All" />
@@ -179,6 +179,7 @@
     <!--azure deprecated-->
     <!--<PackageReference Update="Microsoft.Azure.ServiceBus" Version="5.*" />-->
     <!--<PackageReference Update="Microsoft.Azure.Amqp" Version="2.*" />-->
+    <!--<PackageReference Update="Microsoft.Extensions.CommandLineUtils" Version="1.*" />-->
 
     <!--microsoft identity-->
     <PackageReference Update="Microsoft.Identity.Client" Version="4.*" />
