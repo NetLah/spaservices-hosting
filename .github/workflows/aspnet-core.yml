@@ -90,7 +90,7 @@ jobs:
       - name: Docker meta
         if: ${{ success() && github.event_name != 'pull_request' && (runner.os == 'Linux' || runner.os == 'Windows') }}
         id: meta
-        uses: docker/metadata-action@v3
+        uses: docker/metadata-action@v4
         with:
           images: |
             ${{ steps.repos.outputs.content }}
@@ -106,7 +106,7 @@ jobs:
       - name: Docker meta sample
         if: ${{ success() && github.event_name != 'pull_request' && (runner.os == 'Linux' || runner.os == 'Windows') }}
         id: meta_sample
-        uses: docker/metadata-action@v3
+        uses: docker/metadata-action@v4
         with:
           images: |
             ${{ steps.sample_repos.outputs.content }}
