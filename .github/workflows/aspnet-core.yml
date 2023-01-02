@@ -131,8 +131,8 @@ jobs:
           tags: |
             type=raw,enable=${{ github.event_name != 'pull_request' }},priority=699,value=${{ steps.minver.outputs.version }}
             type=ref,event=branch,priority=500
-            type=ref,event=pr,priority=500,prefix=pr-
-            type=sha,enable=${{ github.event_name != 'pull_request' }},priority=400,prefix=sha-,format=short
+            type=ref,event=pr,priority=500,prefix=7.0-pr-
+            type=sha,enable=${{ github.event_name != 'pull_request' }},priority=400,prefix=7.0-sha-,format=short
             type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=600,pattern=^(\d+\.\d+(\.\d+)?(-.+)?)$,group=1
             type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=580,pattern=^(\d+\.\d+(\.\d+)?)(-.+)?$,group=1
             type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=570,pattern=^(\d+\.\d+)(\.\d+)?(-.+)?$,group=1
@@ -153,8 +153,8 @@ jobs:
           tags: |
             type=raw,enable=${{ github.event_name != 'pull_request' }},priority=699,value=${{ steps.minver.outputs.version }}
             type=ref,event=branch,priority=500
-            type=ref,event=pr,priority=500,prefix=pr-
-            type=sha,enable=${{ github.event_name != 'pull_request' }},priority=400,prefix=sha-,format=short
+            type=ref,event=pr,priority=500,prefix=7.0-pr-
+            type=sha,enable=${{ github.event_name != 'pull_request' }},priority=400,prefix=7.0-sha-,format=short
             type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=600,pattern=^(\d+\.\d+(\.\d+)?(-.+)?)$,group=1
             type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=580,pattern=^(\d+\.\d+(\.\d+)?)(-.+)?$,group=1
             type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=570,pattern=^(\d+\.\d+)(\.\d+)?(-.+)?$,group=1
