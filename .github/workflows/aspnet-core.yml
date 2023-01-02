@@ -54,7 +54,7 @@ jobs:
         if: ${{ success() && github.event_name != 'pull_request' && (runner.os == 'Linux' || runner.os == 'Windows') }}
         shell: pwsh
         run: |
-          $tagSuffix = if ($Env:RUNNER_OS -eq 'Linux') { '-alpine' } else if ($Env:RUNNER_OS -eq 'Windows') { ' -nanoserver-1809' }
+          $tagSuffix = if ($Env:RUNNER_OS -eq 'Linux') { '-alpine' } else { if ($Env:RUNNER_OS -eq 'Windows') { ' -nanoserver-1809' } }
           Write-Host "TAG_SUFFIX=$tagSuffix" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           Write-Host "Set tag suffix to: $tagSuffix"
 
