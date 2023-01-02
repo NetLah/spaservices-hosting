@@ -50,19 +50,13 @@ jobs:
           Set-Content -Path $versionFilePath -Value $content -ErrorAction Stop
           Write-Output "`n<!-- Build commit $($Env:GITHUB_SHA) / $($Env:GITHUB_REF_NAME) at $($(Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ss.fffZ')) -->" | Out-File -FilePath src/WebApp/wwwroot/index.html -Encoding utf8 -Append
 
-      - name: Set Docker tag suffix=alpine
-        if: ${{ success() && github.event_name != 'pull_request' && runner.os == 'Linux' }}
+      - name: Set Docker tag suffix
+        if: ${{ success() && github.event_name != 'pull_request' && (runner.os == 'Linux' || runner.os == 'Windows') }}
         shell: pwsh
         run: |
-          echo "TAG_SUFFIX=-alpine" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-          echo "Set tag suffix to: -alpine"
-
-      - name: Set Docker tag suffix=nanoserver-1809
-        if: ${{ success() && github.event_name != 'pull_request' && runner.os == 'Windows' }}
-        shell: pwsh
-        run: |
-          echo "TAG_SUFFIX=-nanoserver-1809" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-          echo "Set tag suffix to: -nanoserver-1809"
+          $tagSuffix = if ($Env:RUNNER_OS -eq 'Linux') { '-alpine' } elif ($Env:RUNNER_OS -eq 'Windows') { ' -nanoserver-1809' }
+          Write-Host "TAG_SUFFIX=$tagSuffix" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          Write-Host "Set tag suffix to: $tagSuffix"
 
       - name: Docker meta
         if: ${{ success() && github.event_name != 'pull_request' && (runner.os == 'Linux' || runner.os == 'Windows') }}
