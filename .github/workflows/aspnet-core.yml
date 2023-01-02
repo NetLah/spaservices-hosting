@@ -219,13 +219,14 @@ jobs:
 
       - name: Build and Push 6.0
         if: ${{ success() && (runner.os == 'Linux' || runner.os == 'Windows') }}
+        id: build60
         shell: pwsh
         run: ./docker-build.ps1 -Context ./artifacts/net6.0 -Squash -Tags "${{ steps.meta60.outputs.tags }}" -Labels "${{ steps.meta60.outputs.labels }}"
 
       - name: Build and Push Sample 6.0
         if: ${{ success() && (runner.os == 'Linux' || runner.os == 'Windows') }}
         shell: pwsh
-        run: ./docker-build.ps1 -Context ./artifacts/net6.0 -NoPull -Dockerfile ./.docker-share/Dockerfile-sample -Tags "${{ steps.meta_sample60.outputs.tags }}" -Labels "${{ steps.meta_sample60.outputs.labels }}" -BuildArgs "SPAHOST_IMAGE=$(('${{ steps.meta60.outputs.tags }}'.Trim() -split '\r|\n' | Where-Object { $_ })[0])"
+        run: ./docker-build.ps1 -Context ./artifacts/net6.0 -NoPull -Dockerfile ./.docker-share/Dockerfile-sample -Tags "${{ steps.meta_sample60.outputs.tags }}" -Labels "${{ steps.meta_sample60.outputs.labels }}" -BuildArgs "SPAHOST_IMAGE=${{ steps.build60.outputs.image }}"
 
       - name: Set source ASP.NET Image Tag 7.0
         if: ${{ success() && (runner.os == 'Linux' || runner.os == 'Windows') }}
@@ -237,13 +238,14 @@ jobs:
         
       - name: Build and Push 7.0
         if: ${{ success() && (runner.os == 'Linux' || runner.os == 'Windows') }}
+        id: build70
         shell: pwsh
         run: ./docker-build.ps1 -Context ./artifacts/net7.0 -Squash -Tags "${{ steps.meta70.outputs.tags }}" -Labels "${{ steps.meta70.outputs.labels }}" -BuildArgs "ASPNET_IMAGE_TAG=${{ env.ASPNET_IMAGE_TAG }}"
 
       - name: Build and Push Sample 7.0
         if: ${{ success() && (runner.os == 'Linux' || runner.os == 'Windows') }}
         shell: pwsh
-        run: ./docker-build.ps1 -Context ./artifacts/net7.0 -NoPull -Dockerfile ./.docker-share/Dockerfile-sample -Tags "${{ steps.meta_sample70.outputs.tags }}" -Labels "${{ steps.meta_sample70.outputs.labels }}" -BuildArgs "SPAHOST_IMAGE=$(('${{ steps.meta70.outputs.tags }}'.Trim() -split '\r|\n' | Where-Object { $_ })[0])"
+        run: ./docker-build.ps1 -Context ./artifacts/net7.0 -NoPull -Dockerfile ./.docker-share/Dockerfile-sample -Tags "${{ steps.meta_sample70.outputs.tags }}" -Labels "${{ steps.meta_sample70.outputs.labels }}" -BuildArgs "SPAHOST_IMAGE=${{ steps.build70.outputs.image }}"
 
       - name: Pack
         run: dotnet pack -c Release -o ./artifacts/packages/ --no-build --verbosity normal

@@ -56,9 +56,18 @@ if (!$?) {
     exit $LASTEXITCODE
 }
 
+$firstImage = $true
+
 if (!$NoPush -And $tagStrs) {
     Write-Host "Pushing docker images"
     foreach ($dockerImageTag in $tagStrs) {
+
+        if ($firstImage) {
+            $firstImage = $false
+            Write-Output "image=$dockerImageTag" | Out-File -FilePath $Env:GITHUB_OUTPUT -Encoding utf8 -Append
+            Write-Output "Build image: $dockerImageTag"
+        }
+
         docker push $dockerImageTag
         if (!$?) {
             exit $LASTEXITCODE
