@@ -8,7 +8,8 @@
     <FrameworkVersion Condition="'$(TargetFramework)' == 'net7.0'">7.*</FrameworkVersion>
     <SystemTextJsonVersion Condition="'$(TargetFramework)' != 'net6.0' And '$(TargetFramework)' != 'net7.0' And '$(TargetFramework)' != 'net6.0-windows'">5.*</SystemTextJsonVersion>
     <SystemTextJsonVersion Condition="'$(TargetFramework)' == 'net6.0' Or '$(TargetFramework)' == 'net7.0' Or '$(TargetFramework)' == 'net6.0-windows'">$(FrameworkVersion)</SystemTextJsonVersion>
-    <SwashbuckleVersion>6.*</SwashbuckleVersion>
+    <SwashbuckleVersion Condition="'$(TargetFramework)' != 'net6.0' And '$(TargetFramework)' != 'net7.0'">5.*</SwashbuckleVersion>
+    <SwashbuckleVersion Condition="'$(TargetFramework)' == 'net6.0' Or '$(TargetFramework)' == 'net7.0'">6.*</SwashbuckleVersion>
   </PropertyGroup>
 
   <ItemGroup>
