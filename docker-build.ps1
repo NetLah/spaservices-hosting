@@ -14,13 +14,15 @@ Write-Output "Powershell Version: $($PSVersionTable.PSVersion)"
 Write-Output "Tags (raw): $Tags"
 Write-Output "Labels (raw): $Labels"
 
-$tagStrs = [Array]::Reverse($Tags.Trim() -split '\r|\n' | Where-Object { $_ })
+$tagStrs = $Tags.Trim() -split '\r|\n' | Where-Object { $_ }
 $labelStrs = $Labels.Trim() -split '\r|\n' | Where-Object { $_ }
 $buildArgStrs = $BuildArgs.Trim() -split '\r|\n' | Where-Object { $_ }
 
 if (!$tagStrs) {
     throw 'Tags is required'
 }
+
+$tagStrs = [Array]::Reverse($tagStrs)
 
 $params = @('build', $Context)
 
