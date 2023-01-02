@@ -64,37 +64,14 @@ jobs:
           echo "TAG_SUFFIX=-nanoserver-1809" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           echo "Set tag suffix to: -nanoserver-1809"
 
-      - name: Docker Repos Selection
-        if: ${{ success() && github.event_name != 'pull_request' && (runner.os == 'Linux' || runner.os == 'Windows') }}
-        id: repos
-        shell: pwsh
-        run: |
-          $repos='${{ secrets.DOCKER_HUB_REPOS }}'
-          if ($Env:GITHUB_REF.StartsWith('refs/tags/')) {
-            $repos+='%0A'
-            $repos+='netlah/spa-host'
-          }
-          Write-Output "content=$repos" | Out-File -FilePath $Env:GITHUB_OUTPUT -Encoding utf8 -Append
-
-      - name: Docker Sample Repos Selection
-        if: ${{ success() && github.event_name != 'pull_request' && (runner.os == 'Linux' || runner.os == 'Windows') }}
-        id: sample_repos
-        shell: pwsh
-        run: |
-          $repos='${{ secrets.DOCKER_HUB_SAMPLE_REPOS }}'
-          if ($Env:GITHUB_REF.StartsWith('refs/tags/')) {
-            $repos+='%0A'
-            $repos+='netlah/spa-host-sample'
-          }
-          Write-Output "content=$repos" | Out-File -FilePath $Env:GITHUB_OUTPUT -Encoding utf8 -Append
-
       - name: Docker meta
         if: ${{ success() && github.event_name != 'pull_request' && (runner.os == 'Linux' || runner.os == 'Windows') }}
         id: meta
         uses: docker/metadata-action@v4
         with:
           images: |
-            ${{ steps.repos.outputs.content }}
+            ${{ secrets.DOCKER_HUB_REPOS }}
+            name=netlah/spa-host,enable=${{ startsWith(github.ref, 'refs/tags/')) }}
           tags: |
             type=raw,enable=true,priority=999,prefix=,suffix=${{ env.TAG_SUFFIX }},value=${{ steps.minver.outputs.version }}
             type=ref,event=branch,priority=600,prefix=,suffix=${{ env.TAG_SUFFIX }}
@@ -110,7 +87,8 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: |
-            ${{ steps.sample_repos.outputs.content }}
+            ${{ secrets.DOCKER_HUB_SAMPLE_REPOS }}
+            name=netlah/spa-host-sample,enable=${{ startsWith(github.ref, 'refs/tags/')) }}
           tags: |
             type=raw,enable=true,priority=999,prefix=,suffix=${{ env.TAG_SUFFIX }},value=${{ steps.minver.outputs.version }}
             type=ref,event=branch,priority=600,prefix=,suffix=${{ env.TAG_SUFFIX }}
