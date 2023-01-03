@@ -34,8 +34,9 @@ jobs:
         run: dotnet tool restore
 
       - name: MinVer
+        shell: pwsh
         id: minver
-        run: echo "::set-output name=version::$(dotnet minver)"
+        run: Write-Output "version=$(dotnet minver)" | Out-File -FilePath $Env:GITHUB_OUTPUT -Encoding utf8 -Append
 
       - name: Set UI Version
         shell: pwsh
@@ -49,75 +50,109 @@ jobs:
           Set-Content -Path $versionFilePath -Value $content -ErrorAction Stop
           Write-Output "`n<!-- Build commit $($Env:GITHUB_SHA) / $($Env:GITHUB_REF_NAME) at $($(Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ss.fffZ')) -->" | Out-File -FilePath src/WebApp/wwwroot/index.html -Encoding utf8 -Append
 
-      - name: Set Docker tag suffix=alpine
-        if: ${{ success() && github.event_name != 'pull_request' && runner.os == 'Linux' }}
+      - name: Set Docker tag suffix
+        if: ${{ success() && (runner.os == 'Linux' || runner.os == 'Windows') }}
         shell: pwsh
         run: |
-          echo "TAG_SUFFIX=-alpine" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-          echo "Set tag suffix to: -alpine"
+          $tagSuffix = if ($Env:RUNNER_OS -eq 'Linux') { '-alpine' } else { if ($Env:RUNNER_OS -eq 'Windows') { '-nanoserver-1809' } }
+          Write-Output "TAG_SUFFIX=$tagSuffix" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+          Write-Host "Set tag suffix to: $tagSuffix"
 
-      - name: Set Docker tag suffix=nanoserver-1809
-        if: ${{ success() && github.event_name != 'pull_request' && runner.os == 'Windows' }}
-        shell: pwsh
-        run: |
-          echo "TAG_SUFFIX=-nanoserver-1809" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-          echo "Set tag suffix to: -nanoserver-1809"
-
-      - name: Docker Repos Selection
-        if: ${{ success() && github.event_name != 'pull_request' && (runner.os == 'Linux' || runner.os == 'Windows') }}
-        id: repos
-        shell: pwsh
-        run: |
-          $repos='${{ secrets.DOCKER_HUB_REPOS }}'
-          if ($Env:GITHUB_REF.StartsWith('refs/tags/')) {
-            $repos+='%0A'
-            $repos+='netlah/spa-host'
-          }
-          Write-Output "::set-output name=content::$repos"
-
-      - name: Docker Sample Repos Selection
-        if: ${{ success() && github.event_name != 'pull_request' && (runner.os == 'Linux' || runner.os == 'Windows') }}
-        id: sample_repos
-        shell: pwsh
-        run: |
-          $repos='${{ secrets.DOCKER_HUB_SAMPLE_REPOS }}'
-          if ($Env:GITHUB_REF.StartsWith('refs/tags/')) {
-            $repos+='%0A'
-            $repos+='netlah/spa-host-sample'
-          }
-          Write-Output "::set-output name=content::$repos"
-
-      - name: Docker meta
-        if: ${{ success() && github.event_name != 'pull_request' && (runner.os == 'Linux' || runner.os == 'Windows') }}
-        id: meta
-        uses: docker/metadata-action@v3
+      - name: Docker meta 6.0
+        if: ${{ success() && (runner.os == 'Linux' || runner.os == 'Windows') }}
+        id: meta60
+        uses: docker/metadata-action@v4
         with:
           images: |
-            ${{ steps.repos.outputs.content }}
+            ${{ secrets.DOCKER_HUB_REPOS }}
+            name=netlah/spa-host,enable=${{ startsWith(github.ref, 'refs/tags/') }}
+          flavor: |
+            latest=auto
+            suffix=${{ env.TAG_SUFFIX }}
           tags: |
-            type=raw,enable=true,priority=999,prefix=,suffix=${{ env.TAG_SUFFIX }},value=${{ steps.minver.outputs.version }}
-            type=ref,event=branch,priority=600,prefix=,suffix=${{ env.TAG_SUFFIX }}
-            type=sha,enable=true,priority=500,prefix=sha-,suffix=${{ env.TAG_SUFFIX }},format=short
-            type=match,enable=true,priority=900,prefix=,suffix=${{ env.TAG_SUFFIX }},pattern=^(\d+\.\d+(\.\d+)?(-.+)?)$,group=1
-            type=match,enable=true,priority=880,prefix=,suffix=${{ env.TAG_SUFFIX }},pattern=^(\d+\.\d+(\.\d+)?)(-.+)?$,group=1
-            type=match,enable=true,priority=870,prefix=,suffix=${{ env.TAG_SUFFIX }},pattern=^(\d+\.\d+)(\.\d+)?(-.+)?$,group=1
-            type=match,enable=true,priority=860,prefix=,suffix=${{ env.TAG_SUFFIX }},pattern=^(\d+)\.\d+(\.\d+)?(-.+)?$,group=1
+            type=raw,enable=${{ github.event_name != 'pull_request' }},priority=999,value=${{ steps.minver.outputs.version }}
+            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=900,pattern=^(\d+\.\d+(\.\d+)?(-.+)?)$,group=1
+            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=880,pattern=^(\d+\.\d+(\.\d+)?)(-.+)?$,group=1
+            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=870,pattern=^(\d+\.\d+)(\.\d+)?(-.+)?$,group=1
+            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=860,pattern=^(\d+)\.\d+(\.\d+)?(-.+)?$,group=1
+            type=raw,enable=${{ github.event_name != 'pull_request' }},priority=699,prefix=6.0-,value=${{ steps.minver.outputs.version }}
+            type=ref,event=branch,priority=500,prefix=6.0-
+            type=ref,event=pr,priority=500,prefix=6.0-pr-
+            type=sha,enable=${{ github.event_name != 'pull_request' }},priority=400,prefix=6.0-sha-,format=short
+            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=600,prefix=6.0-,pattern=^(\d+\.\d+(\.\d+)?(-.+)?)$,group=1
+            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=580,prefix=6.0-,pattern=^(\d+\.\d+(\.\d+)?)(-.+)?$,group=1
+            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=570,prefix=6.0-,pattern=^(\d+\.\d+)(\.\d+)?(-.+)?$,group=1
+            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=560,prefix=6.0-,pattern=^(\d+)\.\d+(\.\d+)?(-.+)?$,group=1
 
-      - name: Docker meta sample
-        if: ${{ success() && github.event_name != 'pull_request' && (runner.os == 'Linux' || runner.os == 'Windows') }}
-        id: meta_sample
-        uses: docker/metadata-action@v3
+      - name: Docker meta sample 6.0
+        if: ${{ success() && (runner.os == 'Linux' || runner.os == 'Windows') }}
+        id: meta_sample60
+        uses: docker/metadata-action@v4
         with:
           images: |
-            ${{ steps.sample_repos.outputs.content }}
+            ${{ secrets.DOCKER_HUB_SAMPLE_REPOS }}
+            name=netlah/spa-host-sample,enable=${{ startsWith(github.ref, 'refs/tags/') }}
+          flavor: |
+            latest=auto
+            suffix=${{ env.TAG_SUFFIX }}
           tags: |
-            type=raw,enable=true,priority=999,prefix=,suffix=${{ env.TAG_SUFFIX }},value=${{ steps.minver.outputs.version }}
-            type=ref,event=branch,priority=600,prefix=,suffix=${{ env.TAG_SUFFIX }}
-            type=sha,enable=true,priority=500,prefix=sha-,suffix=${{ env.TAG_SUFFIX }},format=short
-            type=match,enable=true,priority=900,prefix=,suffix=${{ env.TAG_SUFFIX }},pattern=^(\d+\.\d+(\.\d+)?(-.+)?)$,group=1
-            type=match,enable=true,priority=880,prefix=,suffix=${{ env.TAG_SUFFIX }},pattern=^(\d+\.\d+(\.\d+)?)(-.+)?$,group=1
-            type=match,enable=true,priority=870,prefix=,suffix=${{ env.TAG_SUFFIX }},pattern=^(\d+\.\d+)(\.\d+)?(-.+)?$,group=1
-            type=match,enable=true,priority=860,prefix=,suffix=${{ env.TAG_SUFFIX }},pattern=^(\d+)\.\d+(\.\d+)?(-.+)?$,group=1
+            type=raw,enable=${{ github.event_name != 'pull_request' }},priority=999,value=${{ steps.minver.outputs.version }}
+            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=900,pattern=^(\d+\.\d+(\.\d+)?(-.+)?)$,group=1
+            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=880,pattern=^(\d+\.\d+(\.\d+)?)(-.+)?$,group=1
+            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=870,pattern=^(\d+\.\d+)(\.\d+)?(-.+)?$,group=1
+            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=860,pattern=^(\d+)\.\d+(\.\d+)?(-.+)?$,group=1
+            type=raw,enable=${{ github.event_name != 'pull_request' }},priority=699,prefix=6.0-,value=${{ steps.minver.outputs.version }}
+            type=ref,event=branch,priority=500,prefix=6.0-
+            type=ref,event=pr,priority=500,prefix=6.0-pr-
+            type=sha,enable=${{ github.event_name != 'pull_request' }},priority=400,prefix=6.0-sha-,format=short
+            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=600,prefix=6.0-,pattern=^(\d+\.\d+(\.\d+)?(-.+)?)$,group=1
+            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=580,prefix=6.0-,pattern=^(\d+\.\d+(\.\d+)?)(-.+)?$,group=1
+            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=570,prefix=6.0-,pattern=^(\d+\.\d+)(\.\d+)?(-.+)?$,group=1
+            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=560,prefix=6.0-,pattern=^(\d+)\.\d+(\.\d+)?(-.+)?$,group=1
+            
+      - name: Docker meta 7.0
+        if: ${{ success() && (runner.os == 'Linux' || runner.os == 'Windows') }}
+        id: meta70
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            ${{ secrets.DOCKER_HUB_REPOS }}
+            name=netlah/spa-host,enable=${{ startsWith(github.ref, 'refs/tags/') }}
+          flavor: |
+            latest=auto
+            suffix=${{ env.TAG_SUFFIX }}
+            prefix=7.0-
+          tags: |
+            type=raw,enable=${{ github.event_name != 'pull_request' }},priority=699,value=${{ steps.minver.outputs.version }}
+            type=ref,event=branch,priority=500
+            type=ref,event=pr,priority=500,prefix=7.0-pr-
+            type=sha,enable=${{ github.event_name != 'pull_request' }},priority=400,prefix=7.0-sha-,format=short
+            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=600,pattern=^(\d+\.\d+(\.\d+)?(-.+)?)$,group=1
+            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=580,pattern=^(\d+\.\d+(\.\d+)?)(-.+)?$,group=1
+            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=570,pattern=^(\d+\.\d+)(\.\d+)?(-.+)?$,group=1
+            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=560,pattern=^(\d+)\.\d+(\.\d+)?(-.+)?$,group=1
+
+      - name: Docker meta sample 7.0
+        if: ${{ success() && (runner.os == 'Linux' || runner.os == 'Windows') }}
+        id: meta_sample70
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            ${{ secrets.DOCKER_HUB_SAMPLE_REPOS }}
+            name=netlah/spa-host-sample,enable=${{ startsWith(github.ref, 'refs/tags/') }}
+          flavor: |
+            latest=auto
+            suffix=${{ env.TAG_SUFFIX }}
+            prefix=7.0-
+          tags: |
+            type=raw,enable=${{ github.event_name != 'pull_request' }},priority=699,value=${{ steps.minver.outputs.version }}
+            type=ref,event=branch,priority=500
+            type=ref,event=pr,priority=500,prefix=7.0-pr-
+            type=sha,enable=${{ github.event_name != 'pull_request' }},priority=400,prefix=7.0-sha-,format=short
+            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=600,pattern=^(\d+\.\d+(\.\d+)?(-.+)?)$,group=1
+            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=580,pattern=^(\d+\.\d+(\.\d+)?)(-.+)?$,group=1
+            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=570,pattern=^(\d+\.\d+)(\.\d+)?(-.+)?$,group=1
+            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=560,pattern=^(\d+)\.\d+(\.\d+)?(-.+)?$,group=1
 
       - name: Install dependencies
         run: dotnet restore
@@ -129,26 +164,34 @@ jobs:
         run: dotnet test -c Release --no-build --verbosity normal
 
       - name: Publish
-        run: dotnet publish src/WebApp -c Release -f net6.0 --no-build -o artifacts/app
+        run: |
+          dotnet publish src/WebApp -c Release -f net6.0 --no-build -o artifacts/net6.0/app
+          dotnet publish src/WebApp -c Release -f net7.0 --no-build -o artifacts/net7.0/app
 
       - name: Split sample wwwroot
         shell: pwsh
         run: |
-          $webFolder = New-Item -Name 'artifacts/wwwroot' -ItemType 'Directory' -ErrorAction Stop
-          Move-Item -Force -Path 'artifacts/app/wwwroot/*' -Destination "$webFolder/" -Exclude favicon.ico -ErrorAction Stop
+          $webFolder = New-Item -Name 'artifacts/net6.0/wwwroot' -ItemType 'Directory' -ErrorAction Stop
+          Move-Item -Force -Path 'artifacts/net6.0/app/wwwroot/*' -Destination "$webFolder/" -Exclude favicon.ico -ErrorAction Stop -Verbose
+          $webFolder = New-Item -Name 'artifacts/net7.0/wwwroot' -ItemType 'Directory' -ErrorAction Stop
+          Move-Item -Force -Path 'artifacts/net7.0/app/wwwroot/*' -Destination "$webFolder/" -Exclude favicon.ico -ErrorAction Stop -Verbose
 
       - name: Copy Dockerfile Linux
-        if: ${{ success() && github.event_name != 'pull_request' && runner.os == 'Linux' }}
+        if: ${{ success() && runner.os == 'Linux' }}
         shell: pwsh
-        run: Copy-Item -Recurse -Force -Path '.dockerignore','.docker-linux/*' -Destination artifacts/ -ErrorAction Stop -Verbose
+        run: |
+          Copy-Item -Recurse -Force -Path '.dockerignore','.docker-linux/*' -Destination artifacts/net6.0/ -ErrorAction Stop -Verbose
+          Copy-Item -Recurse -Force -Path '.dockerignore','.docker-linux/*' -Destination artifacts/net7.0/ -ErrorAction Stop -Verbose
 
       - name: Copy Dockerfile Windows
-        if: ${{ success() && github.event_name != 'pull_request' && runner.os == 'Windows' }}
+        if: ${{ success() && runner.os == 'Windows' }}
         shell: pwsh
-        run: Copy-Item -Recurse -Force -Path '.dockerignore','.docker-windows/*' -Destination artifacts/ -ErrorAction Stop -Verbose
+        run: |
+          Copy-Item -Recurse -Force -Path '.dockerignore','.docker-windows/*' -Destination artifacts/net6.0/ -ErrorAction Stop -Verbose
+          Copy-Item -Recurse -Force -Path '.dockerignore','.docker-windows/*' -Destination artifacts/net7.0/ -ErrorAction Stop -Verbose
 
       - name: Enabling Docker Daemon With experimental features
-        if: ${{ success() && github.event_name != 'pull_request' && runner.os == 'Linux' }}
+        if: ${{ success() && runner.os == 'Linux' }}
         run: |
           echo 'Before update daemon.json'
           sudo cat /etc/docker/daemon.json
@@ -158,25 +201,45 @@ jobs:
           sudo systemctl restart docker.service
 
       - name: Set up Docker Buildx
-        if: ${{ success() && github.event_name != 'pull_request' && (runner.os == 'Linux' || runner.os == 'Windows') }}
+        if: ${{ success() && (runner.os == 'Linux') }}
         uses: docker/setup-buildx-action@v2
 
       - name: Login to Docker Hub
-        if: ${{ success() && github.event_name != 'pull_request' && (runner.os == 'Linux' || runner.os == 'Windows') }}
-        uses: docker/login-action@v1
+        if: ${{ success() && (runner.os == 'Linux' || runner.os == 'Windows') }}
+        uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-      - name: Build and Push
-        if: ${{ success() && github.event_name != 'pull_request' && (runner.os == 'Linux' || runner.os == 'Windows') }}
+      - name: Build and Push 6.0
+        if: ${{ success() && (runner.os == 'Linux' || runner.os == 'Windows') }}
+        id: build60
         shell: pwsh
-        run: ./docker-build.ps1 -Context ./artifacts -Squash -Tags "${{ steps.meta.outputs.tags }}" -Labels "${{ steps.meta.outputs.labels }}"
+        run: ./docker-build.ps1 -Context ./artifacts/net6.0 -Squash -Tags "${{ steps.meta60.outputs.tags }}" -Labels "${{ steps.meta60.outputs.labels }}"
 
-      - name: Build and Push Sample
-        if: ${{ success() && github.event_name != 'pull_request' && (runner.os == 'Linux' || runner.os == 'Windows') }}
+      - name: Build and Push Sample 6.0
+        if: ${{ success() && (runner.os == 'Linux' || runner.os == 'Windows') }}
         shell: pwsh
-        run: ./docker-build.ps1 -Context ./artifacts -NoPull -Dockerfile ./.docker-share/Dockerfile-sample -Tags "${{ steps.meta_sample.outputs.tags }}" -Labels "${{ steps.meta_sample.outputs.labels }}" -BuildArgs "SPAHOST_IMAGE=$(('${{ steps.meta.outputs.tags }}'.Trim() -split '\r|\n' | Where-Object { $_ })[0])"
+        run: ./docker-build.ps1 -Context ./artifacts/net6.0 -NoPull -Dockerfile ./.docker-share/Dockerfile-sample -Tags "${{ steps.meta_sample60.outputs.tags }}" -Labels "${{ steps.meta_sample60.outputs.labels }}" -BuildArgs "SPAHOST_IMAGE=${{ steps.build60.outputs.image }}"
+
+      - name: Set source ASP.NET Image Tag 7.0
+        if: ${{ success() && (runner.os == 'Linux' || runner.os == 'Windows') }}
+        shell: pwsh
+        run: |
+          $aspnetImageTag70 = if ($Env:RUNNER_OS -eq 'Linux') { '7.0-alpine' } else { '7.0-nanoserver-1809' }
+          Write-Output "ASPNET_IMAGE_TAG=$aspnetImageTag70" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+          Write-Host "Set source ASP.NET Image Tag 7.0 to: $aspnetImageTag70"
+        
+      - name: Build and Push 7.0
+        if: ${{ success() && (runner.os == 'Linux' || runner.os == 'Windows') }}
+        id: build70
+        shell: pwsh
+        run: ./docker-build.ps1 -Context ./artifacts/net7.0 -Squash -Tags "${{ steps.meta70.outputs.tags }}" -Labels "${{ steps.meta70.outputs.labels }}" -BuildArgs "ASPNET_IMAGE_TAG=${{ env.ASPNET_IMAGE_TAG }}"
+
+      - name: Build and Push Sample 7.0
+        if: ${{ success() && (runner.os == 'Linux' || runner.os == 'Windows') }}
+        shell: pwsh
+        run: ./docker-build.ps1 -Context ./artifacts/net7.0 -NoPull -Dockerfile ./.docker-share/Dockerfile-sample -Tags "${{ steps.meta_sample70.outputs.tags }}" -Labels "${{ steps.meta_sample70.outputs.labels }}" -BuildArgs "SPAHOST_IMAGE=${{ steps.build70.outputs.image }}"
 
       - name: Pack
         run: dotnet pack -c Release -o ./artifacts/packages/ --no-build --verbosity normal
