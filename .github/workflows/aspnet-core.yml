@@ -176,19 +176,12 @@ jobs:
           $webFolder = New-Item -Name 'artifacts/net7.0/wwwroot' -ItemType 'Directory' -ErrorAction Stop
           Move-Item -Force -Path 'artifacts/net7.0/app/wwwroot/*' -Destination "$webFolder/" -Exclude favicon.ico -ErrorAction Stop -Verbose
 
-      - name: Copy Dockerfile Linux
-        if: ${{ success() && runner.os == 'Linux' }}
+      - name: Copy Dockerfile
+        if: ${{ success() && (runner.os == 'Linux' || runner.os == 'Windows') }}
         shell: pwsh
         run: |
-          Copy-Item -Recurse -Force -Path '.dockerignore','.docker-linux/*' -Destination artifacts/net6.0/ -ErrorAction Stop -Verbose
-          Copy-Item -Recurse -Force -Path '.dockerignore','.docker-linux/*' -Destination artifacts/net7.0/ -ErrorAction Stop -Verbose
-
-      - name: Copy Dockerfile Windows
-        if: ${{ success() && runner.os == 'Windows' }}
-        shell: pwsh
-        run: |
-          Copy-Item -Recurse -Force -Path '.dockerignore','.docker-windows/*' -Destination artifacts/net6.0/ -ErrorAction Stop -Verbose
-          Copy-Item -Recurse -Force -Path '.dockerignore','.docker-windows/*' -Destination artifacts/net7.0/ -ErrorAction Stop -Verbose
+          Copy-Item -Recurse -Force -Path '.dockerignore',".docker-$( if ($Env:RUNNER_OS -eq 'Linux') { 'linux' } else { 'windows' } )/*" -Destination artifacts/net6.0/ -ErrorAction Stop -Verbose
+          Copy-Item -Recurse -Force -Path '.dockerignore',".docker-$( if ($Env:RUNNER_OS -eq 'Linux') { 'linux' } else { 'windows' } )/*" -Destination artifacts/net7.0/ -ErrorAction Stop -Verbose
 
       - name: Enabling Docker Daemon With experimental features
         if: ${{ success() && runner.os == 'Linux' }}
