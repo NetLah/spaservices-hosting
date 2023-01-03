@@ -43,6 +43,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "assets", "assets", "{A2F5CD
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hosting.Test", "test\Hosting.Test\Hosting.Test.csproj", "{45D6DC99-54ED-4940-BC68-9C857FE70A6C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleSpaWebApp", "samples\SampleSpaWebApp\SampleSpaWebApp.csproj", "{E3E33BE4-B3C4-4274-950D-9FDF0C666CA5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -65,6 +67,10 @@ Global
 		{45D6DC99-54ED-4940-BC68-9C857FE70A6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{45D6DC99-54ED-4940-BC68-9C857FE70A6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{45D6DC99-54ED-4940-BC68-9C857FE70A6C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E3E33BE4-B3C4-4274-950D-9FDF0C666CA5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3E33BE4-B3C4-4274-950D-9FDF0C666CA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3E33BE4-B3C4-4274-950D-9FDF0C666CA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3E33BE4-B3C4-4274-950D-9FDF0C666CA5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -76,6 +82,7 @@ Global
 		{61EAC3FA-53CA-4C01-ACBB-C5096E46A71F} = {E6A38223-4737-47DA-8A06-D4FF2C91387A}
 		{A2F5CDC8-E1D1-48FA-A4D9-DA9CEF39C1F0} = {61EAC3FA-53CA-4C01-ACBB-C5096E46A71F}
 		{45D6DC99-54ED-4940-BC68-9C857FE70A6C} = {B4DA763B-08AD-4FA6-BE9A-B56BBF4ECA8C}
+		{E3E33BE4-B3C4-4274-950D-9FDF0C666CA5} = {1B7178A0-2F00-429C-8344-454A382575EF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DB3C8D03-45CD-43CA-9070-BA27E853B656}
