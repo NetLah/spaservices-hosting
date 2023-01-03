@@ -71,9 +71,6 @@ jobs:
             suffix=${{ env.TAG_SUFFIX }}
           tags: |
             type=raw,enable=${{ github.event_name != 'pull_request' }},priority=999,value=${{ steps.minver.outputs.version }}
-            type=ref,event=branch,priority=800
-            type=ref,event=pr,priority=800,prefix=pr-
-            type=sha,enable=${{ github.event_name != 'pull_request' }},priority=700,prefix=sha-,format=short
             type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=900,pattern=^(\d+\.\d+(\.\d+)?(-.+)?)$,group=1
             type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=880,pattern=^(\d+\.\d+(\.\d+)?)(-.+)?$,group=1
             type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=870,pattern=^(\d+\.\d+)(\.\d+)?(-.+)?$,group=1
@@ -100,9 +97,6 @@ jobs:
             suffix=${{ env.TAG_SUFFIX }}
           tags: |
             type=raw,enable=${{ github.event_name != 'pull_request' }},priority=999,value=${{ steps.minver.outputs.version }}
-            type=ref,event=branch,priority=800
-            type=ref,event=pr,priority=800,prefix=pr-
-            type=sha,enable=${{ github.event_name != 'pull_request' }},priority=700,prefix=sha-,format=short
             type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=900,pattern=^(\d+\.\d+(\.\d+)?(-.+)?)$,group=1
             type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=880,pattern=^(\d+\.\d+(\.\d+)?)(-.+)?$,group=1
             type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=870,pattern=^(\d+\.\d+)(\.\d+)?(-.+)?$,group=1
