@@ -5,12 +5,15 @@ namespace WebApp.Test;
 public class HealthChecksTest
 {
     [Theory]
-    [InlineData(null, "_healthz")]
-    [InlineData("", "_healthz")]
-    [InlineData("/_healthz", "_healthz")]
-    [InlineData("/__gtg", "__gtg", "_healthz")]
-    [InlineData("/__/gtg", "__/gtg", "_healthz")]
-    public async Task CustomRouteTest(string? value, string url, params string[] errorUrls)
+    [InlineData(null, "healthz", "_healthz", "__gtg")]
+    [InlineData("", "_healthz")]    // listen on all URLs
+    [InlineData("", "healthz")]     // listen on all URLs
+    [InlineData("", "healthz/any")] // listen on all URLs
+    [InlineData("", "index.html")]  // listen on all URLs
+    [InlineData("/_healthz", "_healthz", "healthz")]
+    [InlineData("/__gtg", "__gtg", "healthz")]
+    [InlineData("/__/gtg", "__/gtg", "healthz")]
+    public async Task CustomHealthChecksTest(string? value, string url, params string[] errorUrls)
     {
         await using var factory = new WebApplicationFactory<Program>();
 
@@ -20,7 +23,7 @@ public class HealthChecksTest
                 builder.SetupTestingEnvironment();
                 if (value != null)
                 {
-                    builder.UseSetting("healthChecksPath", value);
+                    builder.UseSetting("HealthCheck:Path", value);
                 }
             })
             .CreateClientNoAutoRedirect();

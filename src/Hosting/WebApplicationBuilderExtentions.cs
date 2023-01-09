@@ -56,8 +56,6 @@ public static class WebApplicationBuilderExtentions
             logger.LogDebug("Load Hsts configuration {loading}", loading);
         }
 
-        builder.Services.AddHealthChecks();
-
         builder.AddHttpOverrides();
 
         builder.Services.AddControllers();

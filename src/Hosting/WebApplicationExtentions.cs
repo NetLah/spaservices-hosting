@@ -31,12 +31,7 @@ public static class WebApplicationExtentions
         }
         logger.LogInformation("Use Hsts: {enalbed}", !app.Environment.IsDevelopment() && appOptions.HstsEnabled);
 
-        // Cannot use app.MapHealthChecks because of HttpsRedirection
-        var healthChecksPath = StringHelper.GetOrDefault(appOptions.HealthChecksPath, DefaultConfiguration.HealthChecksPath);
-        app.UseHealthChecks(healthChecksPath);
-        logger.LogInformation("HealthChecksPath: {healthChecksPath}", healthChecksPath);
-
-        app.UseHttpOverrides();
+        app.UseHttpOverrides(); // v0.2.3 support HealthChecks configurable
 
         if (appOptions.HttpsRedirectionEnabled)
         {
