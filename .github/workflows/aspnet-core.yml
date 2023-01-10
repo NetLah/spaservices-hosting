@@ -109,7 +109,7 @@ jobs:
             type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=580,prefix=6.0-,pattern=^(\d+\.\d+(\.\d+)?)(-.+)?$,group=1
             type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=570,prefix=6.0-,pattern=^(\d+\.\d+)(\.\d+)?(-.+)?$,group=1
             type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=560,prefix=6.0-,pattern=^(\d+)\.\d+(\.\d+)?(-.+)?$,group=1
-            
+
       - name: Docker meta 7.0
         if: ${{ success() && (runner.os == 'Linux' || runner.os == 'Windows') }}
         id: meta70
@@ -213,8 +213,10 @@ jobs:
       - name: Build and Push Sample 6.0
         if: ${{ success() && (runner.os == 'Linux' || runner.os == 'Windows') }}
         shell: pwsh
-        run: ./docker-build.ps1 -Context ./artifacts/net6.0 -NoPull -Dockerfile ./.docker-share/Dockerfile-sample -Tags "${{ steps.meta_sample60.outputs.tags }}" -Labels "${{ steps.meta_sample60.outputs.labels }}" -BuildArgs "SPAHOST_IMAGE=${{ steps.build60.outputs.image }}"
-                
+        run: ./docker-build.ps1 -Context ./artifacts/net6.0 -NoPull -Dockerfile ./.docker-share/Dockerfile-sample -Tags "${{ steps.meta_sample60.outputs.tags }}" -Labels "${{ steps.meta_sample60.outputs.labels }}" -BuildArgs "SPAHOST_IMAGE=$Env:SPAHOST_IMAGE"
+        env:
+          SPAHOST_IMAGE: ${{ steps.build60.outputs.image }}
+
       - name: Build and Push 7.0
         if: ${{ success() && (runner.os == 'Linux' || runner.os == 'Windows') }}
         id: build70
@@ -226,7 +228,9 @@ jobs:
       - name: Build and Push Sample 7.0
         if: ${{ success() && (runner.os == 'Linux' || runner.os == 'Windows') }}
         shell: pwsh
-        run: ./docker-build.ps1 -Context ./artifacts/net7.0 -NoPull -Dockerfile ./.docker-share/Dockerfile-sample -Tags "${{ steps.meta_sample70.outputs.tags }}" -Labels "${{ steps.meta_sample70.outputs.labels }}" -BuildArgs "SPAHOST_IMAGE=${{ steps.build70.outputs.image }}"
+        run: ./docker-build.ps1 -Context ./artifacts/net7.0 -NoPull -Dockerfile ./.docker-share/Dockerfile-sample -Tags "${{ steps.meta_sample70.outputs.tags }}" -Labels "${{ steps.meta_sample70.outputs.labels }}" -BuildArgs "SPAHOST_IMAGE=$Env:SPAHOST_IMAGE"
+        env:
+          SPAHOST_IMAGE: ${{ steps.build70.outputs.image }}
 
       - name: Pack
         run: dotnet pack -c Release -o ./artifacts/packages/ --no-build --verbosity normal
