@@ -103,6 +103,7 @@
     <PackageReference Update="Microsoft.Extensions.Caching.Abstractions" Version="$(FrameworkVersion)" />
     <PackageReference Update="Microsoft.Extensions.Caching.Memory" Version="$(FrameworkVersion)" />
     <PackageReference Update="Microsoft.Extensions.Caching.StackExchangeRedis" Version="$(FrameworkVersion)" />
+    <PackageReference Update="Microsoft.Extensions.Configuration" Version="$(FrameworkVersion)" />
     <PackageReference Update="Microsoft.Extensions.Configuration.Abstractions" Version="$(FrameworkVersion)" />
     <PackageReference Update="Microsoft.Extensions.Configuration.Binder" Version="$(FrameworkVersion)" />
     <PackageReference Update="Microsoft.Extensions.Configuration.CommandLine" Version="$(FrameworkVersion)" />
