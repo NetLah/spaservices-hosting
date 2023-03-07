@@ -63,9 +63,9 @@ public static class WebApplicationBuilderExtentions
         var wwwroot = StringHelper.GetOrDefault(appOptions.WwwRoot, "wwwroot");
 
         logger.LogInformation("Spa static files location {folder}", wwwroot);
-        builder.Services.AddSpaStaticFiles(configuration =>
+        builder.Services.AddSpaStaticFiles(spaStaticFilesOptions =>
         {
-            configuration.RootPath = wwwroot;
+            spaStaticFilesOptions.RootPath = wwwroot;
         });
 
         return builder;
