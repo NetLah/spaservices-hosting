@@ -41,7 +41,25 @@ public static class WebApplicationExtentions
 
         action?.Invoke(app);
 
-        app.UseSpaStaticFiles();
+        var staticFileOptions = new StaticFileOptions();
+
+        var responseHeaders = appOptions.ResponseHeaders;
+        var isResponseHeadersEnabled = responseHeaders != null
+            && responseHeaders.Headers is { } headers
+            && headers.Any()
+            && responseHeaders.IsEnabled;
+
+#pragma warning disable S2589 // Boolean expressions should not be gratuitous
+        if (isResponseHeadersEnabled && responseHeaders != null)
+        {
+            var headerNames = responseHeaders.Headers.Keys.ToArray();
+            logger.LogInformation("ResponseHeadersHandler Setup for {headerNames}", headerNames);
+            var handler = new ResponseHeadersHandler(logger, responseHeaders);
+            staticFileOptions.OnPrepareResponse = handler.PrepareResponse;
+        }
+#pragma warning restore S2589 // Boolean expressions should not be gratuitous
+
+        app.UseSpaStaticFiles(staticFileOptions);
 
         app.UseRouting();
 
@@ -72,7 +90,12 @@ public static class WebApplicationExtentions
 
         app.UseSpa(spa =>
         {
-            // do nothing
+            spa.Options.DefaultPageStaticFileOptions = staticFileOptions;
+            if (appOptions.DefaultPage is { } defaultPage)
+            {
+                spa.Options.DefaultPage = defaultPage;
+                logger.LogInformation("SPA DefaultPage: {defaultPage}", defaultPage);
+            }
         });
 
         app.Lifetime.ApplicationStarted.Register(() => logger.LogApplicationLifetimeEvent("Application started", appInfo));
@@ -101,7 +124,11 @@ public static class WebApplicationExtentions
 
         if (routeGeneralVersion != null)
         {
-            if (mapControllerAction) logger.LogDebug("Map General/Version {route}", routeGeneralInfo);
+            if (mapControllerAction)
+            {
+                logger.LogDebug("Map General/Version {route}", routeGeneralInfo);
+            }
+
             app.MapControllerRoute(name: string.Empty,
                 pattern: routeGeneralVersion,
                 defaults: new { controller = "General", action = nameof(GeneralController.Version) })
@@ -110,7 +137,11 @@ public static class WebApplicationExtentions
 
         if (routeGeneralInfo != null)
         {
-            if (mapControllerAction) logger.LogDebug("Map General/Info {route}", routeGeneralInfo);
+            if (mapControllerAction)
+            {
+                logger.LogDebug("Map General/Info {route}", routeGeneralInfo);
+            }
+
             app.MapControllerRoute(name: string.Empty,
                 pattern: routeGeneralInfo,
                 defaults: new { controller = "General", action = nameof(GeneralController.Info) })
@@ -119,7 +150,11 @@ public static class WebApplicationExtentions
 
         if (routeGeneralSys != null)
         {
-            if (mapControllerAction) logger.LogDebug("Map General/Sys {route}", routeGeneralSys);
+            if (mapControllerAction)
+            {
+                logger.LogDebug("Map General/Sys {route}", routeGeneralSys);
+            }
+
             app.MapControllerRoute(name: string.Empty,
                 pattern: routeGeneralSys,
                 defaults: new { controller = "General", action = nameof(GeneralController.Sys) })
