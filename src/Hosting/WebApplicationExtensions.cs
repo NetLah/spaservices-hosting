@@ -9,7 +9,7 @@ using System.Text;
 
 namespace Microsoft.AspNetCore.Builder;
 
-public static class WebApplicationExtentions
+public static class WebApplicationExtensions
 {
     public static WebApplication UseSpaApp(this WebApplication app, ILogger? logger = null, Action<WebApplication>? action = null)
     {

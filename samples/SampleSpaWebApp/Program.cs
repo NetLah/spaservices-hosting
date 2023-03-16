@@ -14,6 +14,10 @@ try
     var appInfo = builder.InitializeSpaApp();
     logger.LogApplicationLifetimeEvent("Application initializing...", appInfo);
 
+    IAssemblyInfo assembly = new AssemblyInfo(typeof(WebApplicationBuilderExtentions).Assembly);
+    logger.LogInformation("Library:{title}; Version:{version} BuildTime:{buildTime}; Framework:{framework}",
+        assembly.Title, assembly.InformationalVersion, assembly.BuildTimestampLocal, assembly.FrameworkName);
+
     builder.Services.AddApplicationInsightsTelemetry();
 
     builder.AddSpaApp();

@@ -7,7 +7,7 @@ using NetLah.Extensions.SpaServices.Hosting;
 
 namespace Microsoft.AspNetCore.Builder;
 
-public static class WebApplicationBuilderExtentions
+public static class WebApplicationBuilderExtensions
 {
     public static IAppInfo InitializeSpaApp(this WebApplicationBuilder builder, ILogger? logger = null)
     {
