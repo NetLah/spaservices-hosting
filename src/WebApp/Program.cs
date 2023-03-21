@@ -35,6 +35,4 @@ finally
     Serilog.Log.CloseAndFlush();
 }
 
-#pragma warning disable S1118 // Add a 'protected' constructor or the 'static' keyword to the class declaration
 public partial class Program { }
-#pragma warning restore S1118 // Add a 'protected' constructor or the 'static' keyword to the class declaration
