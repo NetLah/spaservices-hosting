@@ -18,6 +18,8 @@ public static class WebApplicationExtensions
         var appOptions = app.Services.GetRequiredService<AppOptions>();
         var appInfo = app.Services.GetRequiredService<IAppInfo>();
 
+        app.UseHttpOverrides(); // v0.2.3 support HealthChecks configurable
+
         if (app.Environment.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();
@@ -30,8 +32,6 @@ public static class WebApplicationExtensions
             }
         }
         logger.LogInformation("Use Hsts: {enalbed}", !app.Environment.IsDevelopment() && appOptions.HstsEnabled);
-
-        app.UseHttpOverrides(); // v0.2.3 support HealthChecks configurable
 
         if (appOptions.HttpsRedirectionEnabled)
         {
