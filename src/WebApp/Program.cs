@@ -1,4 +1,6 @@
+using Azure.Identity;
 using NetLah.Diagnostics;
+using NetLah.Extensions.ApplicationInsights;
 using NetLah.Extensions.Logging;
 
 AppLog.InitLogger("WebApp");
@@ -14,7 +16,7 @@ try
     var appInfo = builder.InitializeSpaApp();
     logger.LogApplicationLifetimeEvent("Application initializing...", appInfo);
 
-    builder.Services.AddApplicationInsightsTelemetry();
+    builder.CustomApplicationInsightsTelemetry(() => new DefaultAzureCredential());
 
     builder.AddSpaApp();
 

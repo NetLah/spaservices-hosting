@@ -7,3 +7,18 @@ indent_style = space
 # Xml files
 [{*.xml,*.csproj,*.props,*.targets}]
 indent_size = 2
+
+[*.cs]
+csharp_style_namespace_declarations=file_scoped
+
+# CA1816: Dispose methods should call SuppressFinalize
+dotnet_diagnostic.CA1816.severity = none
+
+# IDE0022: Use block body for methods
+dotnet_diagnostic.IDE0022.severity = none
+
+# S112: General exceptions should never be thrown
+dotnet_diagnostic.S112.severity = none
+
+# S3881: "IDisposable" should be implemented correctly
+dotnet_diagnostic.S3881.severity = none
