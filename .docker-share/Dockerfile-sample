@@ -2,4 +2,4 @@ ARG SPAHOST_IMAGE_TAG=latest
 ARG SPAHOST_IMAGE=netlah/spa-host:${SPAHOST_IMAGE_TAG}
 FROM ${SPAHOST_IMAGE}
 COPY wwwroot /app/wwwroot
-ENTRYPOINT ["/opt/startup/init_container.sh", "dotnet", "WebApp.dll"]
+ENTRYPOINT ["/opt/startup/init_container.sh", "exec", "dotnet", "WebApp.dll"]

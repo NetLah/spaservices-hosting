@@ -30,5 +30,4 @@ RUN dotnet publish src/WebApp -c ${CONFIGURATION} --no-build -o /publish/webApp
 
 FROM base AS final
 COPY --from=publish /publish/webApp .
-ENTRYPOINT ["/opt/startup/init_container.sh"]
-CMD ["dotnet", "WebApp.dll"]
+ENTRYPOINT ["/opt/startup/init_container.sh", "exec", "dotnet", "WebApp.dll"]
