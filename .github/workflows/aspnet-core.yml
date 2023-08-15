@@ -262,7 +262,7 @@ jobs:
       - name: Build and Push Sample 6.0
         if: ${{ success() && (runner.os == 'Linux' || runner.os == 'Windows') }}
         shell: pwsh
-        run: ./docker-build.ps1 -Context ./artifacts/net6.0 -NoPull -Dockerfile ./.docker-share/Dockerfile-sample -Tags "${{ steps.meta_sample60.outputs.tags }}" -Labels "${{ steps.meta_sample60.outputs.labels }}" -BuildArgs "SPAHOST_IMAGE=$Env:SPAHOST_IMAGE"
+        run: ./docker-build.ps1 -Context ./artifacts/net6.0 -NoPull -Dockerfile ./artifacts/net6.0/Dockerfile-sample -Tags "${{ steps.meta_sample60.outputs.tags }}" -Labels "${{ steps.meta_sample60.outputs.labels }}" -BuildArgs "SPAHOST_IMAGE=$Env:SPAHOST_IMAGE"
         env:
           SPAHOST_IMAGE: ${{ steps.build60.outputs.image }}
 
@@ -277,7 +277,7 @@ jobs:
       - name: Build and Push Sample 7.0
         if: ${{ success() && (runner.os == 'Linux' || runner.os == 'Windows') }}
         shell: pwsh
-        run: ./docker-build.ps1 -Context ./artifacts/net7.0 -NoPull -Dockerfile ./.docker-share/Dockerfile-sample -Tags "${{ steps.meta_sample70.outputs.tags }}" -Labels "${{ steps.meta_sample70.outputs.labels }}" -BuildArgs "SPAHOST_IMAGE=$Env:SPAHOST_IMAGE"
+        run: ./docker-build.ps1 -Context ./artifacts/net7.0 -NoPull -Dockerfile ./artifacts/net7.0/Dockerfile-sample -Tags "${{ steps.meta_sample70.outputs.tags }}" -Labels "${{ steps.meta_sample70.outputs.labels }}" -BuildArgs "SPAHOST_IMAGE=$Env:SPAHOST_IMAGE"
         env:
           SPAHOST_IMAGE: ${{ steps.build70.outputs.image }}
 
@@ -292,7 +292,7 @@ jobs:
       - name: Build and Push Sample 8.0
         if: ${{ success() && (runner.os == 'Linux' || runner.os == 'Windows') }}
         shell: pwsh
-        run: ./docker-build.ps1 -Context ./artifacts/net8.0 -NoPull -Dockerfile ./.docker-share/Dockerfile-sample -Tags "${{ steps.meta_sample80.outputs.tags }}" -Labels "${{ steps.meta_sample80.outputs.labels }}" -BuildArgs "SPAHOST_IMAGE=$Env:SPAHOST_IMAGE"
+        run: ./docker-build.ps1 -Context ./artifacts/net8.0 -NoPull -Dockerfile ./artifacts/net8.0/Dockerfile-sample -Tags "${{ steps.meta_sample80.outputs.tags }}" -Labels "${{ steps.meta_sample80.outputs.labels }}" -BuildArgs "SPAHOST_IMAGE=$Env:SPAHOST_IMAGE"
         env:
           SPAHOST_IMAGE: ${{ steps.build80.outputs.image }}
 
@@ -310,4 +310,4 @@ jobs:
         if: ${{ success() && runner.os == 'Windows' && (startsWith(github.ref, 'refs/heads/dev')) }}
         run: |
           dotnet nuget push .\artifacts\packages\*.nupkg -s https://nuget.pkg.github.com/NetLah/index.json --skip-duplicate -k ${{ secrets.PUSH_GITHUB_REGISTRY_TOKEN }}
-          dotnet nuget push .\artifacts\packages\*.nupkg -s https://nuget.cloudsmith.io/netlah/net-dev1/v3/index.json --skip-duplicate -k ${{ secrets.PUSH_CLOUDSMITH_TOKEN }} 
+          dotnet nuget push .\artifacts\packages\*.nupkg -s https://nuget.cloudsmith.io/netlah/net-dev1/v3/index.json --skip-duplicate -k ${{ secrets.PUSH_CLOUDSMITH_TOKEN }}
