@@ -1,5 +1,6 @@
 [CmdletBinding()]
 param (
+    [Parameter(Mandatory = $false)] [string] $DockerContext = '',
     [Parameter(Mandatory = $false)] [string] $Context = '.',
     [Parameter(Mandatory = $false)] [string] $Dockerfile = '',
     [Parameter(Mandatory = $false)] [string] $Tags,
@@ -24,7 +25,13 @@ if (!$tagStrs) {
 
 [System.Array]::Reverse($tagStrs)
 
-$params = @('build', $Context)
+[string[]]$params = @()
+
+if ($DockerContext) {
+    $params += @('--context', $DockerContext)
+}
+
+$params += @('build', $Context)
 
 if (!$NoPull) {
     $params += @('--pull')
@@ -64,7 +71,9 @@ if (!$NoPush -And $tagStrs) {
 
         if ($firstImage) {
             $firstImage = $false
-            Write-Output "image=$dockerImageTag" | Out-File -FilePath $Env:GITHUB_OUTPUT -Encoding utf8 -Append
+            if ($Env:GITHUB_OUTPUT) {
+                Write-Output "image=$dockerImageTag" | Out-File -FilePath $Env:GITHUB_OUTPUT -Encoding utf8 -Append
+            }
             Write-Output "Build image: $dockerImageTag"
         }
 
