@@ -166,12 +166,12 @@ jobs:
           flavor: |
             latest=auto
             suffix=${{ env.TAG_SUFFIX }}
-            prefix=8.0-preview-
+            prefix=8.0-rc-
           tags: |
             type=raw,enable=${{ github.event_name != 'pull_request' }},priority=699,value=${{ steps.minver.outputs.version }}
             type=ref,event=branch,priority=500
-            type=ref,event=pr,priority=500,prefix=8.0-preview-pr-
-            type=sha,enable=${{ github.event_name != 'pull_request' }},priority=400,prefix=8.0-preview-sha-,format=short
+            type=ref,event=pr,priority=500,prefix=8.0-rc-pr-
+            type=sha,enable=${{ github.event_name != 'pull_request' }},priority=400,prefix=8.0-rc-sha-,format=short
             type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=600,pattern=^(\d+\.\d+(\.\d+)?(-.+)?)$,group=1
             type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=580,pattern=^(\d+\.\d+(\.\d+)?)(-.+)?$,group=1
             type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=570,pattern=^(\d+\.\d+)(\.\d+)?(-.+)?$,group=1
@@ -188,12 +188,12 @@ jobs:
           flavor: |
             latest=auto
             suffix=${{ env.TAG_SUFFIX }}
-            prefix=8.0-preview-
+            prefix=8.0-rc-
           tags: |
             type=raw,enable=${{ github.event_name != 'pull_request' }},priority=699,value=${{ steps.minver.outputs.version }}
             type=ref,event=branch,priority=500
-            type=ref,event=pr,priority=500,prefix=8.0-preview-pr-
-            type=sha,enable=${{ github.event_name != 'pull_request' }},priority=400,prefix=8.0-preview-sha-,format=short
+            type=ref,event=pr,priority=500,prefix=8.0-rc-pr-
+            type=sha,enable=${{ github.event_name != 'pull_request' }},priority=400,prefix=8.0-rc-sha-,format=short
             type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=600,pattern=^(\d+\.\d+(\.\d+)?(-.+)?)$,group=1
             type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=580,pattern=^(\d+\.\d+(\.\d+)?)(-.+)?$,group=1
             type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=570,pattern=^(\d+\.\d+)(\.\d+)?(-.+)?$,group=1
@@ -286,7 +286,7 @@ jobs:
         id: build80
         shell: pwsh
         run: |
-          $aspnetImageTag80 = if ($Env:RUNNER_OS -eq 'Linux') { '8.0-preview-alpine' } else { '8.0-preview-nanoserver-1809' }
+          $aspnetImageTag80 = if ($Env:RUNNER_OS -eq 'Linux') { '8.0-rc-alpine' } else { '8.0-rc-nanoserver-1809' }
           ./docker-build.ps1 -Context ./artifacts/net8.0 -Squash -Tags "${{ steps.meta80.outputs.tags }}" -Labels "${{ steps.meta80.outputs.labels }}" -BuildArgs "ASPNET_IMAGE_TAG=$aspnetImageTag80"
 
       - name: Build and Push Sample 8.0
