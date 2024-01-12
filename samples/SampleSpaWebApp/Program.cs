@@ -1,5 +1,6 @@
 using NetLah.Diagnostics;
 using NetLah.Extensions.Logging;
+using NetLah.Extensions.SpaServices.Hosting;
 
 AppLog.InitLogger("SampleWebApp");
 AppLog.Logger.LogInformation("Application starting...");
@@ -14,7 +15,7 @@ try
     var appInfo = builder.InitializeSpaApp();
     logger.LogApplicationLifetimeEvent("Application initializing...", appInfo);
 
-    IAssemblyInfo assembly = new AssemblyInfo(typeof(WebApplicationBuilderExtensions).Assembly);
+    IAssemblyInfo assembly = new AssemblyInfo(typeof(ResponseHeadersOptions).Assembly);
     logger.LogInformation("Library:{title}; Version:{version} BuildTime:{buildTime}; Framework:{framework}",
         assembly.Title, assembly.InformationalVersion, assembly.BuildTimestampLocal, assembly.FrameworkName);
 

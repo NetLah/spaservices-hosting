@@ -4,10 +4,7 @@ internal static class AppFileVersionParserExentions
 {
     public static AppFileVersionInfo? ParseFolder(this AppFileVersionParser parser, string folderName)
     {
-        if (folderName == null)
-        {
-            throw new ArgumentNullException(nameof(folderName));
-        }
+        ArgumentNullException.ThrowIfNull(folderName);
 
         if (string.IsNullOrWhiteSpace(folderName))
         {
@@ -22,10 +19,7 @@ internal static class AppFileVersionParserExentions
 
     public static AppFileVersionInfo? ParseFile(this AppFileVersionParser parser, string fileName)
     {
-        if (fileName == null)
-        {
-            throw new ArgumentNullException(nameof(fileName));
-        }
+        ArgumentNullException.ThrowIfNull(fileName);
 
         if (string.IsNullOrWhiteSpace(fileName))
         {
@@ -44,16 +38,13 @@ internal static class AppFileVersionParserExentions
 
     public static AppFileVersionInfo? ParseStream(this AppFileVersionParser parser, Stream stream)
     {
-        if (stream == null)
-        {
-            throw new ArgumentNullException(nameof(stream));
-        }
+        ArgumentNullException.ThrowIfNull(stream);
 
         using var reader = new StreamReader(stream);
         return parser.Parse(reader);
     }
 
-    public static AppFileVersionInfo? Parse(this AppFileVersionParser parser, string fileContent)
+    public static AppFileVersionInfo? Parse(this AppFileVersionParser parser, string? fileContent)
     {
         if (string.IsNullOrWhiteSpace(fileContent))
         {

@@ -126,7 +126,7 @@ description: This is free text");
     [InlineData(true, "title8", "v8", "2022-09-18T09:58:19.1234567Z", "The desc 8", "  app  : title8 \r  version  : v8 \r  buildTime  : 2022-09-18T09:58:19.1234567Z \r  description  : The desc 8 ")]
     [InlineData(true, "title9", "v9", "2022-09-18T09:58:19.1234567Z", "The description 9", "app: title9 \n  version: v9 \n\rbuildTime: 2022-09-18T09:58:19.1234567Z \r\ndescription: The description 9\r\n")]
     [InlineData(true, null, "v10", null, null, "version:v10\rversion:v1\rversion:v2")]
-    public void Parse(bool n, string a, string v, string t, string d, string content)
+    public void Parse(bool n, string? a, string? v, string? t, string? d, string? content)
     {
         var appFileVersionInfo = new AppFileVersionParser().Parse(content);
         if (n)
