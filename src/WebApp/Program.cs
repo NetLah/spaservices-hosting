@@ -23,8 +23,8 @@ try
         assembly.Title, assembly.InformationalVersion, assembly.BuildTimestampLocal, assembly.FrameworkName);
 
     var asmSerilogAspNetCore = new AssemblyInfo(typeof(SerilogApplicationBuilderExtensions).Assembly);
-    logger.LogInformation("{title}; Version:{version} BuildTime:{buildTime}; Framework:{framework}",
-        asmSerilogAspNetCore.Title, asmSerilogAspNetCore.InformationalVersion, asmSerilogAspNetCore.BuildTimestampLocal, asmSerilogAspNetCore.FrameworkName);
+    logger.LogInformation("{title}; Version:{version} Framework:{framework}",
+        asmSerilogAspNetCore.Title, asmSerilogAspNetCore.InformationalVersion, asmSerilogAspNetCore.FrameworkName);
 #endif
 
     builder.CustomApplicationInsightsTelemetry(() => new DefaultAzureCredential());

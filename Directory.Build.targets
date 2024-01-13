@@ -57,7 +57,7 @@
     <PackageReference Update="NetLah.Extensions.Logging.Reference" Version="1.*-*" />
     <PackageReference Update="NetLah.Extensions.Logging.Serilog" Version="1.*-*" />
     <PackageReference Update="NetLah.Extensions.Logging.Serilog.AspNetCore" Version="1.*-*" />
-    <PackageReference Update="NetLah.Extensions.SpaServices.Hosting" Version="0.*-*" />
+    <PackageReference Update="NetLah.Extensions.SpaServices.Hosting" Version="1.*-*" />
     <PackageReference Update="Testing.Dynamic.Json" Version="1.*-*" />
 
     <!--tests-->

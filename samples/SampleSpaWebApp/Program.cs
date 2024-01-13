@@ -1,6 +1,6 @@
 using NetLah.Diagnostics;
 using NetLah.Extensions.Logging;
-using NetLah.Extensions.SpaServices.Hosting;
+using Serilog;
 
 AppLog.InitLogger("SampleWebApp");
 AppLog.Logger.LogInformation("Application starting...");
@@ -15,9 +15,14 @@ try
     var appInfo = builder.InitializeSpaApp();
     logger.LogApplicationLifetimeEvent("Application initializing...", appInfo);
 
-    IAssemblyInfo assembly = new AssemblyInfo(typeof(ResponseHeadersOptions).Assembly);
-    logger.LogInformation("Library:{title}; Version:{version} BuildTime:{buildTime}; Framework:{framework}",
+
+    IAssemblyInfo assembly = new AssemblyInfo(typeof(WebApplicationBuilderExtensions).Assembly);
+    logger.LogInformation("{title}; Version:{version} BuildTime:{buildTime}; Framework:{framework}",
         assembly.Title, assembly.InformationalVersion, assembly.BuildTimestampLocal, assembly.FrameworkName);
+
+    var asmSerilogAspNetCore = new AssemblyInfo(typeof(SerilogApplicationBuilderExtensions).Assembly);
+    logger.LogInformation("{title}; Version:{version} Framework:{framework}",
+        asmSerilogAspNetCore.Title, asmSerilogAspNetCore.InformationalVersion, asmSerilogAspNetCore.FrameworkName);
 
     builder.Services.AddApplicationInsightsTelemetry();
 
