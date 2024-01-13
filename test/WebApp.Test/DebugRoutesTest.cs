@@ -5,10 +5,10 @@ namespace WebApp.Test;
 public class DebugRoutesTest
 {
     [Theory]
-    [InlineData(null, null!, "debug/routes", "debug/routes1")]
+    [InlineData(null, null, "debug/routes", "debug/routes1")]
     [InlineData("debug/routes", "debug/routes", "debug/routes1")]
     [InlineData("debug/routes", "debug/routes/", "debug/routes1")]
-    public async Task DebugRoutesSuccess(string? value, string url, params string[] errorUrls)
+    public async Task DebugRoutesSuccess(string? value, string? url, params string[] errorUrls)
     {
         await using var factory = new WebApplicationFactory<Program>();
 
