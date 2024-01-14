@@ -2,7 +2,6 @@ using Azure.Identity;
 using NetLah.Diagnostics;
 using NetLah.Extensions.ApplicationInsights;
 using NetLah.Extensions.Logging;
-using Serilog;
 
 AppLog.InitLogger("WebApp");
 AppLog.Logger.LogInformation("Application starting...");
@@ -13,18 +12,18 @@ try
 
     builder.UseSerilog();
     var logger = AppLog.Logger;
+    void LogAssembly(AssemblyInfo assembly)
+    {
+        logger.LogInformation("{title}; Version:{version} Framework:{framework}",
+        assembly.Title, assembly.InformationalVersion, assembly.FrameworkName);
+    }
 
     var appInfo = builder.InitializeSpaApp();
     logger.LogApplicationLifetimeEvent("Application initializing...", appInfo);
 
 #if DEBUG
-    IAssemblyInfo assembly = new AssemblyInfo(typeof(WebApplicationBuilderExtensions).Assembly);
-    logger.LogInformation("{title}; Version:{version} BuildTime:{buildTime}; Framework:{framework}",
-        assembly.Title, assembly.InformationalVersion, assembly.BuildTimestampLocal, assembly.FrameworkName);
-
-    var asmSerilogAspNetCore = new AssemblyInfo(typeof(SerilogApplicationBuilderExtensions).Assembly);
-    logger.LogInformation("{title}; Version:{version} Framework:{framework}",
-        asmSerilogAspNetCore.Title, asmSerilogAspNetCore.InformationalVersion, asmSerilogAspNetCore.FrameworkName);
+    LogAssembly(new AssemblyInfo(typeof(WebApplicationBuilderExtensions).Assembly));
+    LogAssembly(new AssemblyInfo(typeof(Serilog.SerilogApplicationBuilderExtensions).Assembly));
 #endif
 
     builder.CustomApplicationInsightsTelemetry(() => new DefaultAzureCredential());
