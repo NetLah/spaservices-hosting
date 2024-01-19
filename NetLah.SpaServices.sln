@@ -18,6 +18,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{E6A38223-4737-47DA-8A06-D4FF2C91387A}"
 	ProjectSection(SolutionItems) = preProject
+		src\Directory.Build.override.targets = src\Directory.Build.override.targets
+		src\Directory.Build.targets = src\Directory.Build.targets
 		src\Dockerfile = src\Dockerfile
 		src\Dockerfile-windows = src\Dockerfile-windows
 	EndProjectSection

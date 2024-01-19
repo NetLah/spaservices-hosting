@@ -9,8 +9,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(FrameworkVersion)' == ''">
-    <FrameworkVersion Condition="'$(NET_3_1)' == true">3.*</FrameworkVersion>
-    <FrameworkVersion Condition="'$(NET_5_0)' == true">5.*</FrameworkVersion>
+    <FrameworkVersion Condition="'$(NET_5_0_LESS)' == true">7.*</FrameworkVersion>
     <FrameworkVersion Condition="'$(NET_6_0_UP_OR_STD)' == true">8.*</FrameworkVersion>
     <FrameworkVersion Condition="'$(FrameworkVersion)' == ''">$(LatestDevFrameworkVersion)</FrameworkVersion>
   </PropertyGroup>
@@ -52,7 +51,7 @@
     <PackageReference Update="NetLah.Abstractions" Version="1.*" />
     <PackageReference Update="NetLah.Extensions.CommandLineUtils" Version="0.*-*" />
     <PackageReference Update="NetLah.Extensions.Configuration" Version="1.*-*" />
-    <PackageReference Update="NetLah.Extensions.EventAggregator" Version="0.*-*" />
+    <PackageReference Update="NetLah.Extensions.EventAggregator" Version="1.*-*" />
     <PackageReference Update="NetLah.Extensions.HttpOverrides" Version="1.*-*" />
     <PackageReference Update="NetLah.Extensions.Logging.Reference" Version="1.*-*" />
     <PackageReference Update="NetLah.Extensions.Logging.Serilog" Version="1.*-*" />
@@ -271,8 +270,9 @@
     <PackageReference Update="Microsoft.EntityFrameworkCore.SqlServer" Version="$(EFCoreFrameworkVersion)" />
     <PackageReference Update="Microsoft.EntityFrameworkCore.Tools" Version="$(EFCoreFrameworkVersion)" PrivateAssets="All" />
     <PackageReference Update="Microsoft.SqlServer.Server" Version="1.*" />
+
+    <!-- EFCore.PG and Npgsql must same version https://github.com/npgsql/efcore.pg/issues/3011 -->
     <PackageReference Update="Npgsql" Version="$(EFCoreFrameworkVersion)" />
-    <PackageReference Update="Npgsql" Version="8.*" Condition="'$(NET_6_0)' == true Or '$(NET_7_0)' == true" />
     <PackageReference Update="Npgsql.EntityFrameworkCore.PostgreSQL" Version="$(EFCoreFrameworkVersion)" />
     <PackageReference Update="EFCore.NamingConventions" Version="$(EFCoreFrameworkVersion)" />
 
@@ -387,7 +387,7 @@
 
   </ItemGroup>
 
-  <ItemGroup Condition="'$(NET_5_0_LESS)' == true">
+  <ItemGroup Condition="'$(NET_5_0_LESS_OR_STD)' == true">
     <PackageReference Update="Serilog" Version="3.0.*" />
     <PackageReference Update="Serilog.AspNetCore" Version="7.*" />
     <PackageReference Update="Serilog.Extensions.Hosting" Version="7.*" />
@@ -395,7 +395,7 @@
     <PackageReference Update="Serilog.Formatting.Compact" Version="1.*" />
     <PackageReference Update="Serilog.Settings.Configuration" Version="7.*" />
     <PackageReference Update="Serilog.Sinks.Console" Version="4.*" />
-    <PackageReference Update="Serilog.Sinks.Seq" Version="5.*" />
+    <PackageReference Update="Serilog.Sinks.Seq" Version="6.*" />
 
     <PackageReference Update="xunit.runner.visualstudio" Version="2.4.*" PrivateAssets="All" />
   </ItemGroup>
