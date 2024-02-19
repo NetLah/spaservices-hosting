@@ -4,6 +4,7 @@ public class AppOptions
 {
     public bool HttpsRedirectionEnabled { get; set; }
     public bool HstsEnabled { get; set; }
+    public bool IsShowAssemblies { get; set; }
 
     public string? WwwRoot { get; set; }
     public string? DefaultPage { get; set; }    // "/index.html"

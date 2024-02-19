@@ -2,6 +2,7 @@ using Azure.Identity;
 using NetLah.Diagnostics;
 using NetLah.Extensions.ApplicationInsights;
 using NetLah.Extensions.Logging;
+using NetLah.Extensions.SpaServices.Hosting;
 
 AppLog.InitLogger("WebApp");
 AppLog.Logger.LogInformation("Application starting...");
@@ -14,17 +15,31 @@ try
     var logger = AppLog.Logger;
     void LogAssembly(AssemblyInfo assembly)
     {
-        logger.LogInformation("{title}; Version:{version} Framework:{framework}",
-        assembly.Title, assembly.InformationalVersion, assembly.FrameworkName);
+        if (assembly.BuildTime.HasValue)
+        {
+            logger.LogInformation("{title}; Version:{version} BuildTime:{buildTime} Framework:{framework}",
+                assembly.Title, assembly.InformationalVersion, assembly.BuildTimestampLocal, assembly.FrameworkName);
+        }
+        else
+        {
+            logger.LogInformation("{title}; Version:{version} Framework:{framework}",
+                assembly.Title, assembly.InformationalVersion, assembly.FrameworkName);
+        }
     }
 
     var appInfo = builder.InitializeSpaApp();
     logger.LogApplicationLifetimeEvent("Application initializing...", appInfo);
 
-#if DEBUG
-    LogAssembly(new AssemblyInfo(typeof(WebApplicationBuilderExtensions).Assembly));
-    LogAssembly(new AssemblyInfo(typeof(Serilog.SerilogApplicationBuilderExtensions).Assembly));
-#endif
+    var appOptions = builder.GetAppOptionsOrDefault();
+    if (builder.Environment.IsDevelopment() || appOptions.IsShowAssemblies)
+    {
+        LogAssembly(new AssemblyInfo(typeof(NetLah.Extensions.HttpOverrides.HttpOverridesExtensions).Assembly));
+        LogAssembly(new AssemblyInfo(typeof(AppLogReference).Assembly));
+        LogAssembly(new AssemblyInfo(typeof(AppLog).Assembly));
+        LogAssembly(new AssemblyInfo(typeof(AspNetCoreApplicationBuilderExtensions).Assembly));
+        LogAssembly(new AssemblyInfo(typeof(WebApplicationBuilderExtensions).Assembly));
+        LogAssembly(new AssemblyInfo(typeof(Serilog.SerilogApplicationBuilderExtensions).Assembly));
+    }
 
     builder.CustomApplicationInsightsTelemetry(() => new DefaultAzureCredential());
 

@@ -3,7 +3,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace NetLah.Extensions.SpaServices.Hosting;
 
-internal static class WebApplicationPropertiesExtensions
+public static class WebApplicationPropertiesExtensions
 {
     public static TValue? GetProperty<TValue>(this WebApplicationBuilder builder)
         => builder.Host.GetProperty<TValue>();
@@ -64,7 +64,7 @@ internal static class WebApplicationPropertiesExtensions
         return value;
     }
 
-    public static AppInfo GetAppInfoOrDefault(this WebApplicationBuilder builder)
+    internal static AppInfo GetAppInfoOrDefault(this WebApplicationBuilder builder)
     {
         if (builder.GetProperty<AppInfo>() is not AppInfo appInfo)
         {
@@ -74,7 +74,7 @@ internal static class WebApplicationPropertiesExtensions
         return appInfo;
     }
 
-    public static WebApplicationBuilder SetAppInfo(this WebApplicationBuilder builder, AppInfo appInfo)
+    internal static WebApplicationBuilder SetAppInfo(this WebApplicationBuilder builder, AppInfo appInfo)
     {
         builder.Host.Properties.SetProperty(appInfo);
         return builder;
