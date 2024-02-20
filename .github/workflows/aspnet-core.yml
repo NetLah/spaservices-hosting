@@ -209,28 +209,28 @@ jobs:
         run: dotnet test -c Release --no-build --verbosity normal
 
       - name: Publish
+        shell: pwsh
         run: |
-          dotnet publish src/WebApp -c Release -f net6.0 --no-build -o artifacts/net6.0/app
-          dotnet publish src/WebApp -c Release -f net7.0 --no-build -o artifacts/net7.0/app
-          dotnet publish src/WebApp -c Release -f net8.0 --no-build -o artifacts/net8.0/app
+          foreach ($framework in @('net6.0', 'net7.0', 'net8.0')) {
+            dotnet publish src/WebApp -c Release -f $framework --no-build -o "artifacts/$($framework)/app"
+            Copy-Item -Force -Path shared/appsettings.Development.json -Destination "artifacts/$($framework)/app/" -ErrorAction Stop -Verbose
+          }
 
       - name: Split sample wwwroot
         shell: pwsh
         run: |
-          $webFolder = New-Item -Name 'artifacts/net6.0/wwwroot' -ItemType 'Directory' -ErrorAction Stop
-          Move-Item -Force -Path 'artifacts/net6.0/app/wwwroot/*' -Destination "$webFolder/" -Exclude favicon.ico -ErrorAction Stop -Verbose
-          $webFolder = New-Item -Name 'artifacts/net7.0/wwwroot' -ItemType 'Directory' -ErrorAction Stop
-          Move-Item -Force -Path 'artifacts/net7.0/app/wwwroot/*' -Destination "$webFolder/" -Exclude favicon.ico -ErrorAction Stop -Verbose
-          $webFolder = New-Item -Name 'artifacts/net8.0/wwwroot' -ItemType 'Directory' -ErrorAction Stop
-          Move-Item -Force -Path 'artifacts/net8.0/app/wwwroot/*' -Destination "$webFolder/" -Exclude favicon.ico -ErrorAction Stop -Verbose
+          foreach ($framework in @('net6.0', 'net7.0', 'net8.0')) {
+            $webFolder = New-Item -Name "artifacts/$($framework)/wwwroot" -ItemType 'Directory' -ErrorAction Stop
+            Move-Item -Force -Path "artifacts/$($framework)/app/wwwroot/*" -Destination "$webFolder/" -Exclude favicon.ico -ErrorAction Stop -Verbose
+          }
 
       - name: Copy Dockerfile
         if: ${{ success() && (runner.os == 'Linux' || runner.os == 'Windows') }}
         shell: pwsh
         run: |
-          Copy-Item -Recurse -Force -Path '.dockerignore',".docker-$( if ($Env:RUNNER_OS -eq 'Linux') { 'linux' } else { 'windows' } )/*" -Destination artifacts/net6.0/ -ErrorAction Stop -Verbose
-          Copy-Item -Recurse -Force -Path '.dockerignore',".docker-$( if ($Env:RUNNER_OS -eq 'Linux') { 'linux' } else { 'windows' } )/*" -Destination artifacts/net7.0/ -ErrorAction Stop -Verbose
-          Copy-Item -Recurse -Force -Path '.dockerignore',".docker-$( if ($Env:RUNNER_OS -eq 'Linux') { 'linux' } else { 'windows' } )/*" -Destination artifacts/net8.0/ -ErrorAction Stop -Verbose
+          foreach ($framework in @('net6.0', 'net7.0', 'net8.0')) {
+            Copy-Item -Recurse -Force -Path '.dockerignore',".docker-$( if ($Env:RUNNER_OS -eq 'Linux') { 'linux' } else { 'windows' } )/*" -Destination "artifacts/$($framework)/" -ErrorAction Stop -Verbose
+          }
 
       - name: Enabling Docker Daemon With experimental features
         if: ${{ success() && runner.os == 'Linux' }}
