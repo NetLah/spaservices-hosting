@@ -1,4 +1,5 @@
 using Azure.Identity;
+using Microsoft.AspNetCore.SpaServices;
 using NetLah.Diagnostics;
 using NetLah.Extensions.ApplicationInsights;
 using NetLah.Extensions.Logging;
@@ -38,6 +39,7 @@ try
         LogAssembly(new AssemblyInfo(typeof(AppLog).Assembly));
         LogAssembly(new AssemblyInfo(typeof(AspNetCoreApplicationBuilderExtensions).Assembly));
         LogAssembly(new AssemblyInfo(typeof(WebApplicationBuilderExtensions).Assembly));
+        LogAssembly(new AssemblyInfo(typeof(SpaOptions).Assembly));
         LogAssembly(new AssemblyInfo(typeof(Serilog.SerilogApplicationBuilderExtensions).Assembly));
     }
 
