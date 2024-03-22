@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.SpaServices;
 using NetLah.Diagnostics;
 using NetLah.Extensions.ApplicationInsights;
 using NetLah.Extensions.Logging;
+using NetLah.Extensions.SpaServices.Hosting;
 
 AppLog.InitLogger("SampleWebApp");
 AppLog.Logger.LogInformation("Application starting...");
@@ -30,8 +31,8 @@ try
     var appInfo = builder.InitializeSpaApp();
     logger.LogApplicationLifetimeEvent("Application initializing...", appInfo);
 
-    var isShowAssemblies = !false.ToString().Equals(builder.Configuration["IsShowAssemblies"], StringComparison.InvariantCultureIgnoreCase);
-    if (!builder.Environment.IsDevelopment() || isShowAssemblies)
+    var appOptions = builder.GetAppOptionsOrDefault();
+    if (builder.Environment.IsDevelopment() || appOptions.IsShowAssemblies)
     {
         LogAssembly(new AssemblyInfo(typeof(NetLah.Extensions.HttpOverrides.HttpOverridesExtensions).Assembly));
         LogAssembly(new AssemblyInfo(typeof(AppLogReference).Assembly));
