@@ -64,4 +64,4 @@ finally
     Serilog.Log.CloseAndFlush();
 }
 
-public partial class Program { }
+public partial class Program { protected Program() { } }
