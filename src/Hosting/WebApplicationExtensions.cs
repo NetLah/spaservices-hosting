@@ -11,6 +11,8 @@ namespace Microsoft.AspNetCore.Builder;
 
 public static class WebApplicationExtensions
 {
+    private static readonly string[] DefaultHttpMethods = new[] { "GET" };
+
     public static WebApplication UseSpaApp(this WebApplication app, ILogger? logger = null, Action<WebApplication>? action = null)
     {
         logger ??= LogHelper.LoggerOrDefault;
@@ -31,7 +33,7 @@ public static class WebApplicationExtensions
                 app.UseHsts();
             }
         }
-        logger.LogInformation("Use Hsts: {enalbed}", !app.Environment.IsDevelopment() && appOptions.HstsEnabled);
+        logger.LogInformation("Use Hsts: {enabled}", !app.Environment.IsDevelopment() && appOptions.HstsEnabled);
 
         if (appOptions.HttpsRedirectionEnabled)
         {
@@ -44,20 +46,41 @@ public static class WebApplicationExtensions
         var staticFileOptions = new StaticFileOptions();
 
         var responseHeaders = appOptions.ResponseHeaders;
+
+        if (responseHeaders.List is { } list && list.Count != 0)
+        {
+            foreach (var item in list)
+            {
+                if (!string.IsNullOrWhiteSpace(item))
+                {
+                    var pos = item.IndexOf('=');
+                    if (pos > 0)
+                    {
+                        var hKey = item[..pos];
+                        var hValue = item[(pos + 1)..];
+                        AddHeader(hKey, hValue);
+                    }
+                }
+            }
+
+            void AddHeader(string key, string value)
+            {
+                responseHeaders.Headers ??= new Dictionary<string, string?>();
+                responseHeaders.Headers.TryAdd(key, value);
+            }
+        }
+
         var isResponseHeadersEnabled = responseHeaders != null
             && responseHeaders.Headers is { } headers
-            && headers.Any()
+            && headers.Count != 0
             && responseHeaders.IsEnabled;
-
-#pragma warning disable S2589 // Boolean expressions should not be gratuitous
         if (isResponseHeadersEnabled && responseHeaders != null)
         {
-            var headerNames = responseHeaders.Headers.Keys.ToArray();
-            logger.LogInformation("ResponseHeadersHandler Setup for {headerNames}", headerNames);
+            var headerNames = responseHeaders.Headers.Keys.OrderBy(i => i, StringComparer.OrdinalIgnoreCase).ToArray();
+            logger.LogInformation("ResponseHeadersHandler Setup for {headerNames}", (object)headerNames);
             var handler = new ResponseHeadersHandler(logger, responseHeaders);
             staticFileOptions.OnPrepareResponse = handler.PrepareResponse;
         }
-#pragma warning restore S2589 // Boolean expressions should not be gratuitous
 
         app.UseSpaStaticFiles(staticFileOptions);
 
@@ -132,7 +155,7 @@ public static class WebApplicationExtensions
             app.MapControllerRoute(name: string.Empty,
                 pattern: routeGeneralVersion,
                 defaults: new { controller = "General", action = nameof(GeneralController.Version) })
-                .WithMetadata(new HttpMethodMetadata(new[] { "GET" }));
+                .WithMetadata(new HttpMethodMetadata(DefaultHttpMethods));
         }
 
         if (routeGeneralInfo != null)
@@ -145,7 +168,7 @@ public static class WebApplicationExtensions
             app.MapControllerRoute(name: string.Empty,
                 pattern: routeGeneralInfo,
                 defaults: new { controller = "General", action = nameof(GeneralController.Info) })
-                .WithMetadata(new HttpMethodMetadata(new[] { "GET" }));
+                .WithMetadata(new HttpMethodMetadata(DefaultHttpMethods));
         }
 
         if (routeGeneralSys != null)
@@ -158,7 +181,7 @@ public static class WebApplicationExtensions
             app.MapControllerRoute(name: string.Empty,
                 pattern: routeGeneralSys,
                 defaults: new { controller = "General", action = nameof(GeneralController.Sys) })
-                .WithMetadata(new HttpMethodMetadata(new[] { "GET" }));
+                .WithMetadata(new HttpMethodMetadata(DefaultHttpMethods));
         }
 
         return app;

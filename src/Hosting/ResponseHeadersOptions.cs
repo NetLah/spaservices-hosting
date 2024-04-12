@@ -10,6 +10,8 @@ public class ResponseHeadersOptions
 
     public Dictionary<string, string?> Headers { get; set; } = new Dictionary<string, string?>();
 
+    public List<string?> List { get; set; } = new List<string?>();
+
     public List<string?>? FilterContentType { get; set; }
 
     public List<int>? FilterHttpStatusCode { get; set; }

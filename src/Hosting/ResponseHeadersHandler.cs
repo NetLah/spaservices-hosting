@@ -42,7 +42,7 @@ internal class ResponseHeadersHandler
             }
 
             if (responseHeaders.FilterContentType is not { } listContentType
-                || !listContentType.Any()
+                || listContentType.Count == 0
                 || responseHeaders.IsAnyContentType)
             {
                 _matchContentType = _ => true;
