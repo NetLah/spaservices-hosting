@@ -68,6 +68,8 @@ public static class WebApplicationBuilderExtensions
             spaStaticFilesOptions.RootPath = wwwroot;
         });
 
+        MountFileHelpers.Configure(builder.Services, builder.Configuration);
+
         return builder;
     }
 }
