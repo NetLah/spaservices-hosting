@@ -11,6 +11,10 @@ try
 {
     ApplicationInfo.TryInitialize(null);
     var builder = WebApplication.CreateBuilder(args);
+    builder.Configuration
+        .AddAddFileConfiguration()
+        .AddTransformConfiguration()
+        .AddMapConfiguration();
 
     builder.UseSerilog();
     var logger = AppLog.Logger;
@@ -34,6 +38,7 @@ try
     var appOptions = builder.GetAppOptionsOrDefault();
     if (builder.Environment.IsDevelopment() || appOptions.IsShowAssemblies)
     {
+        LogAssembly(new AssemblyInfo(typeof(NetLah.Extensions.Configuration.ConfigurationBuilderBuilder).Assembly));
         LogAssembly(new AssemblyInfo(typeof(NetLah.Extensions.HttpOverrides.HttpOverridesExtensions).Assembly));
         LogAssembly(new AssemblyInfo(typeof(AppLogReference).Assembly));
         LogAssembly(new AssemblyInfo(typeof(AppLog).Assembly));

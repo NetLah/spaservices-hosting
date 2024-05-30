@@ -11,7 +11,11 @@
     <InternalsVisibleTo Include="WebApp.Test" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(NET_6_0)' == true">
+  <ItemGroup>
+    <PackageReference Include="NetLah.Extensions.Configuration" />
+  </ItemGroup>
+
+    <ItemGroup Condition="'$(NET_6_0)' == true">
     <PackageReference Include="Azure.Core" />
     <PackageReference Include="Azure.Identity" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" />
