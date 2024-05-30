@@ -47,29 +47,6 @@ public static class WebApplicationExtensions
 
         var responseHeaders = appOptions.ResponseHeaders;
 
-        if (responseHeaders.List is { } list && list.Count != 0)
-        {
-            foreach (var item in list)
-            {
-                if (!string.IsNullOrWhiteSpace(item))
-                {
-                    var pos = item.IndexOf('=');
-                    if (pos > 0)
-                    {
-                        var hKey = item[..pos];
-                        var hValue = item[(pos + 1)..];
-                        AddHeader(hKey, hValue);
-                    }
-                }
-            }
-
-            void AddHeader(string key, string value)
-            {
-                responseHeaders.Headers ??= new Dictionary<string, string?>();
-                responseHeaders.Headers.TryAdd(key, value);
-            }
-        }
-
         var isResponseHeadersEnabled = responseHeaders != null
             && responseHeaders.Headers is { } headers
             && headers.Count != 0
