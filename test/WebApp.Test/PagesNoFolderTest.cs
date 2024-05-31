@@ -1,9 +1,7 @@
 namespace WebApp.Test;
 
-public class PagesNoFolderTest : BasePagesTest<Program>, IClassFixture<NoFolderCustomWebApplicationFactory>
+public class PagesNoFolderTest(NoFolderCustomWebApplicationFactory factory) : BasePagesTest<Program>(factory), IClassFixture<NoFolderCustomWebApplicationFactory>
 {
-    public PagesNoFolderTest(NoFolderCustomWebApplicationFactory factory) : base(factory) { }
-
     [Theory]
     [InlineData("/")]
     [InlineData("/any")]

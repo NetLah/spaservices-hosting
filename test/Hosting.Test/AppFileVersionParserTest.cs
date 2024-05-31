@@ -23,9 +23,7 @@ public class AppFileVersionParserTest
     {
         var stream = TestHelper.GetEmbeddedResourceStream("public1..version");
 
-#pragma warning disable CS8604 // Possible null reference argument.
-        var appFileVersionInfo = new AppFileVersionParser().ParseStream(stream);
-#pragma warning restore CS8604 // Possible null reference argument.
+        var appFileVersionInfo = new AppFileVersionParser().ParseStream(stream!);
 
         TestHelper.AssertPublic1_Version(appFileVersionInfo);
     }
@@ -34,11 +32,7 @@ public class AppFileVersionParserTest
     public void ParseSuccess2()
     {
         var fileContent = TestHelper.GetEmbeddedTemplateContent("public1..version");
-
-#pragma warning disable CS8604 // Possible null reference argument.
         var appFileVersionInfo = new AppFileVersionParser().Parse(fileContent);
-#pragma warning restore CS8604 // Possible null reference argument.
-
         TestHelper.AssertPublic1_Version(appFileVersionInfo);
     }
 

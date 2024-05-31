@@ -1,9 +1,7 @@
 namespace WebApp.Test;
 
-public class PagesPublicTest : BasePagesTest<Program>, IClassFixture<PublicCustomWebApplicationFactory>
+public class PagesPublicTest(PublicCustomWebApplicationFactory factory) : BasePagesTest<Program>(factory), IClassFixture<PublicCustomWebApplicationFactory>
 {
-    public PagesPublicTest(PublicCustomWebApplicationFactory factory) : base(factory) { }
-
     [Theory]
     [InlineData("/")]
     [InlineData("/any")]

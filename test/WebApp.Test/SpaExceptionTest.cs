@@ -43,9 +43,9 @@ public class SpaExceptionTest
 
         switch (method)
         {
-            case "POST": asserted = true; await TestHelper.AssertIndexHtmlNotFoundAsync(() => client.PostAsync(url, EmptryContent())); break;
-            case "PUT": asserted = true; await TestHelper.AssertIndexHtmlNotFoundAsync(() => client.PutAsync(url, EmptryContent())); break;
-            case "PATCH": asserted = true; await TestHelper.AssertIndexHtmlNotFoundAsync(() => client.PatchAsync(url, EmptryContent())); break;
+            case "POST": asserted = true; await TestHelper.AssertIndexHtmlNotFoundAsync(() => client.PostAsync(url, EmptyContent())); break;
+            case "PUT": asserted = true; await TestHelper.AssertIndexHtmlNotFoundAsync(() => client.PutAsync(url, EmptyContent())); break;
+            case "PATCH": asserted = true; await TestHelper.AssertIndexHtmlNotFoundAsync(() => client.PatchAsync(url, EmptyContent())); break;
             case "DELETE": asserted = true; await TestHelper.AssertIndexHtmlNotFoundAsync(() => client.DeleteAsync(url)); break;
             case "OPTIONS": asserted = true; await TestHelper.AssertIndexHtmlNotFoundAsync(() => client.SendAsync(new HttpRequestMessage(HttpMethod.Options, url))); break;
             default: Assert.Fail("Invalid method"); break;
@@ -53,7 +53,7 @@ public class SpaExceptionTest
 
         Assert.True(asserted);
 
-        static HttpContent? EmptryContent()
+        static HttpContent? EmptyContent()
         {
             return default;
         }
