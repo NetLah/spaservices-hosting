@@ -15,14 +15,14 @@ public static class ApplicationInsightsExtensions
 
     public static WebApplicationBuilder CustomApplicationInsightsTelemetry(this WebApplicationBuilder builder, Func<TokenCredential> tokenCredentialFactory, ILogger? logger = null)
     {
-        bool isDisabled = builder.Configuration.GetValue<bool>("ApplicationInsights:IsDisabled");
+        var isDisabled = builder.Configuration.GetValue<bool>("ApplicationInsights:IsDisabled");
         if (!isDisabled)
         {
             logger ??= _loggerLazy.Value!;
             logger?.LogDebug("ApplicationInsights configured");
             builder.Services.AddApplicationInsightsTelemetry(builder.Configuration);
 
-            string? apiKey = builder.Configuration["ApplicationInsights:AuthenticationApiKey"];
+            var apiKey = builder.Configuration["ApplicationInsights:AuthenticationApiKey"];
             if (!string.IsNullOrEmpty(apiKey))
             {
                 logger?.LogDebug("ApplicationInsights Live Metrics with AuthenticationApiKey");
@@ -30,7 +30,7 @@ public static class ApplicationInsightsExtensions
             }
             else
             {
-                bool isEnabledLiveMetrics = builder.Configuration.GetValue<bool>("ApplicationInsights:IsEnabledLiveMetrics");
+                var isEnabledLiveMetrics = builder.Configuration.GetValue<bool>("ApplicationInsights:IsEnabledLiveMetrics");
                 if (isEnabledLiveMetrics)
                 {
                     logger?.LogDebug("ApplicationInsights Live Metrics with Azure AD");

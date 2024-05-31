@@ -11,7 +11,7 @@ namespace Microsoft.AspNetCore.Builder;
 
 public static class WebApplicationExtensions
 {
-    private static readonly string[] DefaultHttpMethods = new[] { "GET" };
+    private static readonly string[] DefaultHttpMethods = ["GET"];
 
     public static WebApplication UseSpaApp(this WebApplication app, ILogger? logger = null, Action<WebApplication>? action = null)
     {

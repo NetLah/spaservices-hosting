@@ -3,14 +3,9 @@ using Microsoft.Extensions.FileProviders;
 
 namespace NetLah.Extensions.SpaServices.Hosting;
 
-internal class MountSpaStaticFileProvider : ISpaStaticFileProvider
+internal class MountSpaStaticFileProvider(IDecorator<ISpaStaticFileProvider> decorator, MountFileProviderOptions options) : ISpaStaticFileProvider
 {
-    public MountSpaStaticFileProvider(IDecorator<ISpaStaticFileProvider> decorator, MountFileProviderOptions options)
-    {
-        FileProvider = decorator.Instance.FileProvider == null
-            ? decorator.Instance.FileProvider
-            : new MountFileProvider(decorator.Instance.FileProvider, options);
-    }
-
-    public IFileProvider? FileProvider { get; }
+    public IFileProvider? FileProvider { get; } = decorator.Instance.FileProvider == null
+        ? decorator.Instance.FileProvider
+        : new MountFileProvider(decorator.Instance.FileProvider, options);
 }

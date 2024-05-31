@@ -21,7 +21,7 @@ internal class ResponseHeadersHandler
             .Select(kv => new KeyValuePair<string, StringValues>(kv.Key, new StringValues(kv.Value)))
             .ToList();
 
-        if (!responseHeaders.IsEnabled || !_headers.Any())
+        if (!responseHeaders.IsEnabled || _headers.Count == 0)
         {
             _matchStatusCode = _ => false;
             _matchContentType = _ => false;
@@ -30,9 +30,9 @@ internal class ResponseHeadersHandler
         else
         {
             if (responseHeaders.FilterHttpStatusCode is { } listHttpStatusCode
-                && listHttpStatusCode.Any())
+                && listHttpStatusCode.Count != 0)
             {
-                _statusCodes = listHttpStatusCode.ToHashSet();
+                _statusCodes = [.. listHttpStatusCode];
                 _matchStatusCode = statusCode => _statusCodes.Contains(statusCode);
                 logger.LogInformation("ResponseHeadersHandler StatusCode in list");
             }
@@ -51,7 +51,7 @@ internal class ResponseHeadersHandler
             else
             {
                 _contentTypeHashSet = listContentType.ToHashSet(StringComparer.InvariantCultureIgnoreCase);
-                _contentTypeList = _contentTypeHashSet.ToList();
+                _contentTypeList = [.. _contentTypeHashSet];
 
                 if (responseHeaders.IsContentTypeContainsMatch)
                 {

@@ -5,7 +5,7 @@ namespace NetLah.Extensions.SpaServices.Hosting;
 
 public class InfoCollector : IInfoCollector
 {
-    public List<string> Logs { get; } = new List<string>();
+    public List<string> Logs { get; } = [];
 
     public IInfoCollector Add<T>(string key, T value)
     {
@@ -24,8 +24,8 @@ public class InfoCollector : IInfoCollector
             .Add("HostFramework", appInfo.HostFrameworkName)
             .Add("HostBuildTime", appInfo.HostBuildTimestampLocal)
             .Add("Environment", env.EnvironmentName)
-            .Add("Timezone", TimeZoneInfo.Local)
-            .Add("TimezoneSG", TimeZoneLocalHelper.GetSingaporeOrCustomTimeZone())
+            .Add("TimeZone", TimeZoneInfo.Local)
+            .Add("TimeZoneSG", TimeZoneLocalHelper.GetSingaporeOrCustomTimeZone())
             .Add("ContentRootPath", env.ContentRootPath)
             .Add("RootPath (PWD)", Directory.GetCurrentDirectory())
             .Add("BaseDirectory", AppDomain.CurrentDomain.BaseDirectory)

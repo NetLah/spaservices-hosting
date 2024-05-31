@@ -7,36 +7,26 @@ public interface IDecorator<out TService>
     TService Instance { get; }
 }
 
-internal class Decorator<TService> : IDecorator<TService>
+internal class Decorator<TService>(TService instance) : IDecorator<TService>
 {
-    public TService Instance { get; }
-
-    public Decorator(TService instance)
-    {
-        Instance = instance;
-    }
+    public TService Instance { get; } = instance;
 }
 
-internal class Decorator<TService, TImplementation> : Decorator<TService>
+internal class Decorator<TService, TImplementation>(TImplementation instance) : Decorator<TService>(instance)
     where TImplementation : class, TService
 {
-    public Decorator(TImplementation instance) : base(instance) { }
 }
 
-internal sealed class DisposableDecorator<TService> : Decorator<TService>, IDisposable
+internal sealed class DisposableDecorator<TService>(TService instance) : Decorator<TService>(instance), IDisposable
 {
-    public DisposableDecorator(TService instance) : base(instance) { }
-
     public void Dispose()
     {
         (Instance as IDisposable)?.Dispose();
     }
 }
 
-internal sealed class AsyncDisposableDecorator<TService> : Decorator<TService>, IAsyncDisposable
+internal sealed class AsyncDisposableDecorator<TService>(TService instance) : Decorator<TService>(instance), IAsyncDisposable
 {
-    public AsyncDisposableDecorator(TService instance) : base(instance) { }
-
     public ValueTask DisposeAsync()
     {
         return Instance is IAsyncDisposable asyncDisposable ? asyncDisposable.DisposeAsync() : ValueTask.CompletedTask;

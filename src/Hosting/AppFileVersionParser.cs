@@ -4,10 +4,16 @@ using System.Text.RegularExpressions;
 
 namespace NetLah.Extensions.SpaServices.Hosting;
 
-internal class AppFileVersionParser
+internal partial class AppFileVersionParser
 {
-    private static readonly Regex KeyValueRegex = new("^\\s*(?<key>app|version|buildTime|description)\\s*:(?<value>.{1,100})$",
-        RegexOptions.Compiled | RegexOptions.IgnoreCase);
+#if NET7_0_OR_GREATER
+    private static readonly Regex KeyValueRegex = KeyValueRegexClass();
+
+    [GeneratedRegex("^\\s*(?<key>app|version|buildTime|description)\\s*:(?<value>.{1,100})$", RegexOptions.IgnoreCase | RegexOptions.Compiled, "en-US")]
+    private static partial Regex KeyValueRegexClass();
+#else
+    private static readonly Regex KeyValueRegex = new("^\\s*(?<key>app|version|buildTime|description)\\s*:(?<value>.{1,100})$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+#endif
 
 #pragma warning disable CA1822 // Mark members as static
     public AppFileVersionInfo? Parse(TextReader reader)
@@ -22,8 +28,8 @@ internal class AppFileVersionParser
         {
             if (!string.IsNullOrWhiteSpace(line))
             {
-                if (line.IndexOf(":") is { } index &&
-                    index > 0 &&
+                var index = line.IndexOf(':');
+                if (index > 0 &&
                     KeyValueRegex.Match(line) is { } m &&
                     m.Success)
                 {

@@ -5,14 +5,9 @@ namespace NetLah.Extensions.SpaServices.Hosting.Controllers;
 //[Route("api/v1/[controller]/[action]")]
 [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
 [ApiExplorerSettings(IgnoreApi = true)]
-public class GeneralController : ControllerBase
+public class GeneralController(IAppInfo appInfo) : ControllerBase
 {
-    private readonly IAppInfo _appInfo;
-
-    public GeneralController(IAppInfo appInfo)
-    {
-        _appInfo = appInfo;
-    }
+    private readonly IAppInfo _appInfo = appInfo;
 
     public string Version() => _appInfo.Version;
 
