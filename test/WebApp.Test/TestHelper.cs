@@ -9,13 +9,11 @@ internal static class TestHelper
 
     public static WebApplicationBuilder CreateWebApplicationBuilder(string environmentName = DefaultConfig.TestingEnvironmentConst)
     {
-        var builder = WebApplication.CreateBuilder(
-            new[] {
-                $"--environment={environmentName}",
-                $"--contentRoot={ContentRoot}",
-                "--applicationNAME=WebApp",
-                }
-            );
+        var builder = WebApplication.CreateBuilder([
+            $"--environment={environmentName}",
+            $"--contentRoot={ContentRoot}",
+            "--applicationNAME=WebApp",
+        ]);
 
         builder.WebHost.UseTestServer();
 

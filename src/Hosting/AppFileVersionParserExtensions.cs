@@ -1,6 +1,6 @@
 ﻿namespace NetLah.Extensions.SpaServices.Hosting;
 
-internal static class AppFileVersionParserExentions
+internal static class AppFileVersionParserExtensions
 {
     public static AppFileVersionInfo? ParseFolder(this AppFileVersionParser parser, string folderName)
     {

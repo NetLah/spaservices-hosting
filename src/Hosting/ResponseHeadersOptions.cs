@@ -8,7 +8,7 @@ public class ResponseHeadersOptions
 
     public bool IsAnyContentType { get; set; } = false;
 
-    public Dictionary<string, string?> Headers { get; set; } = new Dictionary<string, string?>();
+    public Dictionary<string, string?> Headers { get; set; } = [];
 
     public List<string?>? FilterContentType { get; set; }
 

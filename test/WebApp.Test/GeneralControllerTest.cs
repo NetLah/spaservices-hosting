@@ -102,8 +102,8 @@ public class GeneralControllerTest
         Assert.Contains("HostFramework: ", content);
         Assert.Contains("HostBuildTime: ", content);
         Assert.Contains("Environment: Testing", content);
-        Assert.Contains("Timezone: ", content);
-        Assert.Contains("TimezoneSG: ", content);
+        Assert.Contains("TimeZone: ", content);
+        Assert.Contains("TimeZoneSG: ", content);
         Assert.Contains("ContentRootPath: ", content);
         Assert.Contains("RootPath (PWD): ", content);
         Assert.Contains("BaseDirectory: ", content);

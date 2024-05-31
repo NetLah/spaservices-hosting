@@ -3,6 +3,8 @@
 # All files
 [*]
 indent_style = space
+spelling_languages = en-us
+spelling_exclusion_path = .\exclusion.dic
 
 # Xml files
 [{*.xml,*.csproj,*.props,*.targets}]

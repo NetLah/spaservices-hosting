@@ -2,12 +2,9 @@
 
 namespace WebApp.Test;
 
-public abstract class BasePagesTest<TEntryPoint> where TEntryPoint : class
+public abstract class BasePagesTest<TEntryPoint>(WebApplicationFactory<TEntryPoint> factory) where TEntryPoint : class
 {
-    protected readonly HttpClient _client;
-
-    protected BasePagesTest(WebApplicationFactory<TEntryPoint> factory)
-        => _client = factory.CreateClientNoAutoRedirect();
+    protected readonly HttpClient _client = factory.CreateClientNoAutoRedirect();
 
     protected Task AssertIndexHtmlNotFoundAsync(string url) => TestHelper.AssertIndexHtmlNotFoundAsync(_client, url);
 
