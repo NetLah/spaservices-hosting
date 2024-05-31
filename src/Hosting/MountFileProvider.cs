@@ -4,15 +4,20 @@ using Microsoft.Extensions.Primitives;
 
 namespace NetLah.Extensions.SpaServices.Hosting;
 
-internal class MountFileProvider : IFileProvider
+internal class MountFileProvider(IFileProvider fileProvider, MountFileProviderOptions options) : IFileProvider
 {
-    private readonly IFileProvider _fileProvider;
-    private readonly MountFileProviderOptions _options;
+    private readonly IFileProvider _fileProvider = fileProvider;
+    private readonly IDictionary<string, string> _fileMap = options?.Files ?? new Dictionary<string, string>();
+    private readonly (string path, Entry value)[] _folderMap = options?
+        .Folders?
+        .Select(kv => (kv.Key, new Entry(kv.Key.Length - 1, new PhysicalFileProvider(kv.Value))))
+        .ToArray()
+        ?? [];
 
-    public MountFileProvider(IFileProvider fileProvider, MountFileProviderOptions options)
+    private class Entry(int length, IFileProvider fileProvider)
     {
-        _fileProvider = fileProvider;
-        _options = options;
+        public int Length { get; } = length;
+        public IFileProvider FileProvider { get; } = fileProvider;
     }
 
     public IDirectoryContents GetDirectoryContents(string subpath)
@@ -22,10 +27,21 @@ internal class MountFileProvider : IFileProvider
 
     public IFileInfo GetFileInfo(string subpath)
     {
-        if (_options.Files.TryGetValue(subpath, out var source))
+        if (!string.IsNullOrEmpty(subpath))
         {
-            var fileInfo = new FileInfo(source);
-            return fileInfo.Exists ? new PhysicalFileInfo(fileInfo) : new NotFoundFileInfo(subpath);
+            if (_fileMap.TryGetValue(subpath, out var source))
+            {
+                var fileInfo = new FileInfo(source);
+                return fileInfo.Exists ? new PhysicalFileInfo(fileInfo) : new NotFoundFileInfo(subpath);
+            }
+
+            foreach (var (path, entry) in _folderMap)
+            {
+                if (subpath.StartsWith(path))
+                {
+                    return entry.FileProvider.GetFileInfo(subpath[entry.Length..]);
+                }
+            }
         }
 
         var result = _fileProvider.GetFileInfo(subpath);
