@@ -2,6 +2,7 @@ using Azure.Identity;
 using Microsoft.AspNetCore.SpaServices;
 using NetLah.Diagnostics;
 using NetLah.Extensions.ApplicationInsights;
+using NetLah.Extensions.Configuration;
 using NetLah.Extensions.Logging;
 using NetLah.Extensions.SpaServices.Hosting;
 
@@ -12,7 +13,12 @@ try
     ApplicationInfo.TryInitialize(null);
     var builder = WebApplication.CreateBuilder(args);
     builder.Configuration
-        .AddAddFileConfiguration()
+        .AddAddFileConfiguration(options =>
+        {
+            options.AddProvider("keyPerFile", KeyPerFileConfigurationBuilderExtensions.AddKeyPerFile, resolveAbsolute: true);
+            options.AddProvider(".ini", IniConfigurationExtensions.AddIniFile);
+            options.AddProvider(".xml", XmlConfigurationExtensions.AddXmlFile);
+        })
         .AddTransformConfiguration()
         .AddMapConfiguration();
 
