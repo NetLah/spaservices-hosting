@@ -1,89 +1,84 @@
 ﻿using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Primitives;
 
 namespace NetLah.Extensions.SpaServices.Hosting;
 
-internal class ResponseHeadersHandler
+internal class ResponseHeadersHandler(ILogger logger, ResponseHeadersOptions responseHeaders, Action<StaticFileResponseContext> originalResponseHandler)
 {
-    private readonly ILogger _logger;
-    private readonly List<KeyValuePair<string, StringValues>> _headers;
-    private readonly HashSet<string?>? _contentTypeHashSet;
-    private readonly List<string?>? _contentTypeList;
-    private readonly Func<int, bool> _matchStatusCode;
-    private readonly Func<string, bool> _matchContentType;
-    private readonly HashSet<int>? _statusCodes;
-
-    public ResponseHeadersHandler(ILogger logger, ResponseHeadersOptions responseHeaders)
-    {
-        _logger = logger;
-        _headers = responseHeaders.Headers
-            .Select(kv => new KeyValuePair<string, StringValues>(kv.Key, new StringValues(kv.Value)))
-            .ToList();
-
-        if (!responseHeaders.IsEnabled || _headers.Count == 0)
-        {
-            _matchStatusCode = _ => false;
-            _matchContentType = _ => false;
-            logger.LogWarning("ResponseHeadersHandler is disabled");
-        }
-        else
-        {
-            if (responseHeaders.FilterHttpStatusCode is { } listHttpStatusCode
-                && listHttpStatusCode.Count != 0)
-            {
-                _statusCodes = [.. listHttpStatusCode];
-                _matchStatusCode = statusCode => _statusCodes.Contains(statusCode);
-                logger.LogInformation("ResponseHeadersHandler StatusCode in list");
-            }
-            else
-            {
-                _matchStatusCode = _ => true;
-            }
-
-            if (responseHeaders.FilterContentType is not { } listContentType
-                || listContentType.Count == 0
-                || responseHeaders.IsAnyContentType)
-            {
-                _matchContentType = _ => true;
-                logger.LogInformation("ResponseHeadersHandler all content-type");
-            }
-            else
-            {
-                _contentTypeHashSet = listContentType.ToHashSet(StringComparer.InvariantCultureIgnoreCase);
-                _contentTypeList = [.. _contentTypeHashSet];
-
-                if (responseHeaders.IsContentTypeContainsMatch)
-                {
-                    _matchContentType = contentType => _contentTypeList.Any(item => !string.IsNullOrEmpty(item) && item.Contains(contentType));
-                    logger.LogInformation("ResponseHeadersHandler content-type -contains {contentTypes}", _contentTypeList);
-                }
-                else
-                {
-                    _matchContentType = contentType => _contentTypeHashSet.Contains(contentType);
-                    logger.LogInformation("ResponseHeadersHandler content-type -eq {contentTypes}", _contentTypeList);
-                }
-            }
-        }
-    }
+    private readonly ILogger _logger = logger;
+    private readonly WeakReference _originalResponseHandler = new(originalResponseHandler ?? (_ => { }));
+    private readonly ResponseHandlerEntry[] _handlers = [
+        .. (responseHeaders.DefaultHandler is { } handler ? [handler] : Array.Empty<ResponseHandlerEntry>()),
+        .. responseHeaders.Handlers,
+    ];
 
     public void PrepareResponse(StaticFileResponseContext context)
     {
         var contentType = context.Context.Response.ContentType;
         var statusCode = context.Context.Response.StatusCode;
 
-        if (string.IsNullOrEmpty(contentType)
-            || statusCode > 399
-            || !_matchStatusCode(statusCode)
-            || !_matchContentType(contentType))
+        if (string.IsNullOrEmpty(contentType) || statusCode > 399)
         {
+            GetOriginalResponseHandler()?.Invoke(context);
             return;
         }
 
-        _logger.LogDebug("Add headers");
-        foreach (var item in _headers)
+        foreach (var handler in _handlers)
         {
-            context.Context.Response.Headers.Add(item);
+            if ((handler.StatusCode.Count == 0 || handler.StatusCode.Contains(statusCode))
+                && (
+                (handler.ContentTypeMatchEq.Count == 0 && handler.ContentTypeMatchContain.Length == 0 && handler.ContentTypeMatchStartWith.Length == 0)
+                || (handler.ContentTypeMatchEq.Count > 0 && handler.ContentTypeMatchEq.Contains(contentType))
+                || (handler.ContentTypeMatchContain.Length > 0 && MatchContain(handler.ContentTypeMatchContain))
+                || (handler.ContentTypeMatchStartWith.Length > 0 && MatchStartWith(handler.ContentTypeMatchStartWith))
+                ))
+            {
+                if (handler.StatusCode.Count == 0)
+                {
+                    _logger.LogDebug("Add headers for {contentType}", contentType);
+                }
+                else
+                {
+                    _logger.LogDebug("Add headers for {contentType} statusCode={statusCode}", contentType, statusCode);
+                }
+
+                foreach (var item in handler.Headers)
+                {
+                    context.Context.Response.Headers.Add(item);
+                }
+
+                GetOriginalResponseHandler()?.Invoke(context);
+                return;
+            }
         }
+
+        bool MatchContain(string[] contentTypeMatchContain)
+        {
+            foreach (var item in contentTypeMatchContain)
+            {
+                if (item.Contains(contentType))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        bool MatchStartWith(string[] contentTypeMatchStartWith)
+        {
+            foreach (var item in contentTypeMatchStartWith)
+            {
+                if (item.StartsWith(contentType))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        GetOriginalResponseHandler()?.Invoke(context);
+
+        Action<StaticFileResponseContext>? GetOriginalResponseHandler() => _originalResponseHandler.IsAlive ? _originalResponseHandler.Target as Action<StaticFileResponseContext> : null;
     }
+
 }
