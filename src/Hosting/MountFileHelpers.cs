@@ -81,7 +81,7 @@ internal static class MountFileHelpers
             }
         }
 
-        bool TryParseKeyValue(string keyValue, out string key, out string? value)
+        static bool TryParseKeyValue(string keyValue, out string key, out string? value)
         {
             var pos = keyValue.IndexOf('=');
             if (pos > 0 && pos < keyValue.Length - 1)
