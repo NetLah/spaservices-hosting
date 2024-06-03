@@ -56,7 +56,7 @@ internal class ResponseHeadersHandler(ILogger logger, ResponseHeadersOptions res
         {
             foreach (var item in contentTypeMatchContain)
             {
-                if (item.Contains(contentType))
+                if (contentType.Contains(item))
                 {
                     return true;
                 }
@@ -68,7 +68,7 @@ internal class ResponseHeadersHandler(ILogger logger, ResponseHeadersOptions res
         {
             foreach (var item in contentTypeMatchStartWith)
             {
-                if (item.StartsWith(contentType))
+                if (contentType.StartsWith(item))
                 {
                     return true;
                 }
