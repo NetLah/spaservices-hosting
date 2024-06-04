@@ -44,7 +44,7 @@ try
     var appOptions = builder.GetAppOptionsOrDefault();
     if (builder.Environment.IsDevelopment() || appOptions.IsShowAssemblies)
     {
-        LogAssembly(new AssemblyInfo(typeof(NetLah.Extensions.Configuration.ConfigurationBuilderBuilder).Assembly));
+        LogAssembly(new AssemblyInfo(typeof(ConfigurationBuilderBuilder).Assembly));
         LogAssembly(new AssemblyInfo(typeof(NetLah.Extensions.HttpOverrides.HttpOverridesExtensions).Assembly));
         LogAssembly(new AssemblyInfo(typeof(AppLogReference).Assembly));
         LogAssembly(new AssemblyInfo(typeof(AppLog).Assembly));
