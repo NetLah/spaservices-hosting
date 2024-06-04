@@ -63,6 +63,14 @@ if (!$PublishRoot) {
 foreach ($targetVersionNum in @("6.0", "7.0", "8.0", "9.0")) {
     $path = "$publishRoot/$targetVersionNum"
     $targetVersion = if ($targetVersionNum -eq '3.1') { 'netcoreapp3.1' } else { "net$targetVersionNum" }
+    
+    $tempArtifactsPath = "$publishRoot/$targetVersionNum-temp-Artifacts"
+    $linuxWebAppPath = "$path/spa-host/WebApp"
+    if (Test-Path $linuxWebAppPath -PathType Leaf -ErrorAction SilentlyContinue) {
+        DropFolderRetry $tempArtifactsPath -Retry 3
+        $tempArtifactFolder = New-Item -Path $tempArtifactsPath -ItemType 'Directory' -ErrorAction Stop
+        Move-Item -Path $linuxWebAppPath -Destination $tempArtifactFolder
+    }
 
     DropFolderRetry $path -Retry 3
 
@@ -72,6 +80,11 @@ foreach ($targetVersionNum in @("6.0", "7.0", "8.0", "9.0")) {
     dotnet publish src\WebApp -f $targetVersion -c Release --no-build -o $path/spa-host
     if (!$?) { FailBuild 'dotnet publish src\WebApp' }
     blockClosed 'dotnet-publish-src\WebApp'
+
+    if (Test-Path $tempArtifactsPath -PathType Container -ErrorAction SilentlyContinue) {
+        Move-Item -Path $tempArtifactsPath/* -Destination $path/spa-host -Force
+        DropFolderRetry $tempArtifactsPath -Retry 3
+    }
 
     Write-Host "##teamcity[setParameter name='cus.tfmNet$($targetVersionNum)' value='true']"
     blockClosed ".NET-$targetVersionNum"
