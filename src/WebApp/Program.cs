@@ -1,5 +1,6 @@
 using Azure.Identity;
 using Microsoft.AspNetCore.SpaServices;
+using Microsoft.Extensions.Options;
 using NetLah.Diagnostics;
 using NetLah.Extensions.ApplicationInsights;
 using NetLah.Extensions.Configuration;
@@ -56,10 +57,19 @@ try
 
     builder.CustomApplicationInsightsTelemetry(() => new DefaultAzureCredential());
 
+    builder.Services.Configure<Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerOptions>(builder.Configuration.GetSection("Kestrel"));
+
     builder.AddSpaApp();
 
     var app = builder.Build();
     logger.LogInformation("Configure the application...");
+
+    var kso = app.Services.GetRequiredService<IOptions<Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerOptions>>().Value;
+#if NET8_0_OR_GREATER
+    logger.LogInformation("Kestrel options {@options}", new { kso.AddServerHeader, kso.AllowAlternateSchemes, kso.AllowSynchronousIO, kso.AllowResponseHeaderCompression, kso.AllowHostHeaderOverride, kso.DisableStringReuse, kso.Limits });
+#else
+    logger.LogInformation("Kestrel options {@options}", new { kso.AddServerHeader, kso.AllowAlternateSchemes, kso.AllowSynchronousIO, kso.AllowResponseHeaderCompression, kso.DisableStringReuse, kso.Limits });
+#endif
 
     app.UseSpaApp(action: app => app.UseSerilogRequestLoggingLevel());
 
