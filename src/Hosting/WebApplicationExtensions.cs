@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using NetLah.Extensions.HttpOverrides;
+using NetLah.Extensions.Logging;
 using NetLah.Extensions.SpaServices.Hosting;
 using NetLah.Extensions.SpaServices.Hosting.Controllers;
 using System.Text;
@@ -45,17 +47,48 @@ public static class WebApplicationExtensions
 
         var staticFileOptions = new StaticFileOptions();
 
-        var responseHeaders = appOptions.ResponseHeaders;
+        var responseHeadersOptions = ResponseHeadersHelper.Parse(app.Configuration as IConfigurationRoot, "ResponseHeaders");
 
-        var isResponseHeadersEnabled = responseHeaders != null
-            && responseHeaders.Headers is { } headers
-            && headers.Count != 0
-            && responseHeaders.IsEnabled;
-        if (isResponseHeadersEnabled && responseHeaders != null)
+        var isResponseHeadersEnabled = responseHeadersOptions != null
+            && responseHeadersOptions.IsEnabled
+            && (responseHeadersOptions.DefaultHandler != null
+            || responseHeadersOptions.Handlers.Length > 0);
+
+        if (isResponseHeadersEnabled && responseHeadersOptions != null)
         {
-            var headerNames = responseHeaders.Headers.Keys.OrderBy(i => i, StringComparer.OrdinalIgnoreCase).ToArray();
-            logger.LogInformation("ResponseHeadersHandler Setup for {headerNames}", (object)headerNames);
-            var handler = new ResponseHeadersHandler(logger, responseHeaders);
+            var loggerHeader = AppLogReference.GetAppLogLogger(typeof(AppOptions).Namespace + ".ResponseHeaders")
+                ?? Microsoft.Extensions.Logging.Abstractions.NullLogger.Instance;
+
+            if (responseHeadersOptions.DefaultHandler != null)
+            {
+                var headerNames = responseHeadersOptions.DefaultHandler.HeaderNames;
+                var contentTypes = responseHeadersOptions.DefaultHandler.ContentTypes;
+                if (contentTypes.Length == 0)
+                {
+                    loggerHeader.LogInformation("ResponseHeaders Default apply {headerNames}", (object)headerNames);
+                }
+                else
+                {
+                    loggerHeader.LogInformation("ResponseHeaders Default apply {headerNames} for {contentTypes}", headerNames, contentTypes);
+                }
+            }
+
+            foreach (var item in responseHeadersOptions.Handlers)
+            {
+                var headerNames = item.HeaderNames;
+                var contentTypes = item.ContentTypes;
+                if (contentTypes.Length == 0)
+                {
+                    loggerHeader.LogInformation("ResponseHeaders apply {headerNames}", (object)headerNames);
+                }
+                else
+                {
+                    loggerHeader.LogInformation("ResponseHeaders apply {headerNames} for {contentTypes}", headerNames, contentTypes);
+                }
+            }
+
+            var handler = new ResponseHeadersHandler(loggerHeader, responseHeadersOptions, staticFileOptions.OnPrepareResponse);
+
             staticFileOptions.OnPrepareResponse = handler.PrepareResponse;
         }
 

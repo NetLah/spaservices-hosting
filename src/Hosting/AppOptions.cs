@@ -17,6 +17,4 @@ public class AppOptions
     /// /debug/routes
     /// </summary>
     public string? DebugRoutes { get; set; }
-
-    public ResponseHeadersOptions ResponseHeaders { get; set; } = new ResponseHeadersOptions();
 }
