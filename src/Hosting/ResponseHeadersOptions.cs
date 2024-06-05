@@ -8,7 +8,7 @@ internal class BaseResponseHeadersConfigurationOptions
     public HashSet<string>? ContentType { get; set; }
     public HashSet<string>? ContentTypeContain { get; set; }
     public HashSet<string>? ContentTypeStartWith { get; set; }
-    public List<string>? Headers { get; set; }
+    // public List<string>? Headers { get; set; } binder cause bug between array and key value
 }
 
 internal class ResponseHeadersConfigurationOptions : BaseResponseHeadersConfigurationOptions

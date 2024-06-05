@@ -656,4 +656,31 @@ public class ResponseHeadersHelperTest
             ["x-header25"] = "value26",
         }, handler.Headers);
     }
+
+    [Fact]
+    public void HeaderKeyValueWithEqualTest()
+    {
+        var configuration = new ConfigurationManager();
+        configuration.AddInMemoryCollection(new Dictionary<string, string?>
+        {
+            ["ResponseHeaders:Headers:x-header28"] = "value29=hex",
+        });
+
+        var options = Parse(configuration, "ResponseHeaders");
+
+        Assert.NotNull(options);
+        Assert.NotNull(options.DefaultHandler);
+        Assert.Empty(options.Handlers);
+
+        var handler = options.DefaultHandler;
+        Assert.NotNull(handler);
+        Assert.Empty(handler.ContentTypeMatchEq);
+        Assert.Empty(handler.ContentTypeMatchContain);
+        Assert.Empty(handler.ContentTypeMatchStartWith);
+        Assert.Empty(handler.StatusCode);
+        Assert.Equal(new Dictionary<string, StringValues>
+        {
+            ["x-header28"] = "value29=hex",
+        }, handler.Headers);
+    }
 }

@@ -13,7 +13,8 @@ internal static class ResponseHeadersHelper
         nameof(BaseResponseHeadersConfigurationOptions.ContentType),
         nameof(BaseResponseHeadersConfigurationOptions.ContentTypeContain),
         nameof(BaseResponseHeadersConfigurationOptions.ContentTypeStartWith),
-        nameof(BaseResponseHeadersConfigurationOptions.Headers),
+        // nameof(BaseResponseHeadersConfigurationOptions.Headers), binder cause bug between array and key value
+        "Headers",
         nameof(BaseResponseHeadersConfigurationOptions.StatusCode),
         nameof(ResponseHeadersConfigurationOptions.IsEnabled),
         "IsAnyContentType",             // legacy value
@@ -67,9 +68,14 @@ internal static class ResponseHeadersHelper
     {
         var headers = new Dictionary<string, string>();
 
-        foreach (var item in options.Headers ?? [])
+        foreach (var item in configuration.GetSection("Headers").GetChildren())
         {
-            if (TryParseKeyValue(item, out var key, out var value)
+            if (item.Value is { } value1
+                && item.Key is { } key1
+                && !string.IsNullOrEmpty(key1)
+                && !string.IsNullOrEmpty(value1)
+                && int.TryParse(key1, out var _)
+                && TryParseKeyValue(value1, out var key, out var value)
                 && !string.IsNullOrEmpty(key)
                 && !string.IsNullOrEmpty(value))
             {
@@ -115,11 +121,15 @@ internal static class ResponseHeadersHelper
                     headers[key] = value;
                 }
             }
-            else if (nameof(BaseResponseHeadersConfigurationOptions.Headers).Equals(key, DefaultStringComparison))
+            else if ("Headers".Equals(key, DefaultStringComparison))  // nameof(BaseResponseHeadersConfigurationOptions.Headers)
             {
                 foreach (var item1 in item.GetChildren())
                 {
-                    if (item1.Value is { } value1 && item1.Key is { } key1 && !string.IsNullOrEmpty(key1) && !string.IsNullOrEmpty(value1) && !int.TryParse(key1, out var _))
+                    if (item1.Value is { } value1
+                        && item1.Key is { } key1
+                        && !string.IsNullOrEmpty(key1)
+                        && !string.IsNullOrEmpty(value1)
+                        && !int.TryParse(key1, out var _))
                     {
                         headers[key1] = value1;
                     }
