@@ -1,12 +1,14 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
+using Moq;
 
 namespace NetLah.Extensions.SpaServices.Hosting.Test;
 
 public class ResponseHeadersHelperTest
 {
-    private static ResponseHeadersOptions Parse(IConfigurationRoot? configurationRoot, string sectionName)
-        => ResponseHeadersHelper.Parse(configurationRoot, sectionName);
+    private static ResponseHeadersOptions Parse(IConfigurationRoot? configurationRoot, string sectionName, ILogger? logger = null)
+        => ResponseHeadersHelper.Parse(configurationRoot, sectionName, logger ?? Microsoft.Extensions.Logging.Abstractions.NullLogger.Instance);
 
     [Fact]
     public void DisabledTest()
@@ -682,5 +684,50 @@ public class ResponseHeadersHelperTest
         {
             ["x-header28"] = "value29=hex",
         }, handler.Headers);
+    }
+
+    [Fact]
+    public void HeaderKeyInvalidCharsTest()
+    {
+        var configuration = new ConfigurationManager();
+        configuration.AddInMemoryCollection(new Dictionary<string, string?>
+        {
+            ["ResponseHeaders:Headers:x-header30"] = "value31",
+            ["ResponseHeaders:Headers:x header31"] = "value32",
+            ["ResponseHeaders:x@header33"] = "value34",
+        });
+
+        var loggerMock = new Mock<ILogger>();
+
+        var options = Parse(configuration, "ResponseHeaders", loggerMock.Object);
+
+        Assert.NotNull(options);
+        Assert.NotNull(options.DefaultHandler);
+        Assert.Empty(options.Handlers);
+
+        var handler = options.DefaultHandler;
+        Assert.NotNull(handler);
+        Assert.Empty(handler.ContentTypeMatchEq);
+        Assert.Empty(handler.ContentTypeMatchContain);
+        Assert.Empty(handler.ContentTypeMatchStartWith);
+        Assert.Empty(handler.StatusCode);
+
+        //loggerMock.Verify(x => x.LogInformation(It.IsAny<string>()), Times.Exactly(2));
+
+        loggerMock.Verify(
+            x => x.Log(
+                LogLevel.Warning,
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((o, t) => o.ToString()!.StartsWith("Invalid HTTP header ") && o.ToString()!.Contains("Invalid non-ASCII or control character in header: ")),
+                It.IsAny<Exception>(),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+            Times.Exactly(2));
+
+        Assert.Equal(new Dictionary<string, StringValues>
+        {
+            ["x-header30"] = "value31",
+        }, handler.Headers);
+
+        Assert.Equal<string[]>(["x-header30"], handler.HeaderNames);
     }
 }

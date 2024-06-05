@@ -47,7 +47,10 @@ public static class WebApplicationExtensions
 
         var staticFileOptions = new StaticFileOptions();
 
-        var responseHeadersOptions = ResponseHeadersHelper.Parse(app.Configuration as IConfigurationRoot, "ResponseHeaders");
+        var loggerHeader = AppLogReference.GetAppLogLogger(typeof(AppOptions).Namespace + ".ResponseHeaders")
+            ?? Microsoft.Extensions.Logging.Abstractions.NullLogger.Instance;
+
+        var responseHeadersOptions = ResponseHeadersHelper.Parse(app.Configuration as IConfigurationRoot, "ResponseHeaders", loggerHeader);
 
         var isResponseHeadersEnabled = responseHeadersOptions != null
             && responseHeadersOptions.IsEnabled
@@ -56,9 +59,6 @@ public static class WebApplicationExtensions
 
         if (isResponseHeadersEnabled && responseHeadersOptions != null)
         {
-            var loggerHeader = AppLogReference.GetAppLogLogger(typeof(AppOptions).Namespace + ".ResponseHeaders")
-                ?? Microsoft.Extensions.Logging.Abstractions.NullLogger.Instance;
-
             if (responseHeadersOptions.DefaultHandler != null)
             {
                 var headerNames = responseHeadersOptions.DefaultHandler.HeaderNames;

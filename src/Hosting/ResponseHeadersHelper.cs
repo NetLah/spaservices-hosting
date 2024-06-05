@@ -1,5 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
+using System.Buffers;
+using System.Globalization;
 
 namespace NetLah.Extensions.SpaServices.Hosting;
 
@@ -23,7 +26,7 @@ internal static class ResponseHeadersHelper
 
     //private static readonly string[] PropertyNames = [.. PropertySet];
 
-    public static ResponseHeadersOptions Parse(IConfigurationRoot? configurationRoot, string sectionName)
+    public static ResponseHeadersOptions Parse(IConfigurationRoot? configurationRoot, string sectionName, ILogger logger)
     {
         ResponseHandlerEntry? defaultHandlerEntry = null;
         var isEnabled = false;
@@ -37,7 +40,7 @@ internal static class ResponseHeadersHelper
             if (configOptions.IsEnabled)
             {
                 isEnabled = true;
-                defaultHandlerEntry = ParseHandler(configOptions, configuration);
+                defaultHandlerEntry = ParseHandler(configOptions, configuration, logger);
             }
 
             foreach (var item in configuration.GetChildren())
@@ -47,7 +50,7 @@ internal static class ResponseHeadersHelper
                 {
                     var configOptions1 = new BaseResponseHeadersConfigurationOptions();
                     item.Bind(configOptions1);
-                    var handlerEntry = ParseHandler(configOptions1, item);
+                    var handlerEntry = ParseHandler(configOptions1, item, logger);
                     if (handlerEntry.Headers.Length > 0)
                     {
                         handlers.Add(handlerEntry);
@@ -64,7 +67,19 @@ internal static class ResponseHeadersHelper
         };
     }
 
-    private static ResponseHandlerEntry ParseHandler(BaseResponseHeadersConfigurationOptions options, IConfigurationSection configuration)
+    private static string? ValidateHeaderNameCharacters(string headerCharacters)
+    {
+        var invalid = HttpCharacters.IndexOfInvalidTokenChar(headerCharacters);
+        if (invalid >= 0)
+        {
+            var character = string.Format(CultureInfo.InvariantCulture, "0x{0:X4}", (ushort)headerCharacters[invalid]);
+            var message = string.Format("Invalid non-ASCII or control character in header: {0}", character);
+            return message;
+        }
+        return null;
+    }
+
+    private static ResponseHandlerEntry ParseHandler(BaseResponseHeadersConfigurationOptions options, IConfigurationSection configuration, ILogger logger)
     {
         var headers = new Dictionary<string, string>();
 
@@ -137,7 +152,18 @@ internal static class ResponseHeadersHelper
             }
         }
 
+        bool FilterValidHeaderName(KeyValuePair<string, string> pair)
+        {
+            var errorMessage = ValidateHeaderNameCharacters(pair.Key);
+            if (errorMessage != null)
+            {
+                logger.LogWarning("Invalid HTTP header '{key}': {error}", pair.Key, errorMessage);
+            }
+            return errorMessage == null;
+        }
+
         var headersStringValues = headers
+            .Where(FilterValidHeaderName)
             .Select(kv => new KeyValuePair<string, StringValues>(kv.Key, new StringValues(kv.Value)))
             .ToArray();
 
@@ -149,7 +175,7 @@ internal static class ResponseHeadersHelper
             options.ContentTypeContain?.Where(v => !string.IsNullOrEmpty(v)).ToArray() ?? [],
             options.StatusCode?.Where(v => v > 0).ToHashSet() ?? [],
             headersStringValues,
-            [.. headers.Keys.OrderBy(s => s, DefaultStringComparer)],
+            [.. headersStringValues.Select(kv => kv.Key).OrderBy(s => s, DefaultStringComparer)],
             [.. contentTypesSet.OrderBy(s => s, DefaultStringComparer)]);
 
         return handlerEntry;
