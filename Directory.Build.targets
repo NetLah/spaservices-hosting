@@ -82,21 +82,21 @@
     <PackageReference Update="xunit.runner.visualstudio" Version="2.*" PrivateAssets="All" />
 
     <!--serilog-->
-    <PackageReference Update="Serilog" Version="3.*" />
+    <PackageReference Update="Serilog" Version="4.*" />
     <PackageReference Update="Serilog.AspNetCore" Version="8.*" />
     <PackageReference Update="Serilog.Enrichers.CorrelationId" Version="3.*" />
-    <PackageReference Update="Serilog.Enrichers.Environment" Version="2.*" />
-    <PackageReference Update="Serilog.Enrichers.Thread" Version="3.*" />
+    <PackageReference Update="Serilog.Enrichers.Environment" Version="3.*" />
+    <PackageReference Update="Serilog.Enrichers.Thread" Version="4.*" />
     <PackageReference Update="Serilog.Extensions.Hosting" Version="8.*" />
     <PackageReference Update="Serilog.Extensions.Logging" Version="8.*" />
-    <PackageReference Update="Serilog.Formatting.Compact" Version="2.*" />
+    <PackageReference Update="Serilog.Formatting.Compact" Version="3.*" />
     <PackageReference Update="Serilog.Settings.Configuration" Version="8.*" />
     <PackageReference Update="Serilog.Sinks.AzureAnalytics" Version="5.*" />
-    <PackageReference Update="Serilog.Sinks.Console" Version="5.*" />
-    <PackageReference Update="Serilog.Sinks.Debug" Version="2.*" />
-    <PackageReference Update="Serilog.Sinks.File" Version="5.*" />
-    <PackageReference Update="Serilog.Sinks.PeriodicBatching" Version="4.*" />
-    <PackageReference Update="Serilog.Sinks.Seq" Version="7.*" />
+    <PackageReference Update="Serilog.Sinks.Console" Version="6.*" />
+    <PackageReference Update="Serilog.Sinks.Debug" Version="3.*" />
+    <PackageReference Update="Serilog.Sinks.File" Version="6.*" />
+    <PackageReference Update="Serilog.Sinks.PeriodicBatching" Version="5.*" />
+    <PackageReference Update="Serilog.Sinks.Seq" Version="8.*" />
 
     <!--misc-->
     <PackageReference Update="AutoMapper" Version="13.*" />
