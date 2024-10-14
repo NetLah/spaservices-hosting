@@ -44,7 +44,7 @@
     <SystemTextJsonVersion Condition="'$(SystemTextJsonVersion)' == ''">$(FrameworkVersion)</SystemTextJsonVersion>
     <!-- Swashbuckle.AspNetCore@6.3.2 reference to Microsoft.Extensions.ApiDescription.Server@6.0.5 by mistake -->
     <SwashbuckleVersion Condition="'$(SwashbuckleVersion)' == '' And '$(NET_5_0_LESS)' == true">6.3.1</SwashbuckleVersion>
-    <SwashbuckleVersion Condition="'$(SwashbuckleVersion)' == '' And '$(NET_6_0_UP)' == true">6.5.*</SwashbuckleVersion>
+    <!--<SwashbuckleVersion Condition="'$(SwashbuckleVersion)' == '' And '$(NET_6_0_UP)' == true">6.7.*</SwashbuckleVersion>-->
     <SwashbuckleVersion Condition="'$(SwashbuckleVersion)' == ''">6.*</SwashbuckleVersion>
   </PropertyGroup>
 
@@ -91,7 +91,7 @@
     <PackageReference Update="Serilog.Extensions.Logging" Version="8.*" />
     <PackageReference Update="Serilog.Formatting.Compact" Version="3.*" />
     <PackageReference Update="Serilog.Settings.Configuration" Version="8.*" />
-    <PackageReference Update="Serilog.Sinks.AzureAnalytics" Version="5.*" />
+    <!--<PackageReference Update="Serilog.Sinks.AzureAnalytics" Version="5.*" />-->
     <PackageReference Update="Serilog.Sinks.Console" Version="6.*" />
     <PackageReference Update="Serilog.Sinks.Debug" Version="3.*" />
     <PackageReference Update="Serilog.Sinks.File" Version="6.*" />
@@ -135,7 +135,7 @@
     <PackageReference Update="SkiaSharp.QrCode" Version="0.6.0" />
     <PackageReference Update="Spire.Doc" Version="11.*" />
     <PackageReference Update="StackExchange.Redis" Version="2.*" />
-    <PackageReference Update="Std.UriTemplate" Version="0.*" />
+    <PackageReference Update="Std.UriTemplate" Version="1.*" />
     <PackageReference Update="Tavis.UriTemplates" Version="2.*" />
     <PackageReference Update="TimeZoneConverter" Version="5.*" />
     <PackageReference Update="YamlDotNet" Version="11.*" />
@@ -156,13 +156,13 @@
     <PackageReference Update="Microsoft.VisualStudio.Debugger.Contracts" Version="17.*" />
     <PackageReference Update="Microsoft.VisualStudio.Threading" Version="17.*" />
     <PackageReference Update="Microsoft.VisualStudio.Validation" Version="17.*" />
-    <PackageReference Update="System.ClientModel" Version="1.*" /> 
+    <PackageReference Update="System.ClientModel" Version="1.*" />
     <PackageReference Update="System.CommandLine" Version="2.*-*" />
     <PackageReference Update="System.Memory" Version="4.5.4" />
     <PackageReference Update="System.Runtime.Loader" Version="4.3.0" />
     <PackageReference Update="System.Runtime.Extensions" Version="4.3.1" />
     <PackageReference Update="System.Security.Principal.Windows" Version="5.*" />
-    <PackageReference Update="Yarp.ReverseProxy" Version="(1.*,2)" />
+    <PackageReference Update="Yarp.ReverseProxy" Version="[2.*,3)" />
 
     <!--microsoft CodeAnalysis-->
     <PackageReference Update="Microsoft.CodeAnalysis" Version="4.*" />
@@ -221,7 +221,7 @@
     <PackageReference Update="Microsoft.Extensions.ObjectPool" Version="$(FrameworkVersion)" />
     <PackageReference Update="Microsoft.Extensions.Primitives" Version="$(FrameworkVersion)" />
     <PackageReference Update="Microsoft.Win32.SystemEvents" Version="$(FrameworkVersion)" />
-    
+
     <PackageReference Update="System.Collections.Immutable" Version="$(FrameworkVersion)" />
     <PackageReference Update="System.Composition.AttributedModel" Version="$(FrameworkVersion)" />
     <PackageReference Update="System.Composition.Convention" Version="$(FrameworkVersion)" />
@@ -337,32 +337,32 @@
     <!--microsoft identity-->
     <PackageReference Update="Microsoft.Graph" Version="5.*" />
     <PackageReference Update="Microsoft.Graph.Core" Version="3.*" />
-    <PackageReference Update="Microsoft.Identity.Abstractions" Version="5.*" />
+    <PackageReference Update="Microsoft.Identity.Abstractions" Version="7.*" />
     <PackageReference Update="Microsoft.Identity.Client" Version="4.*" />
     <PackageReference Update="Microsoft.Identity.Client.Extensions.Msal" Version="4.*" />
-    <PackageReference Update="Microsoft.Identity.Web" Version="2.*" />
-    <PackageReference Update="Microsoft.Identity.Web.Certificate" Version="2.*" />
-    <PackageReference Update="Microsoft.Identity.Web.Certificateless" Version="2.*" />
-    <PackageReference Update="Microsoft.Identity.Web.Diagnostics" Version="2.*" />
-    <PackageReference Update="Microsoft.Identity.Web.DownstreamApi" Version="2.*" />
-    <PackageReference Update="Microsoft.Identity.Web.TokenAcquisition" Version="2.*" />
-    <PackageReference Update="Microsoft.Identity.Web.TokenCache" Version="2.*" />
-    <PackageReference Update="Microsoft.Identity.Web.MicrosoftGraph" Version="2.*" />
-    <PackageReference Update="Microsoft.IdentityModel.Abstractions" Version="7.*" />
-    <PackageReference Update="Microsoft.IdentityModel.JsonWebTokens" Version="7.*" />
-    <PackageReference Update="Microsoft.IdentityModel.Logging" Version="7.*" />
-    <PackageReference Update="Microsoft.IdentityModel.LoggingExtensions" Version="7.*" />
-    <PackageReference Update="Microsoft.IdentityModel.Protocols" Version="7.*" />
-    <PackageReference Update="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="7.*" />
-    <PackageReference Update="Microsoft.IdentityModel.Tokens" Version="7.*" />
-    <PackageReference Update="Microsoft.IdentityModel.Validators" Version="7.*" />
+    <PackageReference Update="Microsoft.Identity.Web" Version="3.*" />
+    <PackageReference Update="Microsoft.Identity.Web.Certificate" Version="3.*" />
+    <PackageReference Update="Microsoft.Identity.Web.Certificateless" Version="3.*" />
+    <PackageReference Update="Microsoft.Identity.Web.Diagnostics" Version="3.*" />
+    <PackageReference Update="Microsoft.Identity.Web.DownstreamApi" Version="3.*" />
+    <PackageReference Update="Microsoft.Identity.Web.TokenAcquisition" Version="3.*" />
+    <PackageReference Update="Microsoft.Identity.Web.TokenCache" Version="3.*" />
+    <PackageReference Update="Microsoft.Identity.Web.MicrosoftGraph" Version="3.*" />
+    <PackageReference Update="Microsoft.IdentityModel.Abstractions" Version="8.*" />
+    <PackageReference Update="Microsoft.IdentityModel.JsonWebTokens" Version="8.*" />
+    <PackageReference Update="Microsoft.IdentityModel.Logging" Version="8.*" />
+    <PackageReference Update="Microsoft.IdentityModel.LoggingExtensions" Version="8.*" />
+    <PackageReference Update="Microsoft.IdentityModel.Protocols" Version="8.*" />
+    <PackageReference Update="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="8.*" />
+    <PackageReference Update="Microsoft.IdentityModel.Tokens" Version="8.*" />
+    <PackageReference Update="Microsoft.IdentityModel.Validators" Version="8.*" />
     <PackageReference Update="Microsoft.Kiota.Abstractions" Version="1.*" />
     <PackageReference Update="Microsoft.Kiota.Authentication.Azure" Version="1.*" />
     <PackageReference Update="Microsoft.Kiota.Http.HttpClientLibrary" Version="1.*" />
     <PackageReference Update="Microsoft.Kiota.Serialization.Form" Version="1.*" />
     <PackageReference Update="Microsoft.Kiota.Serialization.Json" Version="1.*" />
     <PackageReference Update="Microsoft.Kiota.Serialization.Text" Version="1.*" />
-    <PackageReference Update="System.IdentityModel.Tokens.Jwt" Version="7.*" />
+    <PackageReference Update="System.IdentityModel.Tokens.Jwt" Version="8.*" />
 
     <!--nuget-->
     <PackageReference Update="NuGet.Common" Version="$(NuGetPackageVersion)" />
@@ -441,7 +441,7 @@
     <PackageReference Update="Serilog.Sinks.PeriodicBatching" Version="3.*" />
     <PackageReference Update="Serilog.Sinks.Seq" Version="5.*" />
   </ItemGroup>
-  
+
   <ItemGroup Condition="'$(NET_5_0_LESS_OR_STD)' == true">
     <PackageReference Update="xunit.runner.visualstudio" Version="2.4.*" PrivateAssets="All" />
   </ItemGroup>
