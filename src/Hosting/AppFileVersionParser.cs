@@ -15,9 +15,7 @@ internal partial class AppFileVersionParser
     private static readonly Regex KeyValueRegex = new("^\\s*(?<key>app|version|buildTime|description)\\s*:(?<value>.{1,100})$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 #endif
 
-#pragma warning disable CA1822 // Mark members as static
     public AppFileVersionInfo? Parse(TextReader reader)
-#pragma warning restore CA1822 // Mark members as static
     {
         var result = new AppFileVersionInfo();
         string? line;

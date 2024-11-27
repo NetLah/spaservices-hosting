@@ -7,7 +7,9 @@ internal static class StringHelper
         foreach (var value in values)
         {
             if (!string.IsNullOrWhiteSpace(value))
+            {
                 return value;
+            }
         }
 
         return string.Empty;

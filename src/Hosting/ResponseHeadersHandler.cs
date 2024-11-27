@@ -78,7 +78,9 @@ internal class ResponseHeadersHandler(ILogger logger, ResponseHeadersOptions res
 
         GetOriginalResponseHandler()?.Invoke(context);
 
-        Action<StaticFileResponseContext>? GetOriginalResponseHandler() => _originalResponseHandler.IsAlive ? _originalResponseHandler.Target as Action<StaticFileResponseContext> : null;
+        Action<StaticFileResponseContext>? GetOriginalResponseHandler()
+        {
+            return _originalResponseHandler.IsAlive ? _originalResponseHandler.Target as Action<StaticFileResponseContext> : null;
+        }
     }
-
 }

@@ -59,7 +59,7 @@ public class WebApplicationPropertiesExtensionsTest
         var builder = WebApplication.CreateBuilder();
         var key = "theKey123";
 
-        double p1Default = WebApplicationPropertiesExtensions.GetProperty<double>(builder, key);
+        var p1Default = WebApplicationPropertiesExtensions.GetProperty<double>(builder, key);
         Assert.Equal(default, p1Default);
 
         var p2 = 1.234D;
