@@ -317,7 +317,7 @@
     <PackageReference Update="IdentityModel.AspNetCore.OAuth2Introspection" Version="6.*" />
 
     <!--azure-->
-    <PackageReference Update="Azure.Communication.Email" Version="1.*" />
+    <PackageReference Update="Azure.Communication.Email" Version="1.*-*" />
     <PackageReference Update="Azure.Containers.ContainerRegistry" Version="1.*-*" />
     <PackageReference Update="Azure.Core" Version="1.*" />
     <PackageReference Update="Azure.Core.Amqp" Version="1.*" />
