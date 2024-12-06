@@ -73,7 +73,7 @@
     <PackageReference Update="NetLah.Extensions.Logging.Serilog" Version="1.*-*" />
     <PackageReference Update="NetLah.Extensions.Logging.Serilog.AspNetCore" Version="1.*-*" />
     <PackageReference Update="NetLah.Extensions.SpaServices.Hosting" Version="1.*-*" />
-    <PackageReference Update="NetLah.Extensions.SpaServices.Hosting" Version="2.*-*" Condition="'$(NET_8_0_UP)' == true" />
+    <PackageReference Update="NetLah.Extensions.SpaServices.Hosting" Version="1.0.*-*" Condition="'$(NET_7_0_LESS)' == true" />
     <PackageReference Update="Testing.Dynamic.Json" Version="1.*-*" />
 
     <!--tests-->
