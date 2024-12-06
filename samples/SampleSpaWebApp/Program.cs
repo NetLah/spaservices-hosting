@@ -40,6 +40,7 @@ try
         LogAssembly(new AssemblyInfo(typeof(AspNetCoreApplicationBuilderExtensions).Assembly));
         LogAssembly(new AssemblyInfo(typeof(WebApplicationBuilderExtensions).Assembly));
         LogAssembly(new AssemblyInfo(typeof(SpaOptions).Assembly));
+        LogAssembly(new AssemblyInfo(typeof(WebApplicationPropertiesExtensions).Assembly));
         LogAssembly(new AssemblyInfo(typeof(Serilog.SerilogApplicationBuilderExtensions).Assembly));
     }
 
