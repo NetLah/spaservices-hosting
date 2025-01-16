@@ -29,5 +29,14 @@
     <PackageReference Include="NetLah.Abstractions" />
     <PackageReference Include="NetLah.Extensions.HttpOverrides" />
   </ItemGroup>
-
+  
+  <ItemGroup>
+    <!-- Newtonsoft.Json 11.0.2 -->
+    <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-5crp-9r3c-p9vr" />
+    <!-- System.Drawing.Common 4.7.0 -->
+    <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-rxg9-xrhp-64gj" />
+    <!-- System.Text.RegularExpressions 4.3.0 -->
+    <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-cmhx-cq75-c4mj" />
+  </ItemGroup>
+  
 </Project>
