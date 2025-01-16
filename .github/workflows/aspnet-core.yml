@@ -66,7 +66,7 @@ jobs:
           $tagSuffix = if ($Env:RUNNER_OS -eq 'Linux') { '-alpine' } else { if ($Env:RUNNER_OS -eq 'Windows') { '-nanoserver-1809' } }
           Write-Output "TAG_SUFFIX=$tagSuffix" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
           Write-Host "Set tag suffix to: $tagSuffix"
-          
+
       - name: Docker meta 8.0
         if: ${{ success() && (runner.os == 'Linux' || runner.os == 'Windows') }}
         id: meta80
@@ -163,6 +163,11 @@ jobs:
 
       - name: Test
         run: dotnet test -c Release --no-build --verbosity normal
+
+      - name: Generate package information
+        run: |
+          dotnet list src/Hosting package --include-transitive > src/WebApp/wwwroot/.package-hosting-lib.txt
+          dotnet list src/WebApp package --include-transitive > src/WebApp/wwwroot/.package-webapp.txt
 
       - name: Publish
         shell: pwsh
