@@ -166,8 +166,14 @@ jobs:
 
       - name: Generate package information
         run: |
-          dotnet list src/Hosting package --include-transitive > src/WebApp/wwwroot/.package-hosting-lib.txt
+          dotnet list src/Hosting package --include-transitive > src/WebApp/wwwroot/.package-hosting.txt
           dotnet list src/WebApp package --include-transitive > src/WebApp/wwwroot/.package-webapp.txt
+          dotnet list src/Hosting package --outdated --include-transitive > src/WebApp/wwwroot/.package-hosting-outdated.txt
+          dotnet list src/WebApp package --outdated --include-transitive > src/WebApp/wwwroot/.package-webapp-outdated.txt
+          dotnet list src/Hosting package --deprecated --include-transitive > src/WebApp/wwwroot/.package-hosting-deprecated.txt
+          dotnet list src/WebApp package --deprecated --include-transitive > src/WebApp/wwwroot/.package-webapp-deprecated.txt
+          dotnet list src/Hosting package --vulnerable --include-transitive > src/WebApp/wwwroot/.package-hosting-vulnerable.txt
+          dotnet list src/WebApp package --vulnerable --include-transitive > src/WebApp/wwwroot/.package-webapp-vulnerable.txt
 
       - name: Publish
         shell: pwsh
