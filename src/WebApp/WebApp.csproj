@@ -26,18 +26,6 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(NET_8_0)' == true">
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(NET_9_0)' == true">
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" />
-  </ItemGroup>
-
-  <!--All .NET-->
-  <ItemGroup>
-    <PackageReference Include="Azure.Core" />
-    <PackageReference Include="Microsoft.ApplicationInsights" />
-    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" />
-    <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" />
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" />
     <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" />
@@ -64,6 +52,29 @@
     <PackageReference Include="Microsoft.Extensions.Options" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
     <PackageReference Include="Microsoft.Extensions.Primitives" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" />
+    <PackageReference Include="System.Diagnostics.DiagnosticSource" />
+    <PackageReference Include="System.Diagnostics.PerformanceCounter" />
+    <PackageReference Include="System.Drawing.Common" />
+    <PackageReference Include="System.Memory.Data" />
+    <PackageReference Include="System.Reflection.Metadata" />
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" />
+    <PackageReference Include="System.Security.Permissions" />
+    <PackageReference Include="System.Text.Encodings.Web" />
+    <PackageReference Include="System.Text.Json" />
+    <PackageReference Include="System.Windows.Extensions" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(NET_9_0)' == true">
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" />
+  </ItemGroup>
+
+  <!--All .NET-->
+  <ItemGroup>
+    <PackageReference Include="Azure.Core" />
+    <PackageReference Include="Microsoft.ApplicationInsights" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" />
+    <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" />
     <PackageReference Include="Microsoft.Identity.Client" />
     <PackageReference Include="Microsoft.Identity.Client.Extensions.Msal" />
     <PackageReference Include="Microsoft.IdentityModel.Abstractions" />
@@ -82,20 +93,9 @@
     <PackageReference Include="Serilog.Sinks.Debug" />
     <PackageReference Include="Serilog.Sinks.File" />
     <PackageReference Include="System.ClientModel" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" />
-    <PackageReference Include="System.Diagnostics.DiagnosticSource" />
-    <PackageReference Include="System.Diagnostics.PerformanceCounter" />
-    <PackageReference Include="System.Drawing.Common" />
-    <PackageReference Include="System.Memory" />
-    <PackageReference Include="System.Memory.Data" />
-    <PackageReference Include="System.Reflection.Metadata" />
+    <PackageReference Include="System.Memory" />    
     <PackageReference Include="System.Runtime.Extensions" />
-    <PackageReference Include="System.Security.Cryptography.ProtectedData" />
-    <PackageReference Include="System.Security.Permissions" />
     <PackageReference Include="System.Security.Principal.Windows" />
-    <PackageReference Include="System.Text.Encodings.Web" />
-    <PackageReference Include="System.Text.Json" />
-    <PackageReference Include="System.Windows.Extensions" />
   </ItemGroup>
 
   <ItemGroup>
