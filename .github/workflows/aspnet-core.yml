@@ -30,11 +30,11 @@ jobs:
             8.0.x
             9.0.x
 
-      # - name: Setup .NET 9.0.x RC
-      #   uses: actions/setup-dotnet@v4
-      #   with:
-      #     dotnet-version: 9.0.x
-      #     dotnet-quality: "preview"
+      - name: Setup .NET 10.0.x Preview
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+          dotnet-quality: "preview"
 
       - name: dotnet info
         run: dotnet --info
@@ -155,6 +155,50 @@ jobs:
             type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=570,pattern=^(\d+\.\d+)(\.\d+)?(-.+)?$,group=1
             type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=560,pattern=^(\d+)\.\d+(\.\d+)?(-.+)?$,group=1
 
+      - name: Docker meta 10.0
+        if: ${{ success() && (runner.os == 'Linux' || runner.os == 'Windows') }}
+        id: meta100
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            ${{ secrets.DOCKER_HUB_REPOS }}
+            name=netlah/spa-host,enable=${{ startsWith(github.ref, 'refs/tags/') }}
+          flavor: |
+            latest=auto
+            suffix=${{ env.TAG_SUFFIX }}
+            prefix=10.0-
+          tags: |
+            type=raw,enable=${{ github.event_name != 'pull_request' }},priority=699,value=${{ steps.minver.outputs.version }}
+            type=ref,event=branch,priority=500
+            type=ref,event=pr,priority=500,prefix=10.0-pr-
+            type=sha,enable=${{ github.event_name != 'pull_request' }},priority=400,prefix=10.0-sha-,format=short
+            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=600,pattern=^(\d+\.\d+(\.\d+)?(-.+)?)$,group=1
+            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=5100,pattern=^(\d+\.\d+(\.\d+)?)(-.+)?$,group=1
+            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=570,pattern=^(\d+\.\d+)(\.\d+)?(-.+)?$,group=1
+            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=560,pattern=^(\d+)\.\d+(\.\d+)?(-.+)?$,group=1
+
+      - name: Docker meta sample 10.0
+        if: ${{ success() && (runner.os == 'Linux' || runner.os == 'Windows') }}
+        id: meta_sample100
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            ${{ secrets.DOCKER_HUB_SAMPLE_REPOS }}
+            name=netlah/spa-host-sample,enable=${{ startsWith(github.ref, 'refs/tags/') }}
+          flavor: |
+            latest=auto
+            suffix=${{ env.TAG_SUFFIX }}
+            prefix=10.0-
+          tags: |
+            type=raw,enable=${{ github.event_name != 'pull_request' }},priority=699,value=${{ steps.minver.outputs.version }}
+            type=ref,event=branch,priority=500
+            type=ref,event=pr,priority=500,prefix=10.0-pr-
+            type=sha,enable=${{ github.event_name != 'pull_request' }},priority=400,prefix=10.0-sha-,format=short
+            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=600,pattern=^(\d+\.\d+(\.\d+)?(-.+)?)$,group=1
+            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=5100,pattern=^(\d+\.\d+(\.\d+)?)(-.+)?$,group=1
+            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=570,pattern=^(\d+\.\d+)(\.\d+)?(-.+)?$,group=1
+            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=560,pattern=^(\d+)\.\d+(\.\d+)?(-.+)?$,group=1
+
       - name: Install dependencies
         run: dotnet restore
 
@@ -178,7 +222,7 @@ jobs:
       - name: Publish
         shell: pwsh
         run: |
-          foreach ($framework in @('net8.0', 'net9.0')) {
+          foreach ($framework in @('net8.0', 'net9.0', 'net10.0')) {
             dotnet publish src/WebApp -c Release -f $framework --no-build -o "artifacts/$($framework)/app"
             Copy-Item -Force -Path shared/appsettings.Development.json -Destination "artifacts/$($framework)/app/" -ErrorAction Stop -Verbose
           }
@@ -186,7 +230,7 @@ jobs:
       - name: Split sample wwwroot
         shell: pwsh
         run: |
-          foreach ($framework in @('net8.0', 'net9.0')) {
+          foreach ($framework in @('net8.0', 'net9.0', 'net10.0')) {
             $webFolder = New-Item -Name "artifacts/$($framework)/wwwroot" -ItemType 'Directory' -ErrorAction Stop
             Move-Item -Force -Path "artifacts/$($framework)/app/wwwroot/*" -Destination "$webFolder/" -Exclude favicon.ico -ErrorAction Stop -Verbose
           }
@@ -195,7 +239,7 @@ jobs:
         if: ${{ success() && (runner.os == 'Linux' || runner.os == 'Windows') }}
         shell: pwsh
         run: |
-          foreach ($framework in @('net8.0', 'net9.0')) {
+          foreach ($framework in @('net8.0', 'net9.0', 'net10.0')) {
             Copy-Item -Recurse -Force -Path '.dockerignore',".docker-$( if ($Env:RUNNER_OS -eq 'Linux') { 'linux' } else { 'windows' } )/*" -Destination "artifacts/$($framework)/" -ErrorAction Stop -Verbose
           }
 
@@ -254,6 +298,21 @@ jobs:
         run: ./docker-build.ps1 -Context ./artifacts/net9.0 -NoPull -Dockerfile ./artifacts/net9.0/Dockerfile-sample -Tags "${{ steps.meta_sample90.outputs.tags }}" -Labels "${{ steps.meta_sample90.outputs.labels }}" -BuildArgs "SPAHOST_IMAGE=$Env:SPAHOST_IMAGE"
         env:
           SPAHOST_IMAGE: ${{ steps.build90.outputs.image }}
+
+      - name: Build and Push 10.0
+        if: ${{ success() && (runner.os == 'Linux' || runner.os == 'Windows') }}
+        id: build100
+        shell: pwsh
+        run: |
+          $aspnetImageTag100 = if ($Env:RUNNER_OS -eq 'Linux') { '10.0-alpine' } else { '10.0-nanoserver-1809' }
+          ./docker-build.ps1 -Context ./artifacts/net10.0 -Squash -Tags "${{ steps.meta100.outputs.tags }}" -Labels "${{ steps.meta100.outputs.labels }}" -BuildArgs "ASPNET_IMAGE_TAG=$aspnetImageTag100"
+
+      - name: Build and Push Sample 10.0
+        if: ${{ success() && (runner.os == 'Linux' || runner.os == 'Windows') }}
+        shell: pwsh
+        run: ./docker-build.ps1 -Context ./artifacts/net10.0 -NoPull -Dockerfile ./artifacts/net10.0/Dockerfile-sample -Tags "${{ steps.meta_sample100.outputs.tags }}" -Labels "${{ steps.meta_sample100.outputs.labels }}" -BuildArgs "SPAHOST_IMAGE=$Env:SPAHOST_IMAGE"
+        env:
+          SPAHOST_IMAGE: ${{ steps.build100.outputs.image }}
 
       - name: Pack
         run: dotnet pack src/Hosting/Hosting.csproj -c Release -o ./artifacts/packages/ --no-build --verbosity normal

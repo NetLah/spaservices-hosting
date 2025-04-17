@@ -3,7 +3,7 @@
   <PropertyGroup>
     <PackageId>NetLah.Extensions.SpaServices.$(MSBuildProjectName)</PackageId>
     <PackageTags>spa;single-page-application;host;hosting;configurable;aspnetcore;dotnet;netcore</PackageTags>
-    <TargetFrameworks>net9.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>net10.0;net9.0;net8.0</TargetFrameworks>
     <Description>The ASP.NET Core hosting the single-page application</Description>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>../../NetLah.snk</AssemblyOriginatorKeyFile>
