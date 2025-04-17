@@ -5,7 +5,7 @@
   <Import Project="$(MSBuildThisFileDirectory)Directory.Build.initial.targets" Condition="Exists('$(MSBuildThisFileDirectory)Directory.Build.initial.targets')" />
 
   <PropertyGroup Condition="'$(LatestDevFrameworkVersion)' == ''">
-    <LatestDevFrameworkVersion>10.*-*</LatestDevFrameworkVersion>
+    <LatestDevFrameworkVersion>11.1.*-*</LatestDevFrameworkVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(FrameworkVersion)' == ''">
@@ -13,16 +13,18 @@
     <FrameworkVersion Condition="'$(NET_5_0)' == true Or '$(NET_STD_2_X)' == true">6.*</FrameworkVersion>
     <FrameworkVersion Condition="'$(NET_6_0)' == true Or '$(NET_7_0)' == true">8.*</FrameworkVersion>
     <FrameworkVersion Condition="'$(NET_8_0_UP)' == true">9.*</FrameworkVersion>
+    <FrameworkVersion Condition="'$(NET_10_0)' == true">10.*-*</FrameworkVersion>
     <FrameworkVersion Condition="'$(FrameworkVersion)' == ''">$(LatestDevFrameworkVersion)</FrameworkVersion>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(AspNetFrameworkVersion)' == ''">
+  <PropertyGroup Condition="'$(AspNetFrameworkVersion)' == '' And '$(NET_STD_2_X)' != true">
     <AspNetFrameworkVersion Condition="'$(NET_3_1)' == true">3.1.*</AspNetFrameworkVersion>
     <AspNetFrameworkVersion Condition="'$(NET_5_0)' == true">5.*</AspNetFrameworkVersion>
     <AspNetFrameworkVersion Condition="'$(NET_6_0)' == true">6.*</AspNetFrameworkVersion>
     <AspNetFrameworkVersion Condition="'$(NET_7_0)' == true">7.*</AspNetFrameworkVersion>
     <AspNetFrameworkVersion Condition="'$(NET_8_0)' == true">8.*</AspNetFrameworkVersion>
     <AspNetFrameworkVersion Condition="'$(NET_9_0)' == true">9.*</AspNetFrameworkVersion>
+    <AspNetFrameworkVersion Condition="'$(NET_10_0)' == true">10.*-*</AspNetFrameworkVersion>
     <AspNetFrameworkVersion Condition="'$(AspNetFrameworkVersion)' == ''">$(LatestDevFrameworkVersion)</AspNetFrameworkVersion>
   </PropertyGroup>
 
@@ -31,6 +33,7 @@
     <EFCoreFrameworkVersion Condition="'$(NET_5_0)' == true">5.*</EFCoreFrameworkVersion>
     <EFCoreFrameworkVersion Condition="'$(NET_6_0)' == true Or '$(NET_7_0)' == true">7.*</EFCoreFrameworkVersion>
     <EFCoreFrameworkVersion Condition="'$(NET_8_0_UP)' == true">9.*</EFCoreFrameworkVersion>
+    <EFCoreFrameworkVersion Condition="'$(NET_10_0)' == true">10.*-*</EFCoreFrameworkVersion>
     <EFCoreFrameworkVersion Condition="'$(EFCoreFrameworkVersion)' == ''">$(LatestDevFrameworkVersion)</EFCoreFrameworkVersion>
   </PropertyGroup>
 
@@ -41,7 +44,7 @@
 
   <PropertyGroup>
     <NpgsqlVersion Condition="'$(NpgsqlVersion)' == '' And '$(NET_3_1_LESS_OR_STD)' == true">4.*</NpgsqlVersion>
-    <!--<NpgsqlVersion Condition="'$(NpgsqlVersion)' == '' And '$(NET_8_0_UP)' == true">9.*</NpgsqlVersion>-->
+    <NpgsqlVersion Condition="'$(NpgsqlVersion)' == '' And '$(NET_10_0)' == true">9.*</NpgsqlVersion>
     <NpgsqlVersion Condition="'$(NpgsqlVersion)' == ''">$(EFCoreFrameworkVersion)</NpgsqlVersion>
     <NuGetPackageVersion Condition="'$(NuGetPackageVersion)' == ''">6.*</NuGetPackageVersion>
     <SystemTextJsonVersion Condition="'$(SystemTextJsonVersion)' == '' And '$(NET_5_0_LESS)' == true">6.*</SystemTextJsonVersion>
@@ -136,7 +139,7 @@
     <PackageReference Update="Std.UriTemplate" Version="2.*" />
     <PackageReference Update="Tavis.UriTemplates" Version="2.*" />
     <PackageReference Update="TimeZoneConverter" Version="5.*" />
-    <PackageReference Update="YamlDotNet" Version="11.*" />
+    <PackageReference Update="YamlDotNet" Version="16.*" />
     <PackageReference Update="ZXing.Net" Version="0.16.*" />
 
     <!--microsoft other-->
