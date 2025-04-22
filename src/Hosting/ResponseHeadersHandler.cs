@@ -8,7 +8,7 @@ internal class ResponseHeadersHandler(ILogger logger, ResponseHeadersOptions res
     private readonly ILogger _logger = logger;
     private readonly WeakReference _originalResponseHandler = new(originalResponseHandler ?? (_ => { }));
     private readonly ResponseHandlerEntry[] _handlers = [
-        .. (responseHeaders.DefaultHandler is { } handler ? [handler] : Array.Empty<ResponseHandlerEntry>()),
+        .. responseHeaders.DefaultHandler is { } handler ? [handler] : Array.Empty<ResponseHandlerEntry>(),
         .. responseHeaders.Handlers,
     ];
 
