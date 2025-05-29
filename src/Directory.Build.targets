@@ -65,7 +65,7 @@
     <PackageReference Update="NetLah.Extensions.Logging.Reference" Version="1.0.0" />
     <PackageReference Update="NetLah.Extensions.Logging.Serilog" Version="1.0.0" />
     <PackageReference Update="NetLah.Extensions.Logging.Serilog.AspNetCore" Version="1.0.0" />
-    <PackageReference Update="NetLah.Extensions.SpaServices.Hosting" Version="1.0.0-rc3" />
+    <PackageReference Update="NetLah.Extensions.SpaServices.Hosting" Version="1.2.0-rc1" />
     <PackageReference Update="Testing.Dynamic.Json" Version="1.0.0" />
 
     <!--serilog-->
@@ -119,7 +119,7 @@
     <PackageReference Update="Microsoft.OpenApi" Version="1.0.0" />
 
   </ItemGroup>
-
+  
   <ItemGroup Condition="'$(NET_8_0_LESS_OR_STD)' == true">
     <PackageReference Update="Serilog" Version="3.1.1" />
     <PackageReference Update="Serilog.Formatting.Compact" Version="2.0.0" />

@@ -1,7 +1,7 @@
 <Project>
 
   <PropertyGroup>
-    <CurrentFrameworkVersion>8.0.15;9.0.4;10.0.0-preview.3</CurrentFrameworkVersion>
+    <CurrentFrameworkVersion>8.0.16;9.0.5;10.0.0-preview.4</CurrentFrameworkVersion>
     <ImportedCommonProps>True</ImportedCommonProps>
 
     <NET_ID>$([MSBuild]::GetTargetFrameworkIdentifier($(TargetFramework)))</NET_ID>
