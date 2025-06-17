@@ -120,7 +120,7 @@ jobs:
             ${{ secrets.DOCKER_HUB_REPOS }}
             name=netlah/spa-host,enable=${{ startsWith(github.ref, 'refs/tags/') }}
           flavor: |
-            latest=${{ runner.os == 'Linux' }}
+            latest=${{ runner.os == 'Linux' && startsWith(github.ref, 'refs/tags/') }}
             suffix=-9.0${{ env.TAG_SUFFIX }}
             prefix=
           tags: |
@@ -142,7 +142,7 @@ jobs:
             ${{ secrets.DOCKER_HUB_SAMPLE_REPOS }}
             name=netlah/spa-host-sample,enable=${{ startsWith(github.ref, 'refs/tags/') }}
           flavor: |
-            latest=${{ runner.os == 'Linux' }}
+            latest=${{ runner.os == 'Linux' && startsWith(github.ref, 'refs/tags/') }}
             suffix=-9.0${{ env.TAG_SUFFIX }}
             prefix=
           tags: |
