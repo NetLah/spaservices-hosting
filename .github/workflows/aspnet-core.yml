@@ -84,10 +84,10 @@ jobs:
             type=ref,event=branch,priority=500
             type=ref,event=pr,priority=500,prefix=pr-
             type=sha,enable=${{ github.event_name != 'pull_request' }},priority=400,prefix=sha-,format=short
-            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=600,pattern=^(\d+\.\d+(\.\d+)?(-.+)?)$,group=1
-            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=580,pattern=^(\d+\.\d+(\.\d+)?)(-.+)?$,group=1
-            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=570,pattern=^(\d+\.\d+)(\.\d+)?(-.+)?$,group=1
-            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=560,pattern=^(\d+)\.\d+(\.\d+)?(-.+)?$,group=1
+            type=semver,enable=true,priority=600,pattern={{version}}
+            type=semver,enable=true,priority=580,pattern={{major}}.{{minor}}.{{patch}}
+            type=semver,enable=true,priority=570,pattern={{major}}.{{minor}}
+            type=semver,enable=true,priority=560,pattern={{major}}
 
       - name: Docker meta sample 8.0
         if: ${{ success() && (runner.os == 'Linux' || runner.os == 'Windows') }}
@@ -106,10 +106,10 @@ jobs:
             type=ref,event=branch,priority=500
             type=ref,event=pr,priority=500,prefix=pr-
             type=sha,enable=${{ github.event_name != 'pull_request' }},priority=400,prefix=sha-,format=short
-            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=600,pattern=^(\d+\.\d+(\.\d+)?(-.+)?)$,group=1
-            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=580,pattern=^(\d+\.\d+(\.\d+)?)(-.+)?$,group=1
-            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=570,pattern=^(\d+\.\d+)(\.\d+)?(-.+)?$,group=1
-            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=560,pattern=^(\d+)\.\d+(\.\d+)?(-.+)?$,group=1
+            type=semver,enable=true,priority=600,pattern={{version}}
+            type=semver,enable=true,priority=580,pattern={{major}}.{{minor}}.{{patch}}
+            type=semver,enable=true,priority=570,pattern={{major}}.{{minor}}
+            type=semver,enable=true,priority=560,pattern={{major}}
 
       - name: Docker meta 9.0
         if: ${{ success() && (runner.os == 'Linux' || runner.os == 'Windows') }}
@@ -128,10 +128,10 @@ jobs:
             type=ref,event=branch,priority=500
             type=ref,event=pr,priority=500,prefix=pr-
             type=sha,enable=${{ github.event_name != 'pull_request' }},priority=400,prefix=sha-,format=short
-            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=600,pattern=^(\d+\.\d+(\.\d+)?(-.+)?)$,group=1
-            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=590,pattern=^(\d+\.\d+(\.\d+)?)(-.+)?$,group=1
-            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=570,pattern=^(\d+\.\d+)(\.\d+)?(-.+)?$,group=1
-            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=560,pattern=^(\d+)\.\d+(\.\d+)?(-.+)?$,group=1
+            type=semver,enable=true,priority=600,pattern={{version}}
+            type=semver,enable=true,priority=580,pattern={{major}}.{{minor}}.{{patch}}
+            type=semver,enable=true,priority=570,pattern={{major}}.{{minor}}
+            type=semver,enable=true,priority=560,pattern={{major}}
 
       - name: Docker meta sample 9.0
         if: ${{ success() && (runner.os == 'Linux' || runner.os == 'Windows') }}
@@ -150,10 +150,10 @@ jobs:
             type=ref,event=branch,priority=500
             type=ref,event=pr,priority=500,prefix=pr-
             type=sha,enable=${{ github.event_name != 'pull_request' }},priority=400,prefix=sha-,format=short
-            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=600,pattern=^(\d+\.\d+(\.\d+)?(-.+)?)$,group=1
-            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=590,pattern=^(\d+\.\d+(\.\d+)?)(-.+)?$,group=1
-            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=570,pattern=^(\d+\.\d+)(\.\d+)?(-.+)?$,group=1
-            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=560,pattern=^(\d+)\.\d+(\.\d+)?(-.+)?$,group=1
+            type=semver,enable=true,priority=600,pattern={{version}}
+            type=semver,enable=true,priority=580,pattern={{major}}.{{minor}}.{{patch}}
+            type=semver,enable=true,priority=570,pattern={{major}}.{{minor}}
+            type=semver,enable=true,priority=560,pattern={{major}}
 
       - name: Docker meta 10.0
         if: ${{ success() && (runner.os == 'Linux' || runner.os == 'Windows') }}
@@ -172,10 +172,10 @@ jobs:
             type=ref,event=branch,priority=500
             type=ref,event=pr,priority=500,prefix=pr-
             type=sha,enable=${{ github.event_name != 'pull_request' }},priority=400,prefix=sha-,format=short
-            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=600,pattern=^(\d+\.\d+(\.\d+)?(-.+)?)$,group=1
-            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=5100,pattern=^(\d+\.\d+(\.\d+)?)(-.+)?$,group=1
-            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=570,pattern=^(\d+\.\d+)(\.\d+)?(-.+)?$,group=1
-            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=560,pattern=^(\d+)\.\d+(\.\d+)?(-.+)?$,group=1
+            type=semver,enable=true,priority=600,pattern={{version}}
+            type=semver,enable=true,priority=580,pattern={{major}}.{{minor}}.{{patch}}
+            type=semver,enable=true,priority=570,pattern={{major}}.{{minor}}
+            type=semver,enable=true,priority=560,pattern={{major}}
 
       - name: Docker meta sample 10.0
         if: ${{ success() && (runner.os == 'Linux' || runner.os == 'Windows') }}
@@ -194,10 +194,10 @@ jobs:
             type=ref,event=branch,priority=500
             type=ref,event=pr,priority=500,prefix=pr-
             type=sha,enable=${{ github.event_name != 'pull_request' }},priority=400,prefix=sha-,format=short
-            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=600,pattern=^(\d+\.\d+(\.\d+)?(-.+)?)$,group=1
-            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=5100,pattern=^(\d+\.\d+(\.\d+)?)(-.+)?$,group=1
-            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=570,pattern=^(\d+\.\d+)(\.\d+)?(-.+)?$,group=1
-            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=560,pattern=^(\d+)\.\d+(\.\d+)?(-.+)?$,group=1
+            type=semver,enable=true,priority=600,pattern={{version}}
+            type=semver,enable=true,priority=580,pattern={{major}}.{{minor}}.{{patch}}
+            type=semver,enable=true,priority=570,pattern={{major}}.{{minor}}
+            type=semver,enable=true,priority=560,pattern={{major}}
 
       - name: Install dependencies
         run: dotnet restore
