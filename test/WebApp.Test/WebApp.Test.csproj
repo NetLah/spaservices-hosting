@@ -24,4 +24,9 @@
     <ProjectReference Include="..\..\src\WebApp\WebApp.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- System.Drawing.Common 4.7.0 -->
+    <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-rxg9-xrhp-64gj" />
+  </ItemGroup>
+
 </Project>

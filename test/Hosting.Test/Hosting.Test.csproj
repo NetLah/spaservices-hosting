@@ -47,14 +47,9 @@
     <ProjectReference Include="..\..\src\Hosting\Hosting.csproj" />
   </ItemGroup>
 
-  <!--<ItemGroup>
-    --><!-- System.Text.Json 6.0.0/7.0.0/8.0.0 --><!--
-    <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-8g4q-xg66-9fp4" />
-    <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-hh2w-p6rv-4g7w" />
-    --><!-- System.Drawing.Common 4.7.0 --><!--
+  <ItemGroup>
+    <!-- System.Drawing.Common 4.7.0 -->
     <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-rxg9-xrhp-64gj" />
-    --><!-- System.Text.RegularExpressions 4.3.0 --><!--
-    <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-cmhx-cq75-c4mj" />
-  </ItemGroup>-->
+  </ItemGroup>
 
 </Project>

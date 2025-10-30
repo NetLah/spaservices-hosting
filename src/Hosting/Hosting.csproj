@@ -22,6 +22,10 @@
     <None Include="..\..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
+  <!--<ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>-->
+
   <ItemGroup>
     <PackageReference Include="Azure.Core" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" />

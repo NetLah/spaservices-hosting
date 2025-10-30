@@ -63,12 +63,12 @@
 
   <ItemGroup>
     <!--build related-->
-    <PackageReference Update="Bullseye" Version="5.*" />
-    <PackageReference Include="MinVer" Version="5.*" PrivateAssets="All" />
+    <PackageReference Update="Bullseye" Version="6.*" />
+    <PackageReference Include="MinVer" Version="6.*" PrivateAssets="All" />
     <PackageReference Include="NetLah.AssemblyInfo.BuildTime.Target" Version="1.*" PrivateAssets="All" Condition="'$(ExcludeAssemblyBuildTime)' != true" />
     <PackageReference Update="Microsoft.SourceLink.Gitea" Version="8.*" PrivateAssets="All" />
     <PackageReference Update="Microsoft.SourceLink.GitHub" Version="8.*" PrivateAssets="All" />
-    <PackageReference Update="SimpleExec" Version="11.*" />
+    <PackageReference Update="SimpleExec" Version="12.*" />
 
     <!--the helpers -->
     <PackageReference Update="NetLah.Abstractions" Version="1.*" />
@@ -88,7 +88,7 @@
     <PackageReference Update="AngleSharp" Version="*" />
     <PackageReference Update="coverlet.collector" Version="6.*" PrivateAssets="All" />
     <PackageReference Update="FluentAssertions" Version="6.*" PrivateAssets="All" />
-    <PackageReference Update="Microsoft.NET.Test.Sdk" Version="17.*" />
+    <PackageReference Update="Microsoft.NET.Test.Sdk" Version="18.*" />
     <PackageReference Update="Moq" Version="4.*" />
     <PackageReference Update="NUnit" Version="3.*" />
     <PackageReference Update="NUnit3TestAdapter" Version="4.*" PrivateAssets="All" />
@@ -100,7 +100,8 @@
     <PackageReference Update="xunit.runner.visualstudio" Version="2.4.*" PrivateAssets="All" Condition="'$(NET_5_0_LESS)' == true" />
 
     <!--misc-->
-    <PackageReference Update="AutoMapper" Version="13.*" Condition="'$(NET_6_0_UP)' == true" />
+    <PackageReference Update="AutoMapper" Version="14.*" Condition="'$(NET_8_0_UP)' == true" />
+    <PackageReference Update="AutoMapper" Version="13.*" Condition="'$(NET_6_0)' == true Or '$(NET_7_0)' == true" />
     <PackageReference Update="AutoMapper" Version="12.*" Condition="'$(NET_5_0_LESS)' == true" />
     <PackageReference Update="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.*" />
     <PackageReference Update="BouncyCastle.NetCore" Version="1.9.*" />
@@ -146,6 +147,7 @@
     <!--microsoft other-->
     <PackageReference Update="BenchmarkDotNet" Version="0.13.*" />
     <PackageReference Update="CommunityToolkit.HighPerformance" Version="8.*" />
+    <PackageReference Update="Microsoft.AspNetCore.Hosting" Version="[2.*,3)" />
     <PackageReference Update="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="$(FrameworkVersion)" />
     <PackageReference Update="Microsoft.AspNetCore.Mvc.Razor.Extensions" Version="6.*" />
     <PackageReference Update="Microsoft.AspNetCore.Razor.Language" Version="6.*" />
@@ -160,6 +162,7 @@
     <PackageReference Update="Microsoft.VisualStudio.Validation" Version="17.*" />
     <PackageReference Update="System.ClientModel" Version="1.*" />
     <PackageReference Update="System.CommandLine" Version="2.*-*" />
+    <PackageReference Update="System.IO.FileSystem.AccessControl" Version="5.*" />
     <PackageReference Update="System.Memory" Version="4.*" />
     <PackageReference Update="System.Runtime.CompilerServices.Unsafe" Version="6.*" />
     <PackageReference Update="System.Runtime.Loader" Version="4.3.0" />
@@ -445,7 +448,7 @@
     <PackageReference Update="Serilog.Settings.Configuration" Version="$(SerilogVersion)" />
     <PackageReference Update="Serilog.Sinks.Console" Version="6.*" />
     <PackageReference Update="Serilog.Sinks.Debug" Version="3.*" />
-    <PackageReference Update="Serilog.Sinks.File" Version="6.*" />
+    <PackageReference Update="Serilog.Sinks.File" Version="7.*" />
     <PackageReference Update="Serilog.Sinks.PeriodicBatching" Version="5.*" />
     <PackageReference Update="Serilog.Sinks.Seq" Version="9.*" />
   </ItemGroup>
