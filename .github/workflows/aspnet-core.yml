@@ -30,7 +30,7 @@ jobs:
             8.0.x
             9.0.x
 
-      - name: Setup .NET 10.0.x Preview
+      - name: Setup .NET 10.0.x RC
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.0.x
@@ -304,7 +304,8 @@ jobs:
         id: build100
         shell: pwsh
         run: |
-          $aspnetImageTag100 = if ($Env:RUNNER_OS -eq 'Linux') { '10.0-alpine' } else { '10.0-preview-nanoserver-1809' }
+          $aspnetImageTag100 = if ($Env:RUNNER_OS -eq 'Linux') { '10.0-alpine' } else { '10.0-nanoserver-1809' }
+          $aspnetImageRepo100 = if ($Env:RUNNER_OS -eq 'Linux') { 'netlah/aspnet-webssh' } else { 'netlah/dotnet-aspnet' }
           ./docker-build.ps1 -Context ./artifacts/net10.0 -Squash -Tags "${{ steps.meta100.outputs.tags }}" -Labels "${{ steps.meta100.outputs.labels }}" -BuildArgs "ASPNET_IMAGE_TAG=$aspnetImageTag100"
 
       - name: Build and Push Sample 10.0
