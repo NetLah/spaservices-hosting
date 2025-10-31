@@ -30,7 +30,7 @@ jobs:
             8.0.x
             9.0.x
 
-      - name: Setup .NET 10.0.x Preview
+      - name: Setup .NET 10.0.x RC
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.0.x
@@ -210,14 +210,26 @@ jobs:
 
       - name: Generate package information
         run: |
-          dotnet list src/Hosting package --include-transitive > src/WebApp/wwwroot/.package-hosting.txt
-          dotnet list src/WebApp package --include-transitive > src/WebApp/wwwroot/.package-webapp.txt
-          dotnet list src/Hosting package --outdated --include-transitive > src/WebApp/wwwroot/.package-hosting-outdated.txt
-          dotnet list src/WebApp package --outdated --include-transitive > src/WebApp/wwwroot/.package-webapp-outdated.txt
-          dotnet list src/Hosting package --deprecated --include-transitive > src/WebApp/wwwroot/.package-hosting-deprecated.txt
-          dotnet list src/WebApp package --deprecated --include-transitive > src/WebApp/wwwroot/.package-webapp-deprecated.txt
-          dotnet list src/Hosting package --vulnerable --include-transitive > src/WebApp/wwwroot/.package-hosting-vulnerable.txt
-          dotnet list src/WebApp package --vulnerable --include-transitive > src/WebApp/wwwroot/.package-webapp-vulnerable.txt
+          dotnet package list --project src/Hosting --include-transitive > src/WebApp/wwwroot/.package-hosting.txt
+          dotnet package list --project src/Hosting --framework net8.0 --include-transitive > src/WebApp/wwwroot/.package-net8.0-hosting.txt
+          dotnet package list --project src/Hosting --framework net9.0 --include-transitive > src/WebApp/wwwroot/.package-net9.0-hosting.txt
+          dotnet package list --project src/Hosting --framework net10.0 --include-transitive > src/WebApp/wwwroot/.package-net10.0-hosting.txt
+          dotnet package list --project src/Hosting --deprecated --include-transitive > src/WebApp/wwwroot/.package-hosting-deprecated.txt
+          dotnet package list --project src/Hosting --outdated --include-transitive > src/WebApp/wwwroot/.package-hosting-outdated.txt
+          dotnet package list --project src/Hosting --vulnerable --include-transitive > src/WebApp/wwwroot/.package-hosting-vulnerable.txt
+          dotnet package list --project src/WebApp --include-transitive > src/WebApp/wwwroot/.package-webapp.txt
+          dotnet package list --project src/WebApp --framework net8.0 --include-transitive > src/WebApp/wwwroot/.package-net8.0-webapp.txt
+          dotnet package list --project src/WebApp --framework net9.0 --include-transitive > src/WebApp/wwwroot/.package-net9.0-webapp.txt
+          dotnet package list --project src/WebApp --framework net10.0 --include-transitive > src/WebApp/wwwroot/.package-net10.0-webapp.txt
+          dotnet package list --project src/WebApp --deprecated --include-transitive > src/WebApp/wwwroot/.package-webapp-deprecated.txt
+          dotnet package list --project src/WebApp --framework net8.0 --deprecated --include-transitive > src/WebApp/wwwroot/.package-net8.0-webapp-deprecated.txt
+          dotnet package list --project src/WebApp --framework net9.0 --deprecated --include-transitive > src/WebApp/wwwroot/.package-net9.0-webapp-deprecated.txt
+          dotnet package list --project src/WebApp --framework net10.0 --deprecated --include-transitive > src/WebApp/wwwroot/.package-net10.0-webapp-deprecated.txt
+          dotnet package list --project src/WebApp --outdated --include-transitive > src/WebApp/wwwroot/.package-webapp-outdated.txt
+          dotnet package list --project src/WebApp --framework net8.0 --outdated --include-transitive > src/WebApp/wwwroot/.package-net8.0-webapp-outdated.txt
+          dotnet package list --project src/WebApp --framework net9.0 --outdated --include-transitive > src/WebApp/wwwroot/.package-net9.0-webapp-outdated.txt
+          dotnet package list --project src/WebApp --framework net10.0 --outdated --include-transitive > src/WebApp/wwwroot/.package-net10.0-webapp-outdated.txt
+          dotnet package list --project src/WebApp --vulnerable --include-transitive > src/WebApp/wwwroot/.package-webapp-vulnerable.txt
 
       - name: Publish
         shell: pwsh
@@ -304,8 +316,9 @@ jobs:
         id: build100
         shell: pwsh
         run: |
-          $aspnetImageTag100 = if ($Env:RUNNER_OS -eq 'Linux') { '10.0-alpine' } else { '10.0-preview-nanoserver-1809' }
-          ./docker-build.ps1 -Context ./artifacts/net10.0 -Squash -Tags "${{ steps.meta100.outputs.tags }}" -Labels "${{ steps.meta100.outputs.labels }}" -BuildArgs "ASPNET_IMAGE_TAG=$aspnetImageTag100"
+          $aspnetImageTag100 = if ($Env:RUNNER_OS -eq 'Linux') { '10.0-alpine' } else { '10.0-nanoserver-1809' }
+          $aspnetImageRepo100 = if ($Env:RUNNER_OS -eq 'Linux') { 'netlah/aspnet-webssh' } else { 'netlah/dotnet-aspnet' }
+          ./docker-build.ps1 -Context ./artifacts/net10.0 -Squash -Tags "${{ steps.meta100.outputs.tags }}" -Labels "${{ steps.meta100.outputs.labels }}" -BuildArgs "ASPNET_IMAGE_TAG=$aspnetImageTag100`nASPNET_IMAGE_REPO=$aspnetImageRepo100"
 
       - name: Build and Push Sample 10.0
         if: ${{ success() && (runner.os == 'Linux' || runner.os == 'Windows') }}
