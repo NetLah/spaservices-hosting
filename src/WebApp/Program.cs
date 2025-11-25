@@ -53,6 +53,7 @@ try
         LogAssembly(new AssemblyInfo(typeof(WebApplicationBuilderExtensions).Assembly));
         LogAssembly(new AssemblyInfo(typeof(SpaOptions).Assembly));
         LogAssembly(new AssemblyInfo(typeof(Serilog.SerilogApplicationBuilderExtensions).Assembly));
+        LogAssembly(new AssemblyInfo(typeof(Serilog.Extensions.Logging.SerilogLoggerProvider).Assembly));
     }
 
     builder.CustomApplicationInsightsTelemetry(() => new DefaultAzureCredential());

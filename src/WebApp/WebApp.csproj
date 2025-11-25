@@ -67,6 +67,7 @@
     <PackageReference Include="Microsoft.Identity.Client.Extensions.Msal" />
     <PackageReference Include="Microsoft.IdentityModel.Abstractions" />
     <PackageReference Include="Microsoft.Win32.SystemEvents" />
+    <PackageReference Include="System.ClientModel" />
     <PackageReference Include="System.Configuration.ConfigurationManager" />
     <PackageReference Include="System.Diagnostics.PerformanceCounter" />
     <PackageReference Include="System.Drawing.Common" />
