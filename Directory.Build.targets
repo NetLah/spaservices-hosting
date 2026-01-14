@@ -47,7 +47,7 @@
 
   <PropertyGroup>
     <NpgsqlVersion Condition="'$(NpgsqlVersion)' == '' And '$(NET_3_1_LESS_OR_STD)' == true">4.*</NpgsqlVersion>
-    <NpgsqlVersion Condition="'$(NpgsqlVersion)' == '' And '$(NET_10_0)' == true">10.*-*</NpgsqlVersion>
+    <!--<NpgsqlVersion Condition="'$(NpgsqlVersion)' == '' And '$(NET_10_0)' == true">10.*</NpgsqlVersion>-->
     <NpgsqlVersion Condition="'$(NpgsqlVersion)' == ''">$(EFCoreFrameworkVersion)</NpgsqlVersion>
     <NuGetPackageVersion Condition="'$(NuGetPackageVersion)' == ''">6.*</NuGetPackageVersion>
     <SystemTextJsonVersion Condition="'$(SystemTextJsonVersion)' == '' And '$(NET_5_0_LESS)' == true">6.*</SystemTextJsonVersion>
@@ -60,19 +60,14 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(SerilogVersion)' == ''">
-    <SerilogVersion Condition="'$(NET_8_0_UP)' == true">9.*</SerilogVersion>
+    <SerilogVersion Condition="'$(NET_8_0_UP)' == true">10.*</SerilogVersion>
     <SerilogVersion Condition="'$(SerilogVersion)' == ''">8.*</SerilogVersion>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Serilog10Version)' == ''">
-    <Serilog10Version Condition="'$(NET_8_0_UP)' == true">10.*</Serilog10Version>
-    <Serilog10Version Condition="'$(Serilog10Version)' == ''">$(SerilogVersion)</Serilog10Version>
   </PropertyGroup>
 
   <ItemGroup>
     <!--build related-->
     <PackageReference Update="Bullseye" Version="6.*" />
-    <PackageReference Include="MinVer" Version="6.*" PrivateAssets="All" />
+    <PackageReference Include="MinVer" Version="7.*" PrivateAssets="All" />
     <PackageReference Include="NetLah.AssemblyInfo.BuildTime.Target" Version="1.*" PrivateAssets="All" Condition="'$(ExcludeAssemblyBuildTime)' != true" />
     <PackageReference Update="Microsoft.SourceLink.Gitea" Version="8.*" PrivateAssets="All" />
     <PackageReference Update="Microsoft.SourceLink.GitHub" Version="8.*" PrivateAssets="All" />
@@ -89,6 +84,7 @@
     <PackageReference Update="NetLah.Extensions.Logging.Serilog" Version="1.*-*" />
     <PackageReference Update="NetLah.Extensions.Logging.Serilog.AspNetCore" Version="1.*-*" />
     <PackageReference Update="NetLah.Extensions.Logging.Serilog.AspNetCore" Version="1.0.0" Condition="'$(NET_3_1)' == true" />
+    <PackageReference Update="NetLah.Extensions.Logging.Serilog.HostApplication" Version="1.*-*" Condition="'$(NET_7_0_UP)' == true" />
     <PackageReference Update="NetLah.Extensions.SpaServices.Hosting" Version="1.*-*" />
     <PackageReference Update="NetLah.Extensions.SpaServices.Hosting" Version="1.0.*-*" Condition="'$(NET_7_0_LESS)' == true" />
     <PackageReference Update="Testing.Dynamic.Json" Version="1.*-*" />
@@ -322,7 +318,9 @@
     <!--<PackageReference Update="Tec.EFCore.NamingConventions" Version="9.*-*" />-->
 
     <!--identityserver4 -->
-    <PackageReference Update="IdentityModel" Version="7.*" />
+    <PackageReference Update="IdentityModel" Version="7.*" Condition="'$(NET_7_0_LESS_OR_STD)' == true"  />
+    <PackageReference Update="Duende.IdentityModel" Version="7.*" Condition="'$(NET_STD_2_X)' == true" />
+    <PackageReference Update="Duende.IdentityModel" Version="8.*-*" Condition="'$(NET_8_0_UP)' == true" />
     <PackageReference Update="IdentityModel.AspNetCore.OAuth2Introspection" Version="6.*" />
 
     <!--azure-->
@@ -454,7 +452,7 @@
     <PackageReference Update="Serilog.Enrichers.Environment" Version="3.*" />
     <PackageReference Update="Serilog.Enrichers.Thread" Version="4.*" />
     <PackageReference Update="Serilog.Extensions.Hosting" Version="$(SerilogVersion)" />
-    <PackageReference Update="Serilog.Extensions.Logging" Version="$(Serilog10Version)" />
+    <PackageReference Update="Serilog.Extensions.Logging" Version="$(SerilogVersion)" />
     <PackageReference Update="Serilog.Formatting.Compact" Version="3.*" />
     <PackageReference Update="Serilog.Settings.Configuration" Version="$(SerilogVersion)" />
     <PackageReference Update="Serilog.Sinks.Console" Version="6.*" />
@@ -503,6 +501,7 @@
     <PackageReference Update="Azure.Core" Version="1.45.*" />
     <PackageReference Update="Azure.Identity" Version="1.13.*" />
     <PackageReference Update="System.ClientModel" Version="1.3.*" />
+    <PackageReference Update="Microsoft.Graph.Core" Version="3.2.3" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(NET_5_0_LESS)' == true">
