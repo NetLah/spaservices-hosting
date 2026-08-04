@@ -21,21 +21,19 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup .NET 10.0.x, 9.0.x, 8.0.x, 7.0.x and 6.0.x
+      - name: Setup .NET 10.0.x, 9.0.x, and 8.0.x
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: |
-            6.0.x
-            7.0.x
             8.0.x
             9.0.x
             10.0.x
 
-      # - name: Setup .NET 11.0.x Preview
-      #   uses: actions/setup-dotnet@v4
-      #   with:
-      #     dotnet-version: 11.0.x
-      #     dotnet-quality: "preview"
+      - name: Setup .NET 11.0.x Preview
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 11.0.x
+          dotnet-quality: "preview"
 
       - name: dotnet info
         run: dotnet --info
@@ -200,6 +198,50 @@ jobs:
             type=semver,enable=true,priority=570,pattern={{major}}.{{minor}}
             type=semver,enable=true,priority=560,pattern={{major}}
 
+      - name: Docker meta 11.0
+        if: ${{ success() && (runner.os == 'Linux' || runner.os == 'Windows') }}
+        id: meta110
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            ${{ secrets.DOCKER_HUB_REPOS }}
+            name=netlah/spa-host,enable=${{ startsWith(github.ref, 'refs/tags/') }}
+          flavor: |
+            latest=false
+            suffix=-11.0${{ env.TAG_SUFFIX }}
+            prefix=
+          tags: |
+            type=raw,enable=${{ github.event_name != 'pull_request' }},priority=699,value=${{ steps.minver.outputs.version }}
+            type=ref,event=branch,priority=500
+            type=ref,event=pr,priority=500,prefix=pr-
+            type=sha,enable=${{ github.event_name != 'pull_request' }},priority=400,prefix=sha-,format=short
+            type=semver,enable=true,priority=600,pattern={{version}}
+            type=semver,enable=true,priority=580,pattern={{major}}.{{minor}}.{{patch}}
+            type=semver,enable=true,priority=570,pattern={{major}}.{{minor}}
+            type=semver,enable=true,priority=560,pattern={{major}}
+
+      - name: Docker meta sample 11.0
+        if: ${{ success() && (runner.os == 'Linux' || runner.os == 'Windows') }}
+        id: meta_sample110
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            ${{ secrets.DOCKER_HUB_SAMPLE_REPOS }}
+            name=netlah/spa-host-sample,enable=${{ startsWith(github.ref, 'refs/tags/') }}
+          flavor: |
+            latest=false
+            suffix=-11.0${{ env.TAG_SUFFIX }}
+            prefix=
+          tags: |
+            type=raw,enable=${{ github.event_name != 'pull_request' }},priority=699,value=${{ steps.minver.outputs.version }}
+            type=ref,event=branch,priority=500
+            type=ref,event=pr,priority=500,prefix=pr-
+            type=sha,enable=${{ github.event_name != 'pull_request' }},priority=400,prefix=sha-,format=short
+            type=semver,enable=true,priority=600,pattern={{version}}
+            type=semver,enable=true,priority=580,pattern={{major}}.{{minor}}.{{patch}}
+            type=semver,enable=true,priority=570,pattern={{major}}.{{minor}}
+            type=semver,enable=true,priority=560,pattern={{major}}
+
       - name: Install dependencies
         run: dotnet restore
 
@@ -215,6 +257,7 @@ jobs:
           dotnet package list --project src/Hosting --framework net8.0 --include-transitive > src/WebApp/wwwroot/.package-net8.0-hosting.txt
           dotnet package list --project src/Hosting --framework net9.0 --include-transitive > src/WebApp/wwwroot/.package-net9.0-hosting.txt
           dotnet package list --project src/Hosting --framework net10.0 --include-transitive > src/WebApp/wwwroot/.package-net10.0-hosting.txt
+          dotnet package list --project src/Hosting --framework net11.0 --include-transitive > src/WebApp/wwwroot/.package-net11.0-hosting.txt
           dotnet package list --project src/Hosting --deprecated --include-transitive > src/WebApp/wwwroot/.package-hosting-deprecated.txt
           dotnet package list --project src/Hosting --outdated --include-transitive > src/WebApp/wwwroot/.package-hosting-outdated.txt
           dotnet package list --project src/Hosting --vulnerable --include-transitive > src/WebApp/wwwroot/.package-hosting-vulnerable.txt
@@ -222,20 +265,23 @@ jobs:
           dotnet package list --project src/WebApp --framework net8.0 --include-transitive > src/WebApp/wwwroot/.package-net8.0-webapp.txt
           dotnet package list --project src/WebApp --framework net9.0 --include-transitive > src/WebApp/wwwroot/.package-net9.0-webapp.txt
           dotnet package list --project src/WebApp --framework net10.0 --include-transitive > src/WebApp/wwwroot/.package-net10.0-webapp.txt
+          dotnet package list --project src/WebApp --framework net11.0 --include-transitive > src/WebApp/wwwroot/.package-net11.0-webapp.txt
           dotnet package list --project src/WebApp --deprecated --include-transitive > src/WebApp/wwwroot/.package-webapp-deprecated.txt
           dotnet package list --project src/WebApp --framework net8.0 --deprecated --include-transitive > src/WebApp/wwwroot/.package-net8.0-webapp-deprecated.txt
           dotnet package list --project src/WebApp --framework net9.0 --deprecated --include-transitive > src/WebApp/wwwroot/.package-net9.0-webapp-deprecated.txt
           dotnet package list --project src/WebApp --framework net10.0 --deprecated --include-transitive > src/WebApp/wwwroot/.package-net10.0-webapp-deprecated.txt
+          dotnet package list --project src/WebApp --framework net11.0 --deprecated --include-transitive > src/WebApp/wwwroot/.package-net11.0-webapp-deprecated.txt
           dotnet package list --project src/WebApp --outdated --include-transitive > src/WebApp/wwwroot/.package-webapp-outdated.txt
           dotnet package list --project src/WebApp --framework net8.0 --outdated --include-transitive > src/WebApp/wwwroot/.package-net8.0-webapp-outdated.txt
           dotnet package list --project src/WebApp --framework net9.0 --outdated --include-transitive > src/WebApp/wwwroot/.package-net9.0-webapp-outdated.txt
           dotnet package list --project src/WebApp --framework net10.0 --outdated --include-transitive > src/WebApp/wwwroot/.package-net10.0-webapp-outdated.txt
+          dotnet package list --project src/WebApp --framework net11.0 --outdated --include-transitive > src/WebApp/wwwroot/.package-net11.0-webapp-outdated.txt
           dotnet package list --project src/WebApp --vulnerable --include-transitive > src/WebApp/wwwroot/.package-webapp-vulnerable.txt
 
       - name: Publish
         shell: pwsh
         run: |
-          foreach ($framework in @('net8.0', 'net9.0', 'net10.0')) {
+          foreach ($framework in @('net8.0', 'net9.0', 'net10.0', 'net11.0')) {
             dotnet publish src/WebApp -c Release -f $framework --no-build -o "artifacts/$($framework)/app"
             Copy-Item -Force -Path shared/appsettings.Development.json -Destination "artifacts/$($framework)/app/" -ErrorAction Stop -Verbose
           }
@@ -243,7 +289,7 @@ jobs:
       - name: Split sample wwwroot
         shell: pwsh
         run: |
-          foreach ($framework in @('net8.0', 'net9.0', 'net10.0')) {
+          foreach ($framework in @('net8.0', 'net9.0', 'net10.0', 'net11.0')) {
             $webFolder = New-Item -Name "artifacts/$($framework)/wwwroot" -ItemType 'Directory' -ErrorAction Stop
             Move-Item -Force -Path "artifacts/$($framework)/app/wwwroot/*" -Destination "$webFolder/" -Exclude favicon.ico -ErrorAction Stop -Verbose
           }
@@ -252,7 +298,7 @@ jobs:
         if: ${{ success() && (runner.os == 'Linux' || runner.os == 'Windows') }}
         shell: pwsh
         run: |
-          foreach ($framework in @('net8.0', 'net9.0', 'net10.0')) {
+          foreach ($framework in @('net8.0', 'net9.0', 'net10.0', 'net11.0')) {
             Copy-Item -Recurse -Force -Path '.dockerignore',".docker-$( if ($Env:RUNNER_OS -eq 'Linux') { 'linux' } else { 'windows' } )/*" -Destination "artifacts/$($framework)/" -ErrorAction Stop -Verbose
           }
 
@@ -327,6 +373,22 @@ jobs:
         run: ./docker-build.ps1 -Context ./artifacts/net10.0 -NoPull -Dockerfile ./artifacts/net10.0/Dockerfile-sample -Tags "${{ steps.meta_sample100.outputs.tags }}" -Labels "${{ steps.meta_sample100.outputs.labels }}" -BuildArgs "SPAHOST_IMAGE=$Env:SPAHOST_IMAGE"
         env:
           SPAHOST_IMAGE: ${{ steps.build100.outputs.image }}
+
+      - name: Build and Push 11.0
+        if: ${{ success() && (runner.os == 'Linux' || runner.os == 'Windows') }}
+        id: build110
+        shell: pwsh
+        run: |
+          $aspnetImageTag110 = if ($Env:RUNNER_OS -eq 'Linux') { '11.0-alpine' } else { '11.0-nanoserver-1809' }
+          $aspnetImageRepo110 = if ($Env:RUNNER_OS -eq 'Linux') { 'netlah/aspnet-webssh' } else { 'netlah/dotnet-aspnet' }
+          ./docker-build.ps1 -Context ./artifacts/net11.0 -Squash -Tags "${{ steps.meta110.outputs.tags }}" -Labels "${{ steps.meta110.outputs.labels }}" -BuildArgs "ASPNET_IMAGE_TAG=$aspnetImageTag110`nASPNET_IMAGE_REPO=$aspnetImageRepo110"
+
+      - name: Build and Push Sample 11.0
+        if: ${{ success() && (runner.os == 'Linux' || runner.os == 'Windows') }}
+        shell: pwsh
+        run: ./docker-build.ps1 -Context ./artifacts/net11.0 -NoPull -Dockerfile ./artifacts/net11.0/Dockerfile-sample -Tags "${{ steps.meta_sample110.outputs.tags }}" -Labels "${{ steps.meta_sample110.outputs.labels }}" -BuildArgs "SPAHOST_IMAGE=$Env:SPAHOST_IMAGE"
+        env:
+          SPAHOST_IMAGE: ${{ steps.build110.outputs.image }}
 
       - name: Pack
         run: dotnet pack src/Hosting/Hosting.csproj -c Release -o ./artifacts/packages/ --no-build --verbosity normal

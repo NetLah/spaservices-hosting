@@ -1,0 +1,36 @@
+<Solution>
+  <Folder Name="/samples/">
+    <Project Path="samples/SampleSpaWebApp/SampleSpaWebApp.csproj" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".github/workflows/aspnet-core.yml" />
+    <File Path="Common.props" />
+    <File Path="DevNotes.md" />
+    <File Path="Directory.Build.override.targets" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Build.targets" />
+    <File Path="docker-build.ps1" />
+    <File Path="docker-compose.yml" />
+    <File Path="exclusion.dic" />
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/src/">
+    <File Path="src/Directory.Build.override.targets" />
+    <File Path="src/Directory.Build.targets" />
+    <File Path="src/Dockerfile" />
+    <File Path="src/Dockerfile-windows" />
+    <Project Path="src/Hosting/Hosting.csproj" />
+    <Project Path="src/WebApp/WebApp.csproj" />
+  </Folder>
+  <Folder Name="/src/public/">
+    <File Path="src/public/.version" />
+    <File Path="src/public/index.html" />
+  </Folder>
+  <Folder Name="/src/public/assets/">
+    <File Path="src/public/assets/site.css" />
+  </Folder>
+  <Folder Name="/test/">
+    <Project Path="test/Hosting.Test/Hosting.Test.csproj" />
+    <Project Path="test/WebApp.Test/WebApp.Test.csproj" />
+  </Folder>
+</Solution>
