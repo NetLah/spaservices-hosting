@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFrameworks>net10.0;net9.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>net11.0;net10.0;net9.0;net8.0</TargetFrameworks>
     <UserSecretsId>netlah-spaservices-webapp-hp70a</UserSecretsId>
     <IsPackable>false</IsPackable>
     <ServerGarbageCollection>false</ServerGarbageCollection>
@@ -55,8 +55,8 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="Microsoft.Extensions.DependencyModel" />
-    <PackageReference Include="Microsoft.Extensions.Diagnostics.Abstractions" />
-    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.Abstractions" Condition="'$(NET_8_0_UP)' == true And '$(NET_10_0_LESS)' == true" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Condition="'$(NET_8_0_UP)' == true And '$(NET_10_0_LESS)' == true" />
     <PackageReference Include="Microsoft.Extensions.Logging" />
     <PackageReference Include="Microsoft.Identity.Client.Extensions.Msal" />
     <PackageReference Include="Microsoft.IdentityModel.Abstractions" />
