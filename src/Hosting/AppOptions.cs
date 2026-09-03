@@ -16,8 +16,8 @@ public class AppOptions
     public string? RouteGeneralSys { get; set; }
     public string? RouteGeneralName { get; set; }
 
-    [ConfigurationKeyName("sample_name")]
-    public string? SampleName { get; set; }
+    [ConfigurationKeyName("diag_name")]
+    public string? DiagName { get; set; }
 
     /// <summary>
     /// /debug/routes

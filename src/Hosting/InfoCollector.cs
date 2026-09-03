@@ -24,6 +24,7 @@ public class InfoCollector : IInfoCollector
             .Add("HostFramework", appInfo.HostFrameworkName)
             .Add("HostBuildTime", appInfo.HostBuildTimestampLocal)
             .Add("Environment", env.EnvironmentName)
+            .Add("DiagName", appInfo.DiagName)
             .Add("TimeZone", TimeZoneInfo.Local)
             .Add("TimeZoneSG", TimeZoneLocalHelper.GetSingaporeOrCustomTimeZone())
             .Add("ContentRootPath", env.ContentRootPath)

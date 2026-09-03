@@ -1,12 +1,13 @@
-﻿using NetLah.Extensions.SpaServices.Hosting;
+﻿using Microsoft.Extensions.Configuration;
+using NetLah.Extensions.SpaServices.Hosting;
 
 namespace NetLah.Diagnostics;
 
 internal static class AppInfoExtensions
 {
-    public static AppInfo BindAppInfo(this AppInfo appInfo, IAssemblyInfo assemblyInfo, AppFileVersionInfo appFileVersionInfo)
+    public static AppInfo BindAppInfo(this AppInfo appInfo, IAssemblyInfo assemblyInfo, AppFileVersionInfo appFileVersionInfo, AppOptions options, IConfiguration configuration)
     {
-        if (appInfo == null) { throw new ArgumentNullException(nameof(appInfo)); }
+        ArgumentNullException.ThrowIfNull(appInfo);
 
         appInfo.AppFileVersionInfo = appFileVersionInfo ?? throw new ArgumentNullException(nameof(appFileVersionInfo));
         appInfo.AssemblyInfo = assemblyInfo ?? throw new ArgumentNullException(nameof(assemblyInfo));
@@ -15,6 +16,8 @@ internal static class AppInfoExtensions
         appInfo.Version = appFileVersionInfo.Version ?? assemblyInfo.InformationalVersion;
         appInfo.BuildTimestampLocal = GetTimestampString(appFileVersionInfo.BuildTime, TimeZoneInfo.Local);
         appInfo.Description = appFileVersionInfo.Description;
+
+        appInfo.DiagName = options.DiagName ?? configuration?["DIAGNAME"] ?? configuration?["SAMPLE_NAME"] ?? configuration?["SAMPLENAME"] ?? "Noname";
 
         appInfo.HostTitle = assemblyInfo.Title;
         appInfo.HostInformationalVersion = assemblyInfo.InformationalVersion;

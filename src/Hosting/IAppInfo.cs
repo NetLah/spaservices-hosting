@@ -14,4 +14,6 @@ public interface IAppInfo
     string HostInformationalVersion { get; }
     string HostBuildTimestampLocal { get; }
     string HostFrameworkName { get; }
+
+    string DiagName { get; }
 }

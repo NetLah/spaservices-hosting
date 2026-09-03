@@ -20,7 +20,7 @@ public static class WebApplicationBuilderExtensions
         logger.LogDebug("Load UI version information {folder}", wwwroot);
         var appFileVersionInfo = new AppFileVersionParser().ParseFolder(wwwroot);
 
-        var appInfo = builder.GetAppInfoOrDefault().BindAppInfo(ApplicationInfo.Instance, appFileVersionInfo ?? new AppFileVersionInfo());
+        var appInfo = builder.GetAppInfoOrDefault().BindAppInfo(ApplicationInfo.Instance, appFileVersionInfo ?? new AppFileVersionInfo(), appOptions, builder.Configuration);
 
         builder.Services.AddSingleton<AppOptions>(appOptions);
         builder.Services.AddSingleton<IAppInfo>(appInfo);

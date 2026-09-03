@@ -18,6 +18,8 @@ internal class AppInfo : IAppInfo
     public string? BuildTimestampLocal { get; set; }
     public string? Description { get; set; }
 
+    public string DiagName { get; set; } = "Noname";
+
     public string HostTitle { get; set; } = default!;
     public string HostInformationalVersion { get; set; } = default!;
     public string HostBuildTimestampLocal { get; set; } = default!;

@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 
 namespace NetLah.Extensions.SpaServices.Hosting.Controllers;
 
@@ -23,6 +22,6 @@ public class GeneralController(IAppInfo appInfo) : ControllerBase
     public ContentResult Sys([FromServices] IInfoCollector infoCollector)
         => Content(string.Join(Environment.NewLine, infoCollector.Logs.Append($"Uptime: {_appInfo.Uptime}")), "text/plain; charset=utf-8");
 
-    public ContentResult Name([FromServices] AppOptions? options, [FromServices] IConfiguration? configuration)
-        => Content(options?.SampleName ?? configuration?["SAMPLENAME"] ?? configuration?["DIAG_NAME"] ?? configuration?["DIAGNAME"] ?? "Noname", "text/plain; charset=utf-8");
+    public ContentResult Name([FromServices] IAppInfo appInfo)
+        => Content(appInfo.DiagName, "text/plain; charset=utf-8");
 }
