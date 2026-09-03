@@ -29,9 +29,11 @@ public class DebugRoutesTest
             Assert.Equal(@"[] GET _general/Version NetLah.Extensions.SpaServices.Hosting.Controllers.GeneralController.Version (NetLah.Extensions.SpaServices.Hosting)
 [] GET _general/Info NetLah.Extensions.SpaServices.Hosting.Controllers.GeneralController.Info (NetLah.Extensions.SpaServices.Hosting)
 [] GET _general/Sys NetLah.Extensions.SpaServices.Hosting.Controllers.GeneralController.Sys (NetLah.Extensions.SpaServices.Hosting)
+[] GET _general/Name NetLah.Extensions.SpaServices.Hosting.Controllers.GeneralController.Name (NetLah.Extensions.SpaServices.Hosting)
 [] GET _general/Version Route: _general/Version
 [] GET _general/Info Route: _general/Info
 [] GET _general/Sys Route: _general/Sys
+[] GET _general/Name Route: _general/Name
 [] GET debug/routes HTTP: GET debug/routes
 ", content);
         }

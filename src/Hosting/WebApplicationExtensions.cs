@@ -144,8 +144,9 @@ public static class WebApplicationExtensions
         var routeGeneralVersion = StringHelper.NormalizeNull(appOptions.RouteGeneralVersion);
         var routeGeneralInfo = StringHelper.NormalizeNull(appOptions.RouteGeneralInfo);
         var routeGeneralSys = StringHelper.NormalizeNull(appOptions.RouteGeneralSys);
+        var routeGeneralName = StringHelper.NormalizeNull(appOptions.RouteGeneralName);
 
-        if (routeGeneralVersion == null && routeGeneralInfo == null && routeGeneralSys == null
+        if (routeGeneralVersion == null && routeGeneralInfo == null && routeGeneralSys == null && routeGeneralName == null
             && StringHelper.NormalizeNull(appOptions.RouteGeneral) is { } routeGeneral)
         {
             mapControllerAction = false;
@@ -153,6 +154,7 @@ public static class WebApplicationExtensions
             routeGeneralVersion = routeGeneral.Replace("{action}", nameof(GeneralController.Version), StringComparison.OrdinalIgnoreCase);
             routeGeneralInfo = routeGeneral.Replace("{action}", nameof(GeneralController.Info), StringComparison.OrdinalIgnoreCase);
             routeGeneralSys = routeGeneral.Replace("{action}", nameof(GeneralController.Sys), StringComparison.OrdinalIgnoreCase);
+            routeGeneralName = routeGeneral.Replace("{action}", nameof(GeneralController.Name), StringComparison.OrdinalIgnoreCase);
         }
 
         if (routeGeneralVersion != null)
@@ -191,6 +193,19 @@ public static class WebApplicationExtensions
             app.MapControllerRoute(name: string.Empty,
                 pattern: routeGeneralSys,
                 defaults: new { controller = "General", action = nameof(GeneralController.Sys) })
+                .WithMetadata(new HttpMethodMetadata(DefaultHttpMethods));
+        }
+
+        if (routeGeneralName != null)
+        {
+            if (mapControllerAction)
+            {
+                logger.LogDebug("Map General/Name {route}", routeGeneralName);
+            }
+
+            app.MapControllerRoute(name: string.Empty,
+                pattern: routeGeneralName,
+                defaults: new { controller = "General", action = nameof(GeneralController.Name) })
                 .WithMetadata(new HttpMethodMetadata(DefaultHttpMethods));
         }
 

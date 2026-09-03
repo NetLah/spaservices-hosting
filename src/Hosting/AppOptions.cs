@@ -1,4 +1,6 @@
-﻿namespace NetLah.Extensions.SpaServices.Hosting;
+﻿using Microsoft.Extensions.Configuration;
+
+namespace NetLah.Extensions.SpaServices.Hosting;
 
 public class AppOptions
 {
@@ -12,6 +14,10 @@ public class AppOptions
     public string? RouteGeneralVersion { get; set; }
     public string? RouteGeneralInfo { get; set; }
     public string? RouteGeneralSys { get; set; }
+    public string? RouteGeneralName { get; set; }
+
+    [ConfigurationKeyName("sample_name")]
+    public string? SampleName { get; set; }
 
     /// <summary>
     /// /debug/routes

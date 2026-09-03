@@ -11,6 +11,13 @@
 
 ## Other
 
+- Diagnostic
+
+```
+SAMPLE_NAME or SAMPLENAME or DIAG_NAME or DIAGNAME
+/_general/name
+```
+
 ### dotnet pack solution error NETSDK1194
 
 Bug with new SDK 7.0.200, error NETSDK1194: The "--output" option isn't supported when building a solution
