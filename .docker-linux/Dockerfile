@@ -5,4 +5,4 @@ FROM ${ASPNET_IMAGE}
 WORKDIR /app
 EXPOSE 80
 COPY app .
-ENTRYPOINT ["/opt/startup/init_container.sh", "exec", "dotnet", "WebApp.dll"]
+CMD ["/opt/startup/init_container.sh", "exec", "dotnet", "WebApp.dll"]

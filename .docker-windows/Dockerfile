@@ -5,4 +5,4 @@ FROM ${ASPNET_IMAGE}
 WORKDIR /app
 EXPOSE 80
 COPY app .
-ENTRYPOINT ["dotnet", "WebApp.dll"]
+CMD ["dotnet", "WebApp.dll"]
